@@ -1,6 +1,6 @@
 ---
 title: HallyuLatino 시스템 아키텍처
-version: 1.0.0
+version: 2.0.0
 status: Draft
 owner: @hallyulatino-team
 created: 2025-11-25
@@ -15,6 +15,7 @@ language: Korean (한국어)
 
 | 버전 | 날짜 | 작성자 | 변경 내용 |
 |------|------|--------|----------|
+| 2.0.0 | 2025-11-25 | @hallyulatino-team | MVP 최적화: 모놀리스 아키텍처, n8n 도입 |
 | 1.0.0 | 2025-11-25 | @hallyulatino-team | 최초 작성 |
 
 ## 관련 문서 (Related Documents)
@@ -28,22 +29,24 @@ language: Korean (한국어)
 
 ## 1. 아키텍처 개요 (Architecture Overview)
 
+> ⚡ **MVP 최적화**: 모놀리스 우선, 필요시 마이크로서비스로 전환
+
 ### 1.1 아키텍처 원칙
 
 | 원칙 | 설명 |
 |------|------|
-| **마이크로서비스** | 도메인별 독립 서비스로 분리 |
-| **이벤트 기반** | 비동기 메시징으로 서비스 간 결합도 최소화 |
-| **클라우드 네이티브** | 컨테이너 기반 배포, Auto Scaling |
+| **모듈형 모놀리스** | 단일 배포 단위로 시작, 모듈 경계 유지 |
+| **워크플로우 자동화** | n8n으로 비동기 작업 오케스트레이션 |
+| **서버리스 우선** | Vercel, Supabase, Upstash 등 관리형 서비스 |
 | **API First** | OpenAPI 스펙 우선 정의 |
-| **보안 우선** | Zero Trust, Defense in Depth |
+| **비용 효율** | MVP 단계 $200/월 이하 유지 |
 
 ### 1.2 C4 모델: 시스템 컨텍스트
 
 ```mermaid
 graph TB
     subgraph External["외부 시스템"]
-        User["👤 사용자<br/>(웹/모바일)"]
+        User["👤 사용자<br/>(웹)"]
         Admin["👤 관리자"]
         ContentProvider["🎬 콘텐츠 제공자"]
     end
@@ -53,22 +56,22 @@ graph TB
     end
 
     subgraph ExternalServices["외부 서비스"]
-        OAuth["🔐 OAuth 제공자<br/>(Google, Facebook)"]
-        OpenAI["🤖 OpenAI API"]
-        Stripe["💳 Stripe"]
-        CDN["☁️ CloudFront CDN"]
-        FCM["📱 Firebase FCM"]
+        Supabase["🔐 Supabase Auth<br/>(소셜 로그인)"]
+        DeepL["🌐 DeepL API<br/>(번역)"]
+        Whisper["🎤 Whisper<br/>(음성인식)"]
+        Payment["💳 Stripe +<br/>MercadoPago"]
+        CDN["☁️ Cloudflare CDN"]
     end
 
     User -->|"콘텐츠 시청,<br/>커뮤니티 참여"| System
     Admin -->|"콘텐츠/사용자<br/>관리"| System
     ContentProvider -->|"콘텐츠<br/>업로드"| System
 
-    System -->|"소셜 로그인"| OAuth
-    System -->|"번역/자막 생성"| OpenAI
-    System -->|"결제 처리"| Stripe
+    System -->|"인증"| Supabase
+    System -->|"번역"| DeepL
+    System -->|"자막 생성"| Whisper
+    System -->|"결제 처리"| Payment
     System -->|"미디어 전송"| CDN
-    System -->|"푸시 알림"| FCM
 ```
 
 ### 1.3 C4 모델: 컨테이너 다이어그램
@@ -76,191 +79,159 @@ graph TB
 ```mermaid
 graph TB
     subgraph Clients["클라이언트"]
-        WebApp["🌐 Web App<br/>(Next.js)"]
-        MobileApp["📱 Mobile App<br/>(React Native)"]
+        WebApp["🌐 Web App<br/>(Next.js on Vercel)"]
     end
 
-    subgraph LoadBalancer["로드 밸런서"]
-        ALB["⚖️ AWS ALB"]
+    subgraph Backend["백엔드 (Railway)"]
+        API["⚙️ FastAPI<br/>모놀리스"]
     end
 
-    subgraph APIGateway["API Gateway"]
-        Kong["🚪 Kong Gateway<br/>- 인증<br/>- Rate Limiting<br/>- 로깅"]
-    end
-
-    subgraph Services["마이크로서비스 (EKS)"]
-        AuthService["🔐 Auth Service<br/>(FastAPI)"]
-        UserService["👤 User Service<br/>(FastAPI)"]
-        ContentService["🎬 Content Service<br/>(FastAPI)"]
-        CommunityService["👥 Community Service<br/>(FastAPI)"]
-        PaymentService["💳 Payment Service<br/>(FastAPI)"]
-        NotificationService["🔔 Notification Service<br/>(FastAPI)"]
-        SearchService["🔍 Search Service<br/>(FastAPI)"]
-    end
-
-    subgraph Workers["AI Workers (Celery)"]
-        TranslationWorker["🌐 Translation<br/>Worker"]
-        RecommendationWorker["🎯 Recommendation<br/>Worker"]
-        SubtitleWorker["📝 Subtitle<br/>Worker"]
+    subgraph Automation["워크플로우 자동화"]
+        n8n["🔄 n8n<br/>- 콘텐츠 파이프라인<br/>- 알림 워크플로우<br/>- AI 통합"]
     end
 
     subgraph DataStores["데이터 스토어"]
-        PostgreSQL[("🐘 PostgreSQL<br/>- 사용자<br/>- 콘텐츠 메타")]
-        Redis[("⚡ Redis<br/>- 캐시<br/>- 세션<br/>- 큐")]
-        Elasticsearch[("🔍 Elasticsearch<br/>- 검색 인덱스")]
-        Pinecone[("📌 Pinecone<br/>- 벡터 DB")]
-        S3[("📦 S3/MinIO<br/>- 미디어 파일")]
+        Supabase[("🗄️ Supabase<br/>PostgreSQL +<br/>Auth + Realtime")]
+        pgvector[("🔍 pgvector<br/>벡터 검색")]
+        Redis[("⚡ Upstash Redis<br/>캐시/세션")]
+        R2[("📦 Cloudflare R2<br/>미디어 파일")]
     end
 
-    subgraph MessageQueue["메시지 큐"]
-        RabbitMQ["🐰 RabbitMQ"]
+    subgraph External["외부 서비스"]
+        DeepL["🌐 DeepL"]
+        Whisper["🎤 Whisper"]
+        OpenAI["🤖 GPT-4o-mini"]
+        Payment["💳 Stripe +<br/>MercadoPago"]
+        Cloudflare["☁️ Cloudflare<br/>CDN"]
     end
 
-    WebApp --> ALB
-    MobileApp --> ALB
-    ALB --> Kong
+    WebApp --> API
 
-    Kong --> AuthService
-    Kong --> UserService
-    Kong --> ContentService
-    Kong --> CommunityService
-    Kong --> PaymentService
-    Kong --> SearchService
+    API --> Supabase
+    API --> pgvector
+    API --> Redis
+    API --> R2
+    API --> Payment
 
-    AuthService --> PostgreSQL
-    AuthService --> Redis
-    UserService --> PostgreSQL
-    UserService --> Redis
-    ContentService --> PostgreSQL
-    ContentService --> S3
-    ContentService --> Elasticsearch
-    CommunityService --> PostgreSQL
-    PaymentService --> PostgreSQL
-    SearchService --> Elasticsearch
-    NotificationService --> Redis
+    n8n --> Supabase
+    n8n --> R2
+    n8n --> DeepL
+    n8n --> Whisper
+    n8n --> OpenAI
 
-    ContentService --> RabbitMQ
-    RabbitMQ --> TranslationWorker
-    RabbitMQ --> SubtitleWorker
-    UserService --> RabbitMQ
-    RabbitMQ --> RecommendationWorker
-
-    TranslationWorker --> Pinecone
-    RecommendationWorker --> Pinecone
+    R2 --> Cloudflare
+    Cloudflare --> WebApp
 ```
 
 ---
 
 ## 2. 서비스 아키텍처 (Service Architecture)
 
-### 2.1 서비스 목록
+> ⚡ **모놀리스 구조**: 도메인별 모듈로 구성, 단일 배포 단위
 
-| 서비스 | 책임 | 포트 | 의존성 |
-|--------|------|------|--------|
-| API Gateway (Kong) | 라우팅, 인증, Rate Limiting | 8000 | Redis |
-| Auth Service | 인증/인가 | 8001 | PostgreSQL, Redis |
-| User Service | 사용자 관리 | 8002 | PostgreSQL, Redis |
-| Content Service | 콘텐츠 관리 | 8003 | PostgreSQL, S3, ES |
-| Community Service | 커뮤니티 기능 | 8004 | PostgreSQL |
-| Payment Service | 결제 처리 | 8005 | PostgreSQL, Stripe |
-| Notification Service | 알림 발송 | 8006 | Redis, FCM |
-| Search Service | 검색 기능 | 8007 | Elasticsearch |
+### 2.1 모듈 구조
 
-### 2.2 서비스 상세: Auth Service
+| 모듈 | 책임 | 외부 의존성 |
+|--------|------|--------|
+| `auth` | 인증/인가 (Supabase 위임) | Supabase Auth |
+| `users` | 사용자 프로필 관리 | Supabase |
+| `content` | 콘텐츠 CRUD, 스트리밍 | Supabase, R2 |
+| `community` | 게시판, 댓글 | Supabase |
+| `payment` | 결제 처리 | Stripe, MercadoPago |
+| `search` | 검색 (PostgreSQL FTS) | Supabase |
+| `recommendation` | 추천 (pgvector) | pgvector |
+
+### 2.2 모놀리스 프로젝트 구조
+
+```
+src/backend/
+├── main.py                 # FastAPI 앱 진입점
+├── config.py               # 환경 설정
+├── dependencies.py         # 공통 DI
+│
+├── modules/                # 도메인 모듈 (Clean Architecture)
+│   ├── auth/
+│   │   ├── api/            # 라우터, 스키마
+│   │   ├── application/    # 유스케이스
+│   │   ├── domain/         # 엔티티, 값 객체
+│   │   └── infrastructure/ # 외부 서비스 연동
+│   │
+│   ├── users/
+│   ├── content/
+│   ├── community/
+│   ├── payment/
+│   ├── search/
+│   └── recommendation/
+│
+├── shared/                 # 공통 코드
+│   ├── database.py         # Supabase 클라이언트
+│   ├── cache.py            # Upstash Redis
+│   ├── storage.py          # Cloudflare R2
+│   └── exceptions.py       # 공통 예외
+│
+└── tests/
+    ├── unit/
+    ├── integration/
+    └── conftest.py
+```
+
+### 2.3 모듈 상세: Auth (Supabase 위임)
 
 ```mermaid
 graph LR
-    subgraph AuthService["Auth Service"]
-        API["API Layer<br/>(FastAPI Router)"]
-        App["Application Layer<br/>(Use Cases)"]
-        Domain["Domain Layer<br/>(Entities, Value Objects)"]
-        Infra["Infrastructure Layer<br/>(Repositories, External)"]
+    subgraph AuthModule["Auth 모듈"]
+        API["API Layer<br/>(검증, 세션 관리)"]
+        App["Application Layer<br/>(프로필 연동)"]
+        Infra["Infrastructure<br/>(Supabase Client)"]
     end
 
     Client["Client"] --> API
     API --> App
-    App --> Domain
     App --> Infra
-    Infra --> DB[("PostgreSQL")]
-    Infra --> Cache[("Redis")]
-    Infra --> OAuth["OAuth Provider"]
+    Infra --> Supabase["Supabase Auth<br/>(실제 인증)"]
 ```
 
-**Clean Architecture 계층:**
+> ⚡ **최적화**: 인증 로직은 Supabase Auth에 위임. 백엔드는 토큰 검증과 프로필 동기화만 담당
 
-```
-src/backend/services/auth/
-├── api/                    # API Layer
-│   ├── v1/
-│   │   ├── routes/
-│   │   │   ├── auth.py     # 인증 라우트
-│   │   │   └── oauth.py    # OAuth 라우트
-│   │   └── schemas/
-│   │       ├── request.py  # 요청 스키마
-│   │       └── response.py # 응답 스키마
-│   └── dependencies.py     # DI
-│
-├── application/            # Application Layer
-│   ├── use_cases/
-│   │   ├── login.py
-│   │   ├── register.py
-│   │   ├── refresh_token.py
-│   │   └── oauth_login.py
-│   └── interfaces/
-│       └── repositories.py # Repository 인터페이스
-│
-├── domain/                 # Domain Layer
-│   ├── entities/
-│   │   └── user.py
-│   ├── value_objects/
-│   │   ├── email.py
-│   │   └── password.py
-│   └── exceptions.py
-│
-└── infrastructure/         # Infrastructure Layer
-    ├── repositories/
-    │   └── user_repository.py
-    ├── external/
-    │   ├── google_oauth.py
-    │   └── facebook_oauth.py
-    └── security/
-        ├── jwt_service.py
-        └── password_hasher.py
+```python
+# src/backend/modules/auth/infrastructure/supabase_auth.py
+from supabase import create_client
+
+class SupabaseAuthService:
+    """Supabase Auth 래퍼"""
+
+    async def verify_token(self, token: str) -> dict:
+        """JWT 토큰 검증 (Supabase 위임)"""
+        user = self.client.auth.get_user(token)
+        return user
+
+    async def get_or_create_profile(self, supabase_user_id: str) -> UserProfile:
+        """사용자 프로필 조회 또는 생성"""
+        # ...
 ```
 
-### 2.3 서비스 상세: Content Service
+### 2.4 모듈 상세: Content
 
 ```
-src/backend/services/content/
+src/backend/modules/content/
 ├── api/
 │   └── v1/
-│       ├── routes/
-│       │   ├── contents.py
-│       │   ├── episodes.py
-│       │   └── streaming.py
-│       └── schemas/
+│       ├── routes.py       # GET /contents, GET /contents/{id}
+│       └── schemas.py      # ContentResponse, EpisodeResponse
 │
 ├── application/
-│   ├── use_cases/
-│   │   ├── get_content.py
-│   │   ├── list_contents.py
-│   │   ├── get_streaming_url.py
-│   │   └── track_progress.py
-│   └── interfaces/
+│   ├── get_content.py      # 콘텐츠 조회
+│   ├── list_contents.py    # 목록 조회 (필터, 페이징)
+│   └── get_streaming_url.py # R2 Signed URL 생성
 │
 ├── domain/
-│   ├── entities/
-│   │   ├── content.py
-│   │   ├── episode.py
-│   │   └── watch_progress.py
-│   └── value_objects/
+│   ├── content.py          # Content 엔티티
+│   ├── episode.py          # Episode 엔티티
+│   └── watch_progress.py   # 시청 진행률
 │
 └── infrastructure/
-    ├── repositories/
-    ├── storage/
-    │   └── s3_service.py
-    └── cdn/
-        └── cloudfront_service.py
+    ├── content_repository.py  # Supabase 쿼리
+    └── r2_storage.py          # Cloudflare R2 연동
 ```
 
 ---
@@ -269,216 +240,212 @@ src/backend/services/content/
 
 ### 3.1 데이터 저장소 선택 기준
 
-| 데이터 유형 | 저장소 | 이유 |
-|-------------|--------|------|
-| 트랜잭션 데이터 | PostgreSQL | ACID, 관계형 데이터 |
-| 세션/캐시 | Redis | 고속 읽기/쓰기, TTL |
-| 검색 인덱스 | Elasticsearch | 전문 검색, 분석 |
-| 벡터 임베딩 | Pinecone | 유사도 검색, 추천 |
-| 미디어 파일 | S3/MinIO | 대용량 객체 저장 |
+| 데이터 유형 | 저장소 | 이유 | 비용 |
+|-------------|--------|------|------|
+| 트랜잭션 데이터 | Supabase (PostgreSQL) | ACID, Auth 통합, Realtime | 무료~$25/월 |
+| 세션/캐시 | Upstash Redis | 서버리스, Pay-per-use | 무료~$10/월 |
+| 검색 인덱스 | PostgreSQL FTS | 추가 서비스 불필요 | 포함 |
+| 벡터 임베딩 | pgvector | PostgreSQL 확장, 무료 | 포함 |
+| 미디어 파일 | Cloudflare R2 | 이그레스 무료, 라틴 PoP | 무료~$15/월 |
+
+> ⚡ **최적화**: Elasticsearch, Pinecone 제거로 월 $200+ 절감
 
 ### 3.2 데이터 흐름
 
 ```mermaid
 sequenceDiagram
     participant Client
-    participant Gateway as API Gateway
-    participant Auth as Auth Service
-    participant Content as Content Service
-    participant Cache as Redis
-    participant DB as PostgreSQL
-    participant S3
-    participant CDN
+    participant API as FastAPI
+    participant Cache as Upstash Redis
+    participant DB as Supabase
+    participant R2 as Cloudflare R2
+    participant CDN as Cloudflare CDN
 
-    Client->>Gateway: GET /contents/{id}
-    Gateway->>Auth: 토큰 검증
-    Auth->>Cache: 세션 확인
-    Cache-->>Auth: 세션 유효
-    Auth-->>Gateway: 인증 완료
+    Client->>API: GET /contents/{id}<br/>Authorization: Bearer {supabase_token}
+    API->>DB: 토큰 검증 (Supabase Auth)
+    DB-->>API: 사용자 정보
 
-    Gateway->>Content: 콘텐츠 요청
-    Content->>Cache: 캐시 확인
+    API->>Cache: 캐시 확인
     alt 캐시 히트
-        Cache-->>Content: 캐시된 데이터
+        Cache-->>API: 캐시된 데이터
     else 캐시 미스
-        Content->>DB: 콘텐츠 조회
-        DB-->>Content: 콘텐츠 데이터
-        Content->>Cache: 캐시 저장
+        API->>DB: 콘텐츠 조회
+        DB-->>API: 콘텐츠 데이터
+        API->>Cache: 캐시 저장
     end
-    Content->>S3: 스트리밍 URL 생성
-    S3-->>Content: Signed URL
-    Content-->>Gateway: 응답
-    Gateway-->>Client: 콘텐츠 정보 + CDN URL
+
+    API->>R2: Signed URL 생성
+    R2-->>API: Signed URL
+    API-->>Client: 콘텐츠 정보 + CDN URL
 
     Client->>CDN: 비디오 스트리밍
-    CDN->>S3: 원본 요청 (캐시 미스 시)
+    CDN->>R2: 원본 요청 (캐시 미스 시)
     CDN-->>Client: 비디오 스트림
 ```
 
-### 3.3 캐싱 전략
+### 3.3 캐싱 전략 (Upstash Redis)
 
 | 데이터 | 캐시 TTL | 캐시 키 패턴 |
 |--------|----------|--------------|
-| 사용자 세션 | 30분 | `session:{user_id}` |
 | 콘텐츠 메타데이터 | 1시간 | `content:{content_id}` |
-| 콘텐츠 목록 | 5분 | `contents:list:{page}:{filters}` |
+| 콘텐츠 목록 | 5분 | `contents:list:{page}:{filters_hash}` |
 | 검색 결과 | 10분 | `search:{query_hash}` |
 | 추천 결과 | 1시간 | `recommend:{user_id}` |
+| **번역된 자막** | 7일 | `subtitle:{content_id}:{lang}` |
+| Rate Limit | 1분 | `rate:{user_id}:{endpoint}` |
+
+> ⚡ **중요**: 번역 자막은 장기 캐싱으로 DeepL API 비용 최소화
+
+### 3.4 벡터 검색 (pgvector)
+
+```sql
+-- pgvector 확장 활성화
+CREATE EXTENSION IF NOT EXISTS vector;
+
+-- 콘텐츠 임베딩 테이블
+CREATE TABLE content_embeddings (
+    content_id UUID PRIMARY KEY REFERENCES contents(id),
+    embedding vector(1536),  -- OpenAI embedding 차원
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 유사 콘텐츠 검색 (코사인 유사도)
+SELECT content_id, 1 - (embedding <=> $1) AS similarity
+FROM content_embeddings
+ORDER BY embedding <=> $1
+LIMIT 10;
+```
+
+> ⚡ **최적화**: Pinecone 대신 pgvector 사용으로 월 $70+ 절감
 
 ---
 
 ## 4. 인프라 아키텍처 (Infrastructure Architecture)
 
-### 4.1 AWS 인프라 구성
+> ⚡ **MVP 최적화**: 관리형 서비스 중심, Kubernetes 없이 시작
+
+### 4.1 서버리스 인프라 구성
 
 ```mermaid
 graph TB
-    subgraph VPC["VPC (10.0.0.0/16)"]
-        subgraph PublicSubnet["Public Subnet"]
-            ALB["Application Load Balancer"]
-            NAT["NAT Gateway"]
-        end
-
-        subgraph PrivateSubnet1["Private Subnet (App)"]
-            EKS["EKS Cluster"]
-        end
-
-        subgraph PrivateSubnet2["Private Subnet (Data)"]
-            RDS["RDS PostgreSQL"]
-            ElastiCache["ElastiCache Redis"]
-            ES["OpenSearch"]
-        end
+    subgraph Frontend["프론트엔드"]
+        Vercel["⚡ Vercel<br/>Next.js SSR/SSG<br/>Edge Functions"]
     end
 
-    subgraph External["External"]
-        Route53["Route 53"]
-        CloudFront["CloudFront"]
-        S3["S3"]
-        ECR["ECR"]
+    subgraph Backend["백엔드"]
+        Railway["🚂 Railway<br/>FastAPI 컨테이너<br/>Auto Scaling"]
+        n8n["🔄 n8n<br/>(Railway 또는 Cloud)"]
     end
 
-    Internet["🌐 Internet"] --> Route53
-    Route53 --> CloudFront
-    Route53 --> ALB
-    CloudFront --> S3
-    ALB --> EKS
-    EKS --> RDS
-    EKS --> ElastiCache
-    EKS --> ES
-    EKS --> NAT
-    NAT --> Internet
+    subgraph Data["데이터 계층"]
+        Supabase["🗄️ Supabase<br/>PostgreSQL + Auth<br/>+ Realtime + pgvector"]
+        Upstash["⚡ Upstash Redis<br/>서버리스 캐시"]
+    end
+
+    subgraph Storage["스토리지 & CDN"]
+        R2["📦 Cloudflare R2<br/>오브젝트 스토리지"]
+        CF["☁️ Cloudflare<br/>CDN + DNS + WAF"]
+    end
+
+    subgraph External["외부 서비스"]
+        DeepL["🌐 DeepL API"]
+        Replicate["🎤 Replicate<br/>(Whisper)"]
+        OpenAI["🤖 OpenAI"]
+        Payment["💳 Stripe +<br/>MercadoPago"]
+    end
+
+    Internet["🌐 사용자"] --> CF
+    CF --> Vercel
+    CF --> Railway
+
+    Vercel --> Railway
+    Railway --> Supabase
+    Railway --> Upstash
+    Railway --> R2
+    Railway --> Payment
+
+    n8n --> Supabase
+    n8n --> R2
+    n8n --> DeepL
+    n8n --> Replicate
+    n8n --> OpenAI
 ```
 
-### 4.2 Kubernetes 클러스터 구성
+### 4.2 환경별 구성
 
-```yaml
-# 네임스페이스 구조
-namespaces:
-  - hallyulatino-prod      # 프로덕션 워크로드
-  - hallyulatino-staging   # 스테이징 워크로드
-  - monitoring             # Prometheus, Grafana
-  - logging                # EFK Stack
-  - istio-system           # 서비스 메시
+| 환경 | 프론트엔드 | 백엔드 | 데이터베이스 | 비용/월 |
+|------|-----------|--------|------------|---------|
+| **Development** | Vercel Preview | Railway Dev | Supabase 무료 | ~$5 |
+| **Staging** | Vercel Preview | Railway Starter | Supabase Pro | ~$50 |
+| **Production** | Vercel Pro | Railway Pro | Supabase Pro | ~$150 |
 
-# 노드 그룹
-node_groups:
-  - name: api-nodes
-    instance_type: m6i.large
-    min_size: 2
-    max_size: 10
-    labels:
-      workload: api
+### 4.3 Railway 배포 구성
 
-  - name: worker-nodes
-    instance_type: c6i.xlarge
-    min_size: 1
-    max_size: 5
-    labels:
-      workload: worker
+```toml
+# railway.toml
+[build]
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
 
-  - name: gpu-nodes
-    instance_type: g4dn.xlarge
-    min_size: 0
-    max_size: 2
-    labels:
-      workload: ai
-      nvidia.com/gpu: "true"
+[deploy]
+numReplicas = 2
+startCommand = "uvicorn main:app --host 0.0.0.0 --port $PORT"
+healthcheckPath = "/health"
+healthcheckTimeout = 100
+restartPolicyType = "ON_FAILURE"
+
+[deploy.resources]
+memory = "512Mi"
+cpu = "0.5"
 ```
 
-### 4.3 서비스 배포 구성
+```dockerfile
+# Dockerfile
+FROM python:3.12-slim
 
-```yaml
-# Deployment 예시: Auth Service
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: auth-service
-  namespace: hallyulatino-prod
-spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      app: auth-service
-  template:
-    metadata:
-      labels:
-        app: auth-service
-    spec:
-      containers:
-        - name: auth-service
-          image: ecr.aws/hallyulatino/auth-service:v1.0.0
-          ports:
-            - containerPort: 8001
-          resources:
-            requests:
-              memory: "256Mi"
-              cpu: "250m"
-            limits:
-              memory: "512Mi"
-              cpu: "500m"
-          livenessProbe:
-            httpGet:
-              path: /health
-              port: 8001
-            initialDelaySeconds: 10
-            periodSeconds: 30
-          readinessProbe:
-            httpGet:
-              path: /ready
-              port: 8001
-            initialDelaySeconds: 5
-            periodSeconds: 10
-          env:
-            - name: DATABASE_URL
-              valueFrom:
-                secretKeyRef:
-                  name: auth-secrets
-                  key: database-url
----
-# HPA (Horizontal Pod Autoscaler)
-apiVersion: autoscaling/v2
-kind: HorizontalPodAutoscaler
-metadata:
-  name: auth-service-hpa
-spec:
-  scaleTargetRef:
-    apiVersion: apps/v1
-    kind: Deployment
-    name: auth-service
-  minReplicas: 3
-  maxReplicas: 10
-  metrics:
-    - type: Resource
-      resource:
-        name: cpu
-        target:
-          type: Utilization
-          averageUtilization: 70
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY src/backend ./
+
+EXPOSE 8000
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 ```
+
+### 4.4 확장 전략
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    확장 로드맵                               │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  Phase 1 (MVP): 현재 구성                                    │
+│  ├─ Railway 단일 인스턴스                                    │
+│  ├─ Supabase 무료/Pro                                       │
+│  └─ 예상 트래픽: 1,000 DAU                                  │
+│                                                             │
+│  Phase 2 (Growth): Railway 스케일업                          │
+│  ├─ Railway Pro (Auto Scaling)                              │
+│  ├─ Supabase Pro (Connection Pooling)                       │
+│  └─ 예상 트래픽: 10,000 DAU                                 │
+│                                                             │
+│  Phase 3 (Scale): 필요시 마이그레이션                        │
+│  ├─ AWS/GCP로 마이그레이션 검토                              │
+│  ├─ Kubernetes 도입 검토                                    │
+│  └─ 예상 트래픽: 100,000+ DAU                               │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+> ⚡ **원칙**: "지금 필요한 것만 구축, 필요할 때 확장"
 
 ---
 
 ## 5. 보안 아키텍처 (Security Architecture)
+
+> ⚡ **MVP 최적화**: 관리형 서비스의 내장 보안 기능 최대 활용
 
 ### 5.1 보안 계층
 
@@ -487,209 +454,287 @@ spec:
 │                    보안 계층 (Defense in Depth)              │
 ├─────────────────────────────────────────────────────────────┤
 │                                                             │
-│  Layer 1: 네트워크 보안                                       │
-│  ├─ WAF (AWS WAF)                                           │
-│  ├─ DDoS 방어 (AWS Shield)                                  │
-│  └─ VPC, Security Groups, NACLs                             │
+│  Layer 1: 엣지 보안 (Cloudflare)                             │
+│  ├─ WAF (Cloudflare WAF 무료 티어)                          │
+│  ├─ DDoS 방어 (Cloudflare 무료)                             │
+│  └─ Bot 관리                                                │
 │                                                             │
-│  Layer 2: 엣지 보안                                          │
-│  ├─ TLS 1.3 종단간 암호화                                    │
-│  ├─ CDN 보안 헤더                                           │
-│  └─ Bot 감지                                                │
+│  Layer 2: 인증 (Supabase Auth)                              │
+│  ├─ JWT 토큰 (자동 관리)                                    │
+│  ├─ 소셜 로그인 (Google, Facebook)                          │
+│  └─ Row Level Security (RLS)                               │
 │                                                             │
-│  Layer 3: API Gateway 보안                                   │
-│  ├─ JWT 토큰 검증                                           │
-│  ├─ Rate Limiting                                           │
-│  └─ IP Whitelist/Blacklist                                  │
-│                                                             │
-│  Layer 4: 애플리케이션 보안                                   │
+│  Layer 3: 애플리케이션 보안                                   │
 │  ├─ 입력 검증 (Pydantic)                                    │
-│  ├─ SQL Injection 방지 (ORM)                                │
-│  ├─ XSS 방지 (CSP)                                          │
-│  └─ CSRF 보호                                               │
+│  ├─ SQL Injection 방지 (Supabase Client)                   │
+│  └─ CORS 설정 (FastAPI)                                    │
 │                                                             │
-│  Layer 5: 데이터 보안                                        │
-│  ├─ 암호화 at Rest (AES-256)                                │
+│  Layer 4: 데이터 보안 (Supabase)                             │
+│  ├─ 암호화 at Rest (자동)                                   │
 │  ├─ 암호화 in Transit (TLS)                                 │
-│  └─ 비밀번호 해싱 (bcrypt)                                   │
+│  └─ 비밀번호 해싱 (Supabase Auth)                           │
 │                                                             │
-│  Layer 6: 인프라 보안                                        │
-│  ├─ IAM 최소 권한                                           │
-│  ├─ Secrets Manager                                         │
-│  └─ 감사 로깅 (CloudTrail)                                  │
+│  Layer 5: 비밀 관리                                          │
+│  ├─ Railway 환경변수                                        │
+│  ├─ Vercel 환경변수                                         │
+│  └─ .env 로컬 개발                                          │
 │                                                             │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-### 5.2 인증/인가 흐름
+### 5.2 인증/인가 흐름 (Supabase Auth)
 
 ```mermaid
 sequenceDiagram
-    participant Client
-    participant Gateway as API Gateway
-    participant Auth as Auth Service
-    participant Resource as Resource Service
-    participant Cache as Redis
+    participant Client as Next.js Client
+    participant Supabase as Supabase Auth
+    participant API as FastAPI
+    participant DB as Supabase DB
 
-    Note over Client,Cache: 로그인 흐름
-    Client->>Auth: POST /auth/login (email, password)
-    Auth->>Auth: 비밀번호 검증
-    Auth->>Auth: JWT 생성 (access + refresh)
-    Auth->>Cache: 세션 저장
-    Auth-->>Client: {access_token, refresh_token}
+    Note over Client,DB: 로그인 흐름 (Supabase 직접)
+    Client->>Supabase: signInWithPassword(email, password)
+    Supabase->>Supabase: 인증 처리
+    Supabase-->>Client: {access_token, refresh_token, user}
 
-    Note over Client,Cache: API 호출 흐름
-    Client->>Gateway: GET /api/v1/contents<br/>Authorization: Bearer {token}
-    Gateway->>Auth: 토큰 검증
-    Auth->>Cache: 세션 확인
-    Cache-->>Auth: 세션 유효
-    Auth-->>Gateway: {user_id, roles}
-    Gateway->>Resource: 요청 전달 + 사용자 정보
-    Resource-->>Gateway: 응답
-    Gateway-->>Client: 응답
+    Note over Client,DB: API 호출 흐름
+    Client->>API: GET /api/v1/contents<br/>Authorization: Bearer {supabase_token}
+    API->>Supabase: 토큰 검증 (getUser)
+    Supabase-->>API: {user_id, email, role}
+    API->>DB: 콘텐츠 조회 (RLS 적용)
+    DB-->>API: 콘텐츠 데이터
+    API-->>Client: 응답
 
-    Note over Client,Cache: 토큰 갱신 흐름
-    Client->>Auth: POST /auth/refresh<br/>{refresh_token}
-    Auth->>Cache: refresh_token 검증
-    Auth->>Auth: 새 access_token 생성
-    Auth-->>Client: {access_token}
+    Note over Client,DB: 소셜 로그인
+    Client->>Supabase: signInWithOAuth({provider: 'google'})
+    Supabase->>Supabase: OAuth 흐름
+    Supabase-->>Client: {access_token, user}
 ```
 
-### 5.3 RBAC (Role-Based Access Control)
+### 5.3 Row Level Security (RLS)
 
-| 역할 | 권한 |
-|------|------|
-| `user` | 콘텐츠 시청, 프로필 관리, 커뮤니티 참여 |
-| `premium` | user + 광고 없음, HD 화질, 다운로드 |
-| `creator` | premium + 콘텐츠 업로드 |
-| `moderator` | creator + 콘텐츠/댓글 관리 |
-| `admin` | 전체 관리 권한 |
+```sql
+-- 사용자는 자신의 프로필만 수정 가능
+CREATE POLICY "Users can update own profile"
+ON profiles FOR UPDATE
+USING (auth.uid() = user_id);
+
+-- 프리미엄 사용자만 HD 콘텐츠 접근
+CREATE POLICY "Premium users access HD content"
+ON contents FOR SELECT
+USING (
+  quality = 'SD' OR
+  EXISTS (
+    SELECT 1 FROM subscriptions
+    WHERE user_id = auth.uid() AND status = 'active'
+  )
+);
+```
+
+### 5.4 RBAC (Role-Based Access Control)
+
+| 역할 | 권한 | 구현 |
+|------|------|------|
+| `user` | 콘텐츠 시청, 프로필 관리 | Supabase 기본 |
+| `premium` | user + HD 화질, 다운로드 | subscription 테이블 |
+| `creator` | premium + 콘텐츠 업로드 | role 컬럼 |
+| `admin` | 전체 관리 권한 | Supabase Dashboard |
 
 ---
 
 ## 6. AI 파이프라인 아키텍처 (AI Pipeline Architecture)
 
-### 6.1 번역 파이프라인
+> ⚡ **n8n 기반**: 워크플로우 자동화로 Celery 대체, 비용 절감
+
+### 6.1 콘텐츠 처리 파이프라인 (n8n)
 
 ```mermaid
 graph LR
-    subgraph Input["입력"]
-        Video["🎬 비디오"]
-        Audio["🔊 오디오 추출"]
+    subgraph Trigger["트리거"]
+        Webhook["🔔 Webhook<br/>(콘텐츠 업로드)"]
     end
 
-    subgraph STT["음성→텍스트"]
-        Whisper["🎤 Whisper<br/>음성 인식"]
+    subgraph n8n["n8n 워크플로우"]
+        Extract["🔊 오디오 추출<br/>(FFmpeg)"]
+        Whisper["🎤 Whisper<br/>(Replicate)"]
+        DeepL["🌐 DeepL API<br/>(번역)"]
+        Format["📝 VTT 생성"]
     end
 
-    subgraph Translation["번역"]
-        GPT4["🤖 GPT-4<br/>번역"]
-        Context["📚 컨텍스트<br/>벡터 DB"]
+    subgraph Storage["저장"]
+        R2["📦 Cloudflare R2"]
+        DB["🗄️ Supabase"]
+        Cache["⚡ Redis 캐시"]
     end
 
-    subgraph Output["출력"]
-        Subtitle["📝 자막 파일<br/>(VTT/SRT)"]
-        Cache["⚡ 캐시"]
-    end
-
-    Video --> Audio
-    Audio --> Whisper
-    Whisper --> GPT4
-    Context --> GPT4
-    GPT4 --> Subtitle
-    Subtitle --> Cache
+    Webhook --> Extract
+    Extract --> Whisper
+    Whisper --> DeepL
+    DeepL --> Format
+    Format --> R2
+    Format --> DB
+    Format --> Cache
 ```
 
-### 6.2 추천 파이프라인
+### 6.2 n8n 워크플로우 예시
+
+```json
+{
+  "name": "콘텐츠 자막 생성 파이프라인",
+  "nodes": [
+    {
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "parameters": {
+        "path": "content-upload",
+        "httpMethod": "POST"
+      }
+    },
+    {
+      "name": "Whisper (Replicate)",
+      "type": "n8n-nodes-base.httpRequest",
+      "parameters": {
+        "url": "https://api.replicate.com/v1/predictions",
+        "method": "POST",
+        "body": {
+          "version": "whisper-large-v3",
+          "input": { "audio": "={{ $json.audio_url }}" }
+        }
+      }
+    },
+    {
+      "name": "DeepL 번역",
+      "type": "n8n-nodes-base.deepL",
+      "parameters": {
+        "text": "={{ $json.transcription }}",
+        "targetLanguage": "ES"
+      }
+    },
+    {
+      "name": "Supabase 저장",
+      "type": "n8n-nodes-base.supabase",
+      "parameters": {
+        "operation": "insert",
+        "table": "subtitles"
+      }
+    }
+  ]
+}
+```
+
+### 6.3 추천 파이프라인 (pgvector)
 
 ```mermaid
 graph TB
     subgraph DataCollection["데이터 수집"]
         WatchHistory["시청 기록"]
         Favorites["즐겨찾기"]
-        SearchHistory["검색 기록"]
         Ratings["평점"]
     end
 
-    subgraph FeatureEngineering["특성 추출"]
-        UserEmbedding["사용자 임베딩"]
-        ContentEmbedding["콘텐츠 임베딩"]
+    subgraph Embedding["임베딩 생성"]
+        OpenAI["🤖 OpenAI<br/>text-embedding-3-small"]
     end
 
-    subgraph VectorSearch["벡터 검색"]
-        Pinecone["📌 Pinecone"]
-    end
-
-    subgraph Ranking["랭킹"]
-        Candidates["후보군 생성"]
-        Reranker["재랭킹<br/>(다양성, 신선도)"]
+    subgraph VectorSearch["벡터 검색 (pgvector)"]
+        pgvector["🔍 PostgreSQL<br/>+ pgvector"]
     end
 
     subgraph Output["출력"]
         Recommendations["🎯 추천 목록"]
+        Cache["⚡ Redis 캐시"]
     end
 
-    WatchHistory --> UserEmbedding
-    Favorites --> UserEmbedding
-    SearchHistory --> UserEmbedding
-    Ratings --> UserEmbedding
-
-    UserEmbedding --> Pinecone
-    ContentEmbedding --> Pinecone
-
-    Pinecone --> Candidates
-    Candidates --> Reranker
-    Reranker --> Recommendations
+    WatchHistory --> OpenAI
+    Favorites --> OpenAI
+    Ratings --> OpenAI
+    OpenAI --> pgvector
+    pgvector --> Recommendations
+    Recommendations --> Cache
 ```
+
+### 6.4 비용 비교
+
+| 항목 | 이전 (GPT-4 + Pinecone) | 최적화 (DeepL + pgvector) |
+|------|-------------------------|--------------------------|
+| 번역 (1M 문자/월) | ~$60 (GPT-4) | ~$5 (DeepL Free) |
+| 벡터 DB | ~$70 (Pinecone) | $0 (pgvector) |
+| 워커 | ~$50 (Celery + RabbitMQ) | ~$10 (n8n) |
+| **총합** | ~$180/월 | ~$15/월 |
+
+> ⚡ **90% 비용 절감** (품질은 DeepL이 번역 전문으로 더 우수)
 
 ---
 
 ## 7. 모니터링 및 관찰성 (Monitoring & Observability)
 
+> ⚡ **MVP 최적화**: 무료/저가 관리형 서비스 활용
+
 ### 7.1 관찰성 스택
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    관찰성 스택 (Observability)               │
+│                    관찰성 스택 (MVP)                         │
 ├─────────────────────────────────────────────────────────────┤
 │                                                             │
-│  📊 Metrics (메트릭)                                         │
-│  ├─ Prometheus: 메트릭 수집 및 저장                          │
-│  ├─ Grafana: 대시보드 및 시각화                              │
-│  └─ CloudWatch: AWS 인프라 메트릭                           │
+│  🐛 에러 트래킹 (Sentry - 무료 티어)                         │
+│  ├─ 프론트엔드 에러 캡처 (Next.js)                           │
+│  ├─ 백엔드 예외 추적 (FastAPI)                               │
+│  └─ 릴리스 버전 트래킹                                       │
 │                                                             │
-│  📝 Logs (로그)                                              │
-│  ├─ Fluent Bit: 로그 수집기                                  │
-│  ├─ Elasticsearch: 로그 저장소                               │
-│  └─ Kibana: 로그 검색 및 분석                                │
+│  📊 업타임 & 로그 (BetterStack - 무료 티어)                  │
+│  ├─ HTTP 엔드포인트 모니터링                                  │
+│  ├─ 구조화된 로그 수집                                       │
+│  └─ 상태 페이지 (status.hallyulatino.com)                   │
 │                                                             │
-│  🔗 Traces (트레이스)                                        │
-│  ├─ OpenTelemetry: 분산 트레이싱                             │
-│  ├─ Jaeger: 트레이스 저장 및 시각화                          │
-│  └─ X-Ray: AWS 서비스 트레이싱                               │
+│  📈 분석 (플랫폼 내장)                                       │
+│  ├─ Vercel Analytics (프론트엔드)                            │
+│  ├─ Railway Metrics (백엔드)                                 │
+│  └─ Supabase Dashboard (DB)                                 │
 │                                                             │
-│  🚨 Alerting (알림)                                          │
-│  ├─ AlertManager: 알림 라우팅                                │
-│  ├─ PagerDuty: On-call 관리                                 │
-│  └─ Slack: 팀 알림                                          │
+│  🚨 알림 (Slack/Discord)                                     │
+│  ├─ Sentry → Slack                                          │
+│  ├─ BetterStack → Slack                                     │
+│  └─ n8n 워크플로우 알림                                      │
 │                                                             │
 └─────────────────────────────────────────────────────────────┘
 ```
 
 ### 7.2 핵심 메트릭
 
-| 카테고리 | 메트릭 | 알림 임계값 |
-|----------|--------|-------------|
-| 가용성 | 서비스 업타임 | < 99.9% |
-| 지연 | API P95 응답 시간 | > 500ms |
-| 에러 | 5xx 에러율 | > 1% |
-| 트래픽 | RPS (Requests Per Second) | > 10,000 |
-| 포화도 | CPU 사용률 | > 80% |
-| 포화도 | 메모리 사용률 | > 85% |
+| 카테고리 | 메트릭 | 알림 임계값 | 도구 |
+|----------|--------|-------------|------|
+| 가용성 | 서비스 업타임 | < 99% | BetterStack |
+| 에러 | 5xx 에러율 | > 5% | Sentry |
+| 성능 | API P95 응답 시간 | > 500ms | Railway |
+| 성능 | Web Vitals (LCP) | > 2.5s | Vercel |
+| DB | 쿼리 성능 | > 1s | Supabase |
+
+### 7.3 로깅 설정
+
+```python
+# src/backend/shared/logging.py
+import structlog
+from betterstack import BetterstackHandler
+
+def setup_logging():
+    structlog.configure(
+        processors=[
+            structlog.processors.TimeStamper(fmt="iso"),
+            structlog.processors.JSONRenderer()
+        ],
+        logger_factory=structlog.PrintLoggerFactory(),
+    )
+
+# 사용 예시
+logger = structlog.get_logger()
+logger.info("content_viewed", content_id=content_id, user_id=user_id)
+```
 
 ---
 
 ## 8. 배포 전략 (Deployment Strategy)
+
+> ⚡ **자동 배포**: Git Push 기반 자동 배포
 
 ### 8.1 CI/CD 파이프라인
 
@@ -701,65 +746,109 @@ graph LR
     end
 
     subgraph CI["CI (GitHub Actions)"]
-        Lint["🔍 Lint"]
-        Test["🧪 Test"]
-        Build["🔨 Build"]
-        Scan["🛡️ Security Scan"]
+        Lint["🔍 Lint + Type Check"]
+        Test["🧪 Unit + Integration"]
     end
 
-    subgraph CD["CD"]
-        Deploy_Dev["🚀 Dev 배포"]
-        Deploy_Staging["🚀 Staging 배포"]
-        Deploy_Prod["🚀 Prod 배포"]
+    subgraph CD["CD (자동)"]
+        Vercel["⚡ Vercel<br/>(프론트엔드)"]
+        Railway["🚂 Railway<br/>(백엔드)"]
     end
 
     Code --> PR
     PR --> Lint
     Lint --> Test
-    Test --> Build
-    Build --> Scan
-    Scan --> Deploy_Dev
-    Deploy_Dev --> Deploy_Staging
-    Deploy_Staging -->|"승인"| Deploy_Prod
+    Test -->|main 병합| Vercel
+    Test -->|main 병합| Railway
 ```
 
 ### 8.2 배포 방식
 
-| 환경 | 방식 | 롤백 |
-|------|------|------|
-| Dev | 직접 배포 | 자동 |
-| Staging | Blue-Green | 수동 |
-| Production | Canary (10% → 50% → 100%) | 자동 (에러율 기반) |
+| 서비스 | 플랫폼 | 배포 트리거 | 롤백 |
+|--------|--------|------------|------|
+| Frontend | Vercel | Git Push (main) | Vercel 대시보드 |
+| Backend | Railway | Git Push (main) | Railway 대시보드 |
+| n8n | Railway | 수동 | Railway 대시보드 |
+
+### 8.3 GitHub Actions 설정
+
+```yaml
+# .github/workflows/ci.yml
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+
+      - name: Lint
+        run: |
+          ruff check .
+          mypy src/
+
+      - name: Test
+        run: pytest tests/ --cov=src/
+
+      # Vercel과 Railway는 자동 배포
+```
 
 ---
 
 ## 9. 재해 복구 (Disaster Recovery)
 
+> ⚡ **관리형 서비스**: 백업은 플랫폼에서 자동 처리
+
 ### 9.1 백업 전략
 
-| 데이터 | 백업 주기 | 보관 기간 | 위치 |
-|--------|-----------|-----------|------|
-| PostgreSQL | 일간 스냅샷 | 30일 | S3 Cross-Region |
-| Redis | 시간별 | 7일 | S3 |
-| S3 | Cross-Region Replication | - | 다른 리전 |
+| 데이터 | 서비스 | 백업 | 보관 기간 |
+|--------|--------|------|-----------|
+| PostgreSQL | Supabase Pro | 일간 자동 | 7일 |
+| 미디어 파일 | Cloudflare R2 | 멀티 리전 복제 | - |
+| n8n 워크플로우 | Git 저장 | 커밋마다 | 영구 |
 
 ### 9.2 복구 목표
 
-| 지표 | 목표 |
-|------|------|
-| RTO (Recovery Time Objective) | < 1시간 |
-| RPO (Recovery Point Objective) | < 15분 |
+| 지표 | 목표 | 비고 |
+|------|------|------|
+| RTO (Recovery Time Objective) | < 4시간 | Supabase PITR |
+| RPO (Recovery Point Objective) | < 24시간 | 일간 백업 기준 |
+
+> ⚠️ **MVP 단계**: Supabase Pro의 Point-in-Time Recovery 활용. 더 빈번한 백업이 필요하면 Pro 플랜 이상 검토.
 
 ---
 
 ## 10. 아키텍처 결정 기록 (ADRs)
 
-### ADR-0001: 마이크로서비스 아키텍처 채택
+### ADR-0001: 초기 마이크로서비스 아키텍처 제안
 
-- **상태**: Accepted
+- **상태**: Superseded by ADR-0002
 - **컨텍스트**: 독립적인 확장성과 배포가 필요
 - **결정**: 도메인별 마이크로서비스로 분리
-- **결과**: 복잡성 증가, 운영 오버헤드 발생, 그러나 확장성과 팀 독립성 확보
+- **결과**: 과도한 복잡성, 높은 운영 비용
+
+### ADR-0002: MVP 최적화 - 모놀리스 전환
+
+- **상태**: Accepted
+- **컨텍스트**: MVP 단계에서 비용 효율성과 개발 속도 필요
+- **결정**: 마이크로서비스 → 모듈형 모놀리스, n8n 도입, 관리형 서비스 활용
+- **결과**: 월 비용 90% 절감 ($750→$45~195), 운영 복잡성 감소
 
 [전체 ADR 목록](./ADRs/)
 

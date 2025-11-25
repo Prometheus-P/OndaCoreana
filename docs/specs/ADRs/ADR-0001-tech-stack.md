@@ -1,18 +1,22 @@
 ---
-title: ADR-0001 기술 스택 선정
-version: 1.0.0
-status: Accepted
+title: ADR-0001 기술 스택 선정 (초기)
+version: 1.1.0
+status: Superseded
+superseded-by: ADR-0002
 owner: @hallyulatino-team
 created: 2025-11-25
 updated: 2025-11-25
 language: Korean (한국어)
 ---
 
-# ADR-0001: 기술 스택 선정
+# ADR-0001: 기술 스택 선정 (초기)
+
+> ⚠️ **이 ADR은 [ADR-0002](./ADR-0002-tech-stack-optimization.md)에 의해 대체되었습니다.**
+> MVP 단계에 맞는 최적화된 스택은 ADR-0002를 참조하세요.
 
 ## 상태 (Status)
 
-**Accepted**
+**Superseded** (ADR-0002에 의해 대체됨)
 
 ## 컨텍스트 (Context)
 

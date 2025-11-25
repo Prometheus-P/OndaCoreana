@@ -1,6 +1,6 @@
 ---
 title: HallyuLatino 프로젝트 컨텍스트
-version: 1.0.0
+version: 1.1.0
 status: Draft
 owner: @hallyulatino-team
 created: 2025-11-25
@@ -15,6 +15,7 @@ language: Korean (한국어)
 
 | 버전 | 날짜 | 작성자 | 변경 내용 |
 |------|------|--------|----------|
+| 1.1.0 | 2025-11-25 | @hallyulatino-team | 기술 스택 최적화 (MVP 친화적), n8n 도입 |
 | 1.0.0 | 2025-11-25 | @hallyulatino-team | 최초 작성 |
 
 ## 관련 문서 (Related Documents)
@@ -80,135 +81,184 @@ language: Korean (한국어)
 
 ## 4. 기술 스택 (Tech Stack)
 
+> ⚡ **MVP 최적화**: 비용 효율성과 개발 속도를 우선한 스택 선정
+> 📌 **참고**: [ADR-0002](./docs/specs/ADRs/ADR-0002-tech-stack-optimization.md)
+
 ### 4.1 프론트엔드 (Frontend)
 
-| 기술 | 버전 | 용도 |
-|------|------|------|
-| Next.js | 14.x | React 프레임워크, SSR/SSG |
-| TypeScript | 5.x | 타입 안정성 |
-| Tailwind CSS | 3.x | 유틸리티 CSS |
-| Zustand | 4.x | 상태 관리 |
-| React Query | 5.x | 서버 상태 관리 |
-| Framer Motion | 10.x | 애니메이션 |
+| 기술 | 버전 | 용도 | 비용 |
+|------|------|------|------|
+| Next.js | 14.x | React 프레임워크, SSR/SSG | - |
+| TypeScript | 5.x | 타입 안정성 | - |
+| Tailwind CSS | 3.x | 유틸리티 CSS | - |
+| Zustand | 4.x | 상태 관리 | - |
+| React Query | 5.x | 서버 상태 관리 | - |
+| **Vercel** | - | 프론트엔드 호스팅 | 무료~$20/월 |
 
 ### 4.2 백엔드 (Backend)
 
-| 기술 | 버전 | 용도 |
-|------|------|------|
-| Python | 3.12.x | 메인 언어 |
-| FastAPI | 0.109.x | API 프레임워크 |
-| SQLAlchemy | 2.x | ORM |
-| Pydantic | 2.x | 데이터 검증 |
-| Celery | 5.x | 비동기 작업 큐 |
-| Redis | 7.x | 캐시, 세션, 큐 브로커 |
+| 기술 | 버전 | 용도 | 비용 |
+|------|------|------|------|
+| Python | 3.12.x | 메인 언어 | - |
+| FastAPI | 0.109.x | API 프레임워크 | - |
+| SQLAlchemy | 2.x | ORM | - |
+| Pydantic | 2.x | 데이터 검증 | - |
+| **Railway/Render** | - | 백엔드 호스팅 | $20-50/월 |
+
+> 📌 **구조**: 모놀리스 (Modular Monolith) - 추후 필요시 마이크로서비스 전환
 
 ### 4.3 데이터베이스 (Database)
 
-| 기술 | 버전 | 용도 |
+| 기술 | 용도 | 비용 |
 |------|------|------|
-| PostgreSQL | 16.x | 주 데이터베이스 |
-| Redis | 7.x | 캐시, 세션 |
-| Elasticsearch | 8.x | 검색 엔진 |
-| MinIO | latest | 오브젝트 스토리지 (S3 호환) |
+| **Supabase** (PostgreSQL) | 주 DB + 인증 + 실시간 | 무료~$25/월 |
+| **pgvector** 확장 | 벡터 검색 (추천) | 포함 |
+| **Upstash Redis** | 캐시, 세션 (서버리스) | 무료~$10/월 |
+| **Cloudflare R2** | 오브젝트 스토리지 | 무료~$15/월 |
 
-### 4.4 AI/ML 파이프라인
+> ⚡ **최적화**: Elasticsearch 제거 → PostgreSQL 전문 검색 사용
+> ⚡ **최적화**: Pinecone 제거 → pgvector 확장 사용
 
-| 기술 | 용도 |
+### 4.4 워크플로우 자동화 (n8n)
+
+| 용도 | 설명 |
 |------|------|
-| OpenAI GPT-4 | 번역, 챗봇 |
-| Whisper | 음성 인식 (자막 생성) |
-| ElevenLabs | AI 더빙 |
-| LangChain | LLM 오케스트레이션 |
-| Pinecone | 벡터 DB (추천 시스템) |
+| **콘텐츠 파이프라인** | 영상 업로드 → 음성 추출 → 자막 생성 → 번역 |
+| **알림 워크플로우** | 신규 콘텐츠 → 이메일/푸시 발송 |
+| **소셜 미디어** | 신규 콘텐츠 → Twitter/Instagram 자동 포스팅 |
+| **AI 통합** | DeepL, OpenAI 연동 (200+ 노드 지원) |
 
-### 4.5 인프라 (Infrastructure)
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    n8n 워크플로우 예시                        │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  [Webhook] → [Whisper] → [DeepL] → [Supabase] → [Notify]   │
+│   영상등록     음성인식     번역       자막저장      알림    │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
 
-| 기술 | 용도 |
-|------|------|
-| AWS | 클라우드 인프라 |
-| Kubernetes (EKS) | 컨테이너 오케스트레이션 |
-| Terraform | IaC |
-| GitHub Actions | CI/CD |
-| Datadog | 모니터링 |
-| Sentry | 에러 트래킹 |
+| 배포 옵션 | 비용 |
+|-----------|------|
+| 셀프호스팅 (Railway) | $5-10/월 |
+| n8n Cloud | $20/월 (스타터) |
+
+### 4.5 AI/번역 서비스
+
+| 기술 | 용도 | 비용 (월) |
+|------|------|-----------|
+| **DeepL API** | 자막 번역 (한↔스페인어/포르투갈어) | $5-25 |
+| **Whisper** (로컬/Replicate) | 음성 인식, 자막 생성 | $10-30 |
+| OpenAI GPT-4o-mini | 챗봇, 컨텍스트 번역 | $10-20 |
+| ElevenLabs | AI 더빙 (Phase 3) | 추후 |
+
+> ⚡ **최적화**: GPT-4 → DeepL로 번역 비용 80% 절감
+> ⚡ **필수**: 번역된 자막 캐싱으로 반복 비용 제거
+
+### 4.6 인프라 (Infrastructure)
+
+| 기술 | 용도 | 비용 |
+|------|------|------|
+| **Vercel** | 프론트엔드 호스팅, Edge Functions | 무료~$20/월 |
+| **Railway** | 백엔드, n8n 호스팅 | $20-50/월 |
+| **Supabase** | DB, 인증, 스토리지 | 무료~$25/월 |
+| **Cloudflare** | CDN, DNS, 보안 | 무료 |
+| **GitHub Actions** | CI/CD | 무료 |
+| **Sentry** | 에러 트래킹 | 무료 티어 |
+| **BetterStack** | 로그, 업타임 모니터링 | 무료 티어 |
+
+### 4.7 결제 (라틴 아메리카 특화)
+
+| 기술 | 지역 | 용도 |
+|------|------|------|
+| **Stripe** | 글로벌 | 국제 카드 결제 |
+| **MercadoPago** | 브라질, 멕시코, 아르헨티나 | 로컬 결제 |
+| PIX (via MercadoPago) | 브라질 | 즉시 이체 |
+| OXXO (via Stripe) | 멕시코 | 현금 결제 |
+
+### 4.8 월간 비용 추정 (MVP)
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│              MVP 월간 인프라 비용 추정                        │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  Vercel (Frontend)          $0 ~ $20                       │
+│  Railway (Backend + n8n)    $20 ~ $50                      │
+│  Supabase (DB + Auth)       $0 ~ $25                       │
+│  Upstash Redis              $0 ~ $10                       │
+│  Cloudflare (CDN + R2)      $0 ~ $15                       │
+│  DeepL API                  $5 ~ $25                       │
+│  Whisper (Replicate)        $10 ~ $30                      │
+│  OpenAI (챗봇)              $10 ~ $20                      │
+│  ─────────────────────────────────────────                 │
+│  총합                       $45 ~ $195/월                  │
+│                                                             │
+│  ⚠️ 이전 스택 대비 약 90% 비용 절감                         │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
 
 ---
 
 ## 5. 시스템 아키텍처 개요 (Architecture Overview)
 
+> ⚡ **MVP 아키텍처**: 모놀리스 기반 단순화된 구조
+
 ```mermaid
 graph TB
     subgraph Clients["클라이언트"]
-        Web["🌐 웹 (Next.js)"]
-        Mobile["📱 모바일 (React Native)"]
+        Web["🌐 웹 (Next.js on Vercel)"]
     end
 
-    subgraph Gateway["API Gateway"]
-        Kong["Kong Gateway"]
+    subgraph Backend["백엔드 (Railway)"]
+        API["⚙️ FastAPI<br/>(모놀리스)"]
     end
 
-    subgraph Services["마이크로서비스"]
-        Auth["🔐 Auth Service"]
-        User["👤 User Service"]
-        Content["🎬 Content Service"]
-        Community["👥 Community Service"]
-        Payment["💳 Payment Service"]
-        Notification["🔔 Notification Service"]
+    subgraph Automation["워크플로우 자동화"]
+        n8n["🔄 n8n<br/>콘텐츠 파이프라인<br/>알림 워크플로우"]
     end
 
-    subgraph AI["AI Workers"]
-        Translator["🌐 Translation Worker"]
-        Recommender["🎯 Recommendation Worker"]
-        Chatbot["🤖 Chatbot Worker"]
-        SubtitleGen["📝 Subtitle Generator"]
-    end
-
-    subgraph Data["데이터 레이어"]
-        PostgreSQL[(PostgreSQL)]
-        Redis[(Redis)]
-        Elasticsearch[(Elasticsearch)]
-        Pinecone[(Pinecone)]
-        S3[(MinIO/S3)]
+    subgraph Data["데이터 (Supabase)"]
+        Supabase["🗄️ Supabase<br/>PostgreSQL + Auth<br/>+ pgvector + Realtime"]
+        Redis["⚡ Upstash Redis<br/>캐시/세션"]
+        R2["📦 Cloudflare R2<br/>미디어 스토리지"]
     end
 
     subgraph External["외부 서비스"]
-        OpenAI["OpenAI API"]
-        Stripe["Stripe"]
-        FCM["Firebase FCM"]
-        CDN["CloudFront CDN"]
+        DeepL["🌐 DeepL<br/>번역"]
+        Whisper["🎤 Whisper<br/>음성인식"]
+        OpenAI["🤖 OpenAI<br/>챗봇"]
+        Payment["💳 Stripe +<br/>MercadoPago"]
+        CDN["☁️ Cloudflare<br/>CDN"]
     end
 
-    Web --> Kong
-    Mobile --> Kong
-    Kong --> Auth
-    Kong --> User
-    Kong --> Content
-    Kong --> Community
-    Kong --> Payment
-    Kong --> Notification
+    Web --> API
+    API --> Supabase
+    API --> Redis
+    API --> R2
+    API --> Payment
 
-    Auth --> PostgreSQL
-    Auth --> Redis
-    User --> PostgreSQL
-    Content --> PostgreSQL
-    Content --> S3
-    Content --> Elasticsearch
-    Community --> PostgreSQL
-    Payment --> PostgreSQL
-    Payment --> Stripe
+    n8n --> Supabase
+    n8n --> DeepL
+    n8n --> Whisper
+    n8n --> OpenAI
+    n8n --> R2
 
-    Content --> Translator
-    Content --> SubtitleGen
-    User --> Recommender
-    Community --> Chatbot
-
-    Translator --> OpenAI
-    Chatbot --> OpenAI
-    Recommender --> Pinecone
-    Notification --> FCM
-
-    Content --> CDN
+    R2 --> CDN
+    CDN --> Web
 ```
+
+### 아키텍처 특징
+
+| 항목 | 설명 |
+|------|------|
+| **구조** | 모놀리스 (Modular Monolith) |
+| **확장 전략** | 트래픽 증가 시 Railway 수평 확장 → 추후 마이크로서비스 |
+| **AI 파이프라인** | n8n으로 비동기 처리 (Celery 대체) |
+| **인증** | Supabase Auth (소셜 로그인 내장) |
+| **검색** | PostgreSQL 전문 검색 + pgvector |
 
 ---
 
@@ -377,18 +427,25 @@ graph TB
 │ Type: Streaming + Community Platform                        │
 │ Target: Latin American K-Content Fans                       │
 │                                                             │
-│ Tech Stack:                                                 │
-│ - Frontend: Next.js 14, TypeScript, Tailwind               │
-│ - Backend: Python 3.12, FastAPI, SQLAlchemy                │
-│ - Database: PostgreSQL 16, Redis 7, Elasticsearch 8        │
-│ - AI: OpenAI GPT-4, Whisper, LangChain, Pinecone          │
-│ - Infra: AWS, Kubernetes, Terraform                        │
+│ Tech Stack (MVP Optimized):                                 │
+│ - Frontend: Next.js 14, TypeScript, Tailwind, Vercel       │
+│ - Backend: Python 3.12, FastAPI (Monolith on Railway)      │
+│ - Database: Supabase (PostgreSQL + Auth + pgvector)        │
+│ - Cache: Upstash Redis (Serverless)                        │
+│ - Storage: Cloudflare R2                                   │
+│ - AI: DeepL (번역), Whisper (음성인식), GPT-4o-mini (챗봇) │
+│ - Automation: n8n (워크플로우)                              │
+│ - Payments: Stripe + MercadoPago (라틴 아메리카)           │
+│                                                             │
+│ Architecture: Modular Monolith (추후 마이크로서비스 전환)   │
+│ Monthly Cost: $45 ~ $195 (MVP)                             │
 │                                                             │
 │ Key Features:                                               │
 │ - Video streaming with AI-generated subtitles              │
-│ - Real-time translation (KO ↔ ES/PT)                       │
-│ - Personalized content recommendation                       │
+│ - Real-time translation (KO ↔ ES/PT via DeepL)            │
+│ - Personalized recommendation (pgvector)                   │
 │ - Fan community and marketplace                            │
+│ - Content pipeline automation (n8n)                        │
 │                                                             │
 │ Languages:                                                  │
 │ - Documentation: Korean (한국어)                            │
