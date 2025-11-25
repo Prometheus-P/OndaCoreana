@@ -1,21 +1,9 @@
-"""HallyuLatino Backend API - Placeholder for CI validation."""
+"""HallyuLatino Backend API - 진입점 모듈.
 
-from fastapi import FastAPI
+이 파일은 하위 호환성을 위해 유지됩니다.
+실제 애플리케이션은 app.main 모듈에서 정의됩니다.
+"""
 
-app = FastAPI(
-    title="HallyuLatino API",
-    description="Korean content streaming platform for Latin America",
-    version="0.1.0",
-)
+from app.main import app
 
-
-@app.get("/health")
-async def health_check():
-    """Health check endpoint."""
-    return {"status": "healthy"}
-
-
-@app.get("/")
-async def root():
-    """Root endpoint."""
-    return {"message": "HallyuLatino API", "version": "0.1.0"}
+__all__ = ["app"]

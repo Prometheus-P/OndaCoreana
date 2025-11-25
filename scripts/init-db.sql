@@ -5,6 +5,7 @@
 -- 확장 모듈 활성화
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+CREATE EXTENSION IF NOT EXISTS "vector";  -- pgvector for AI recommendations
 
 -- 코멘트
 COMMENT ON DATABASE hallyulatino IS 'HallyuLatino 메인 데이터베이스';
