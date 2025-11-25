@@ -1,0 +1,220 @@
+# ═══════════════════════════════════════════════════════════════
+# HallyuLatino .gitignore
+# ═══════════════════════════════════════════════════════════════
+
+# ─────────────────────────────────────────────────────────────────
+# 환경 및 비밀
+# ─────────────────────────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+secrets/
+credentials.json
+
+# ─────────────────────────────────────────────────────────────────
+# Python
+# ─────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+ENV/
+env/
+.venv/
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre
+.pyre/
+
+# ─────────────────────────────────────────────────────────────────
+# Node.js / Frontend
+# ─────────────────────────────────────────────────────────────────
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+lerna-debug.log*
+
+# Next.js
+.next/
+out/
+
+# Nuxt.js
+.nuxt/
+
+# Build
+dist/
+build/
+
+# Testing
+coverage/
+.nyc_output/
+
+# TypeScript
+*.tsbuildinfo
+
+# ─────────────────────────────────────────────────────────────────
+# IDE / 에디터
+# ─────────────────────────────────────────────────────────────────
+# VS Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# JetBrains
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+
+# ─────────────────────────────────────────────────────────────────
+# OS 생성 파일
+# ─────────────────────────────────────────────────────────────────
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Linux
+*~
+
+# ─────────────────────────────────────────────────────────────────
+# Docker
+# ─────────────────────────────────────────────────────────────────
+docker-compose.override.yml
+.docker/
+
+# ─────────────────────────────────────────────────────────────────
+# 로그 및 임시 파일
+# ─────────────────────────────────────────────────────────────────
+logs/
+*.log
+tmp/
+temp/
+*.tmp
+*.temp
+*.bak
+
+# ─────────────────────────────────────────────────────────────────
+# 데이터베이스
+# ─────────────────────────────────────────────────────────────────
+*.db
+*.sqlite
+*.sqlite3
+data/
+postgres_data/
+redis_data/
+elasticsearch_data/
+
+# ─────────────────────────────────────────────────────────────────
+# 미디어 및 업로드
+# ─────────────────────────────────────────────────────────────────
+uploads/
+media/
+static/uploads/
+
+# ─────────────────────────────────────────────────────────────────
+# Terraform
+# ─────────────────────────────────────────────────────────────────
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+*.tfvars
+!*.tfvars.example
+
+# ─────────────────────────────────────────────────────────────────
+# Kubernetes
+# ─────────────────────────────────────────────────────────────────
+*.kubeconfig
+kubeconfig
+
+# ─────────────────────────────────────────────────────────────────
+# 기타
+# ─────────────────────────────────────────────────────────────────
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath
+*.sage.py
+
+# Translations
+*.mo
+*.pot

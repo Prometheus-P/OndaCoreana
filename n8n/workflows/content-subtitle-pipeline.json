@@ -1,0 +1,273 @@
+{
+  "name": "콘텐츠 자막 생성 파이프라인",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "content-upload",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook - 콘텐츠 업로드",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [250, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.replicate.com/v1/predictions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"version\": \"cdd97b257f93cb89dede1c7584e3f3dfc969571b357dbcee08e793740bedd854\",\n  \"input\": {\n    \"audio\": \"{{ $json.audio_url }}\",\n    \"model\": \"large-v3\",\n    \"translate\": false,\n    \"language\": \"ko\"\n  }\n}",
+        "options": {}
+      },
+      "id": "whisper-stt",
+      "name": "Whisper - 음성 인식",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [470, 300],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "replicate-auth",
+          "name": "Replicate API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 30,
+        "unit": "seconds"
+      },
+      "id": "wait-whisper",
+      "name": "Wait - Whisper 완료 대기",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [690, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $('Whisper - 음성 인식').item.json.urls.get }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {}
+      },
+      "id": "get-whisper-result",
+      "name": "Whisper 결과 조회",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [910, 300],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "replicate-auth",
+          "name": "Replicate API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ $json.output.transcription }}",
+        "sourceLang": "KO",
+        "targetLang": "ES"
+      },
+      "id": "deepl-translate-es",
+      "name": "DeepL - 스페인어 번역",
+      "type": "n8n-nodes-base.deepL",
+      "typeVersion": 1,
+      "position": [1130, 200],
+      "credentials": {
+        "deepLApi": {
+          "id": "deepl-api",
+          "name": "DeepL API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "text": "={{ $('Whisper 결과 조회').item.json.output.transcription }}",
+        "sourceLang": "KO",
+        "targetLang": "PT-BR"
+      },
+      "id": "deepl-translate-pt",
+      "name": "DeepL - 포르투갈어 번역",
+      "type": "n8n-nodes-base.deepL",
+      "typeVersion": 1,
+      "position": [1130, 400],
+      "credentials": {
+        "deepLApi": {
+          "id": "deepl-api",
+          "name": "DeepL API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// VTT 형식으로 자막 생성\nconst segments = $('Whisper 결과 조회').item.json.output.segments;\nconst esText = $('DeepL - 스페인어 번역').item.json.text;\nconst ptText = $('DeepL - 포르투갈어 번역').item.json.text;\n\nfunction formatTime(seconds) {\n  const h = Math.floor(seconds / 3600);\n  const m = Math.floor((seconds % 3600) / 60);\n  const s = Math.floor(seconds % 60);\n  const ms = Math.floor((seconds % 1) * 1000);\n  return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}.${ms.toString().padStart(3, '0')}`;\n}\n\nfunction generateVTT(segments, lang) {\n  let vtt = 'WEBVTT\\n\\n';\n  segments.forEach((seg, i) => {\n    vtt += `${i + 1}\\n`;\n    vtt += `${formatTime(seg.start)} --> ${formatTime(seg.end)}\\n`;\n    vtt += `${seg.text}\\n\\n`;\n  });\n  return vtt;\n}\n\nreturn [\n  {\n    json: {\n      content_id: $('Webhook - 콘텐츠 업로드').item.json.content_id,\n      subtitles: {\n        ko: generateVTT(segments, 'ko'),\n        es: esText,\n        pt: ptText\n      },\n      original_transcription: $('Whisper 결과 조회').item.json.output.transcription\n    }\n  }\n];"
+      },
+      "id": "generate-vtt",
+      "name": "VTT 자막 생성",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1350, 300]
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "tableId": "subtitles",
+        "filterType": "string",
+        "filterString": "content_id=eq.{{ $json.content_id }}",
+        "dataToSend": "autoMapInputData"
+      },
+      "id": "supabase-save",
+      "name": "Supabase - 자막 저장",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [1570, 300],
+      "credentials": {
+        "supabaseApi": {
+          "id": "supabase-api",
+          "name": "Supabase API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={\n  \"success\": true,\n  \"content_id\": \"{{ $json.content_id }}\",\n  \"message\": \"자막 생성 완료\"\n}",
+        "options": {}
+      },
+      "id": "respond-webhook",
+      "name": "Webhook 응답",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1790, 300]
+    }
+  ],
+  "connections": {
+    "Webhook - 콘텐츠 업로드": {
+      "main": [
+        [
+          {
+            "node": "Whisper - 음성 인식",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Whisper - 음성 인식": {
+      "main": [
+        [
+          {
+            "node": "Wait - Whisper 완료 대기",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait - Whisper 완료 대기": {
+      "main": [
+        [
+          {
+            "node": "Whisper 결과 조회",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Whisper 결과 조회": {
+      "main": [
+        [
+          {
+            "node": "DeepL - 스페인어 번역",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "DeepL - 포르투갈어 번역",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepL - 스페인어 번역": {
+      "main": [
+        [
+          {
+            "node": "VTT 자막 생성",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DeepL - 포르투갈어 번역": {
+      "main": [
+        [
+          {
+            "node": "VTT 자막 생성",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "VTT 자막 생성": {
+      "main": [
+        [
+          {
+            "node": "Supabase - 자막 저장",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase - 자막 저장": {
+      "main": [
+        [
+          {
+            "node": "Webhook 응답",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "콘텐츠",
+      "createdAt": "2025-11-25T00:00:00.000Z",
+      "updatedAt": "2025-11-25T00:00:00.000Z"
+    },
+    {
+      "name": "AI",
+      "createdAt": "2025-11-25T00:00:00.000Z",
+      "updatedAt": "2025-11-25T00:00:00.000Z"
+    }
+  ],
+  "triggerCount": 0,
+  "updatedAt": "2025-11-25T00:00:00.000Z",
+  "versionId": "1"
+}
