@@ -1,5 +1,7 @@
 """Auth Use Cases - 인증 관련 유스케이스."""
 
+import secrets
+
 from app.application.dto.auth import (
     RegisterRequest,
     RegisterResponse,
@@ -7,7 +9,10 @@ from app.application.dto.auth import (
     LoginResponse,
     TokenResponse,
     UserBasicInfo,
+    OAuthAuthorizationUrl,
+    OAuthLoginResponse,
 )
+from app.application.interfaces.oauth_service import OAuthService
 from app.application.interfaces.jwt_service import JWTService
 from app.domain.entities.user import User
 from app.domain.exceptions.auth import (
@@ -192,4 +197,129 @@ class RefreshTokenUseCase:
             access_token=access_token,
             refresh_token=new_refresh_token,
             expires_in=self._jwt_service.access_token_expire_seconds,
+        )
+
+
+class GetOAuthAuthorizationUrlUseCase:
+    """OAuth 인증 URL 조회 유스케이스.
+
+    OAuth 제공자의 인증 URL을 생성합니다.
+    """
+
+    def __init__(self, oauth_service: OAuthService) -> None:
+        self._oauth_service = oauth_service
+
+    def execute(self) -> OAuthAuthorizationUrl:
+        """OAuth 인증 URL을 생성합니다.
+
+        Returns:
+            OAuthAuthorizationUrl: 인증 URL과 상태 값
+        """
+        state = secrets.token_urlsafe(32)
+        authorization_url = self._oauth_service.get_authorization_url(state)
+
+        return OAuthAuthorizationUrl(
+            authorization_url=authorization_url,
+            state=state,
+        )
+
+
+class OAuthLoginUseCase:
+    """OAuth 로그인 유스케이스.
+
+    OAuth 콜백을 처리하고 사용자를 인증/생성합니다.
+    """
+
+    def __init__(
+        self,
+        oauth_service: OAuthService,
+        user_repository: UserRepository,
+        jwt_service: JWTService,
+    ) -> None:
+        self._oauth_service = oauth_service
+        self._user_repository = user_repository
+        self._jwt_service = jwt_service
+
+    async def execute(self, code: str) -> OAuthLoginResponse:
+        """OAuth 로그인을 처리합니다.
+
+        Args:
+            code: OAuth 인증 코드
+
+        Returns:
+            OAuthLoginResponse: 로그인 응답 (사용자 정보 + 토큰)
+
+        Raises:
+            OAuthError: OAuth 인증 실패
+        """
+        # 1. 인증 코드로 액세스 토큰 교환
+        oauth_token = await self._oauth_service.exchange_code_for_token(code)
+
+        # 2. 사용자 정보 조회
+        oauth_user_info = await self._oauth_service.get_user_info(oauth_token)
+
+        # 3. 기존 OAuth 사용자 확인
+        user = await self._user_repository.find_by_oauth(
+            provider=oauth_user_info.provider,
+            oauth_id=oauth_user_info.provider_id,
+        )
+
+        is_new_user = False
+
+        if not user:
+            # 4a. 이메일로 기존 사용자 확인 (계정 연결)
+            email = Email(oauth_user_info.email)
+            existing_user = await self._user_repository.find_by_email(email)
+
+            if existing_user:
+                # 기존 계정에 OAuth 연결
+                existing_user.oauth_provider = oauth_user_info.provider
+                existing_user.oauth_id = oauth_user_info.provider_id
+                if oauth_user_info.avatar_url and not existing_user.avatar_url:
+                    existing_user.avatar_url = oauth_user_info.avatar_url
+                user = await self._user_repository.update(existing_user)
+            else:
+                # 4b. 새 사용자 생성
+                is_new_user = True
+                nickname = oauth_user_info.name or oauth_user_info.email.split("@")[0]
+
+                user = User(
+                    email=email,
+                    nickname=nickname[:20],  # 닉네임 최대 길이
+                    country="",  # 나중에 프로필에서 설정
+                    preferred_language="es",
+                    is_verified=True,  # OAuth 인증된 이메일은 검증됨
+                    oauth_provider=oauth_user_info.provider,
+                    oauth_id=oauth_user_info.provider_id,
+                    avatar_url=oauth_user_info.avatar_url,
+                )
+                user = await self._user_repository.create(user)
+
+        # 5. 로그인 가능 여부 확인
+        if not user.can_login():
+            raise InvalidCredentialsError("계정이 비활성화되었습니다.")
+
+        # 6. 토큰 생성
+        access_token = self._jwt_service.create_access_token(
+            user_id=str(user.id),
+            email=user.email.value,
+            role=user.role,
+        )
+        refresh_token = self._jwt_service.create_refresh_token(
+            user_id=str(user.id),
+        )
+
+        return OAuthLoginResponse(
+            user=UserBasicInfo(
+                id=str(user.id),
+                email=user.email.value,
+                nickname=user.nickname,
+                preferred_language=user.preferred_language,
+            ),
+            tokens=TokenResponse(
+                access_token=access_token,
+                refresh_token=refresh_token,
+                expires_in=self._jwt_service.access_token_expire_seconds,
+            ),
+            is_new_user=is_new_user,
         )

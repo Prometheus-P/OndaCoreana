@@ -16,6 +16,8 @@ from app.infrastructure.external.jwt_service import JWTServiceImpl
 from app.infrastructure.repositories.supabase_user_repository import (
     SupabaseUserRepository,
 )
+from app.application.interfaces.oauth_service import OAuthService
+from app.infrastructure.external.google_oauth_service import GoogleOAuthService
 
 # Bearer 토큰 인증 스키마
 security = HTTPBearer()
@@ -31,6 +33,12 @@ def get_jwt_service() -> JWTService:
     """JWT 서비스를 반환합니다."""
     settings = get_settings()
     return JWTServiceImpl(settings)
+
+
+def get_google_oauth_service() -> OAuthService:
+    """Google OAuth 서비스를 반환합니다."""
+    settings = get_settings()
+    return GoogleOAuthService(settings)
 
 
 async def get_current_user(

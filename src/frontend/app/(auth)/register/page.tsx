@@ -28,7 +28,7 @@ const LANGUAGES = [
 ]
 
 export default function RegisterPage() {
-  const { register, isLoading, error } = useAuth()
+  const { register, loginWithGoogle, isLoading, error } = useAuth()
 
   const [formData, setFormData] = useState({
     email: '',
@@ -299,7 +299,9 @@ export default function RegisterPage() {
         <div className="mt-6 space-y-3">
           <button
             type="button"
-            className="w-full flex items-center justify-center gap-3 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            onClick={loginWithGoogle}
+            disabled={isLoading}
+            className="w-full flex items-center justify-center gap-3 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path

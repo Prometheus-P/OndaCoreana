@@ -60,3 +60,20 @@ export interface UserUpdateRequest {
   preferredLanguage?: 'es' | 'pt' | 'en'
   avatarUrl?: string
 }
+
+// OAuth Types
+export interface OAuthAuthorizationUrl {
+  authorizationUrl: string
+  state: string
+}
+
+export interface OAuthCallbackRequest {
+  code: string
+  state: string
+}
+
+export interface OAuthLoginResponse {
+  user: UserBasicInfo
+  tokens: TokenResponse
+  isNewUser: boolean
+}

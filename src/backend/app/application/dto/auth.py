@@ -102,3 +102,26 @@ class UserBasicInfo(BaseModel):
 
 # 순환 참조 해결
 LoginResponse.model_rebuild()
+
+
+# OAuth DTOs
+class OAuthAuthorizationUrl(BaseModel):
+    """OAuth 인증 URL 응답 DTO."""
+
+    authorization_url: str = Field(..., description="OAuth 인증 URL")
+    state: str = Field(..., description="CSRF 방지 상태 값")
+
+
+class OAuthCallbackRequest(BaseModel):
+    """OAuth 콜백 요청 DTO."""
+
+    code: str = Field(..., description="OAuth 인증 코드")
+    state: str = Field(..., description="CSRF 방지 상태 값")
+
+
+class OAuthLoginResponse(BaseModel):
+    """OAuth 로그인 응답 DTO."""
+
+    user: UserBasicInfo
+    tokens: TokenResponse
+    is_new_user: bool = Field(default=False, description="신규 사용자 여부")

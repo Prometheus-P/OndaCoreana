@@ -52,6 +52,21 @@ export function useAuth() {
     router.push('/login')
   }, [logout, queryClient, router])
 
+  // Google OAuth 로그인 시작
+  const loginWithGoogle = useCallback(async () => {
+    try {
+      setLoading(true)
+      const response = await authService.getGoogleAuthUrl()
+      // state를 세션 스토리지에 저장 (CSRF 방지)
+      sessionStorage.setItem('oauth_state', response.state)
+      // Google OAuth 페이지로 리다이렉트
+      window.location.href = response.authorizationUrl
+    } catch (error) {
+      setLoading(false)
+      throw error
+    }
+  }, [setLoading])
+
   // 토큰 갱신
   const refreshTokens = useCallback(async () => {
     if (!tokens?.refreshToken) return null
@@ -76,6 +91,7 @@ export function useAuth() {
     isAuthenticated,
     register: (data: RegisterRequest) => registerMutation.mutateAsync(data),
     login: (data: LoginRequest) => loginMutation.mutateAsync(data),
+    loginWithGoogle,
     logout: handleLogout,
     refreshTokens,
     isLoading: registerMutation.isPending || loginMutation.isPending,

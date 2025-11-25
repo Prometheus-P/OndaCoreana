@@ -9,6 +9,9 @@ import type {
   LoginRequest,
   LoginResponse,
   TokenResponse,
+  OAuthAuthorizationUrl,
+  OAuthCallbackRequest,
+  OAuthLoginResponse,
 } from '@/types/auth'
 
 export const authService = {
@@ -34,4 +37,16 @@ export const authService = {
       },
       body: new URLSearchParams({ refresh_token: refreshToken }).toString(),
     }),
+
+  /**
+   * Google OAuth 인증 URL 가져오기
+   */
+  getGoogleAuthUrl: () =>
+    api.get<OAuthAuthorizationUrl>('/v1/auth/oauth/google'),
+
+  /**
+   * Google OAuth 콜백 처리
+   */
+  googleCallback: (data: OAuthCallbackRequest) =>
+    api.post<OAuthLoginResponse>('/v1/auth/oauth/google/callback', data),
 }

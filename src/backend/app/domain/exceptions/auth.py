@@ -40,3 +40,10 @@ class EmailAlreadyExistsError(DomainError):
 
     def __init__(self, message: str = "이미 등록된 이메일입니다.") -> None:
         super().__init__(message, code="EMAIL_ALREADY_EXISTS")
+
+
+class OAuthError(DomainError):
+    """OAuth 인증 예외."""
+
+    def __init__(self, message: str = "OAuth 인증에 실패했습니다.") -> None:
+        super().__init__(message, code="OAUTH_ERROR")

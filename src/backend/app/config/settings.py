@@ -49,6 +49,11 @@ class Settings(BaseSettings):
     refresh_token_expire_days: int = 7
     algorithm: str = "HS256"
 
+    # OAuth 설정
+    google_client_id: str = ""
+    google_client_secret: str = ""
+    google_redirect_uri: str = "http://localhost:3000/auth/callback/google"
+
     # 외부 서비스
     deepl_api_key: str = ""
     openai_api_key: str = ""
