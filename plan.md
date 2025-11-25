@@ -17,6 +17,7 @@ language: Korean (한국어)
 
 | 버전 | 날짜 | 작성자 | 변경 내용 |
 |------|------|--------|----------|
+| 1.2.0 | 2025-11-25 | @claude | Phase 2 인증 서비스 완료 (Google OAuth 포함) |
 | 1.1.0 | 2025-11-25 | @claude | Phase 1 인프라 설정 완료 |
 | 1.0.0 | 2025-11-25 | @hallyulatino-team | 최초 작성 |
 
@@ -29,15 +30,15 @@ language: Korean (한국어)
 │ 🎯 MVP Development Progress                                  │
 ├─────────────────────────────────────────────────────────────┤
 │ Phase 1: 인프라 설정           ████████████████████ 100%    │
-│ Phase 2: 인증 서비스           ████████░░░░░░░░░░░░  40%    │
+│ Phase 2: 인증 서비스           ████████████████████ 100%    │
 │ Phase 3: 사용자 서비스         ░░░░░░░░░░░░░░░░░░░░  0%     │
 │ Phase 4: 콘텐츠 서비스         ░░░░░░░░░░░░░░░░░░░░  0%     │
 │ Phase 5: AI 번역 서비스        ░░░░░░░░░░░░░░░░░░░░  0%     │
 │ Phase 6: 추천 시스템           ░░░░░░░░░░░░░░░░░░░░  0%     │
-│ Phase 7: 프론트엔드            ████░░░░░░░░░░░░░░░░  20%    │
+│ Phase 7: 프론트엔드            ████████░░░░░░░░░░░░  40%    │
 │ Phase 8: 통합 테스트           ░░░░░░░░░░░░░░░░░░░░  0%     │
 ├─────────────────────────────────────────────────────────────┤
-│ 전체 진행률                    ████░░░░░░░░░░░░░░░░  20%    │
+│ 전체 진행률                    ██████░░░░░░░░░░░░░░  30%    │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -65,7 +66,7 @@ language: Korean (한국어)
 
 ---
 
-## 🔄 Phase 2: 인증 서비스 (Auth Service) - 진행 중
+## ✅ Phase 2: 인증 서비스 (Auth Service) - 완료
 
 ### 2.1 사용자 등록
 
@@ -115,11 +116,11 @@ class TestUserRegistration:
 
 | 상태 | 태스크 | 담당자 |
 |:----:|--------|--------|
-| ⬜ | 테스트 케이스 작성 (RED) | TBD |
-| ⬜ | User 도메인 모델 구현 | TBD |
-| ⬜ | UserRepository 구현 | TBD |
-| ⬜ | RegistrationService 구현 (GREEN) | TBD |
-| ⬜ | 리팩토링 (REFACTOR) | TBD |
+| ✅ | 테스트 케이스 작성 (RED) | @claude |
+| ✅ | User 도메인 모델 구현 | @claude |
+| ✅ | UserRepository 구현 | @claude |
+| ✅ | RegistrationService 구현 (GREEN) | @claude |
+| ✅ | 리팩토링 (REFACTOR) | @claude |
 
 ### 2.2 로그인/로그아웃
 
@@ -178,10 +179,10 @@ class TestTokenRefresh:
 
 | 상태 | 태스크 | 담당자 |
 |:----:|--------|--------|
-| ⬜ | 테스트 케이스 작성 (RED) | TBD |
-| ⬜ | JWTService 구현 | TBD |
-| ⬜ | AuthenticationService 구현 (GREEN) | TBD |
-| ⬜ | 리팩토링 (REFACTOR) | TBD |
+| ✅ | 테스트 케이스 작성 (RED) | @claude |
+| ✅ | JWTService 구현 | @claude |
+| ✅ | AuthenticationService 구현 (GREEN) | @claude |
+| ✅ | 리팩토링 (REFACTOR) | @claude |
 
 ### 2.3 소셜 로그인 (OAuth)
 
@@ -216,15 +217,15 @@ class TestFacebookOAuth:
 
 | 상태 | 태스크 | 담당자 |
 |:----:|--------|--------|
-| ⬜ | 테스트 케이스 작성 (RED) | TBD |
-| ⬜ | OAuthService 구현 | TBD |
-| ⬜ | Google OAuth 연동 (GREEN) | TBD |
+| ✅ | 테스트 케이스 작성 (RED) | @claude |
+| ✅ | OAuthService 구현 | @claude |
+| ✅ | Google OAuth 연동 (GREEN) | @claude |
 | ⬜ | Facebook OAuth 연동 (GREEN) | TBD |
-| ⬜ | 리팩토링 (REFACTOR) | TBD |
+| ✅ | 리팩토링 (REFACTOR) | @claude |
 
 ---
 
-## 🔴 Phase 3: 사용자 서비스 (User Service)
+## 🔄 Phase 3: 사용자 서비스 (User Service) - 진행 중
 
 ### 3.1 프로필 관리
 
