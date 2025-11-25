@@ -4,7 +4,7 @@ FastAPI TestClient를 사용한 API 엔드포인트 통합 테스트.
 """
 
 import pytest
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, MagicMock
 from uuid import uuid4
 
 from fastapi.testclient import TestClient
@@ -13,12 +13,46 @@ from app.main import app
 from app.domain.entities.user import User
 from app.domain.value_objects.email import Email
 from app.domain.value_objects.password import Password
+from app.presentation.api.dependencies import (
+    get_user_repository,
+    get_jwt_service,
+)
+from app.infrastructure.external.jwt_service import JWTServiceImpl
+from app.config.settings import Settings
 
 
 @pytest.fixture
-def client():
+def test_settings():
+    """테스트용 설정."""
+    return Settings(
+        app_env="development",
+        database_url="postgresql://test:test@localhost:5432/test",
+        redis_url="redis://localhost:6379/1",
+        secret_key="test-secret-key-for-testing-only",
+        supabase_url="https://test.supabase.co",
+        supabase_service_key="test-service-key",
+    )
+
+
+@pytest.fixture
+def jwt_service(test_settings):
+    """JWT 서비스 인스턴스."""
+    return JWTServiceImpl(test_settings)
+
+
+@pytest.fixture
+def mock_user_repository():
+    """Mock 사용자 리포지토리."""
+    return AsyncMock()
+
+
+@pytest.fixture
+def client(mock_user_repository, jwt_service):
     """테스트 클라이언트를 반환합니다."""
-    return TestClient(app)
+    app.dependency_overrides[get_user_repository] = lambda: mock_user_repository
+    app.dependency_overrides[get_jwt_service] = lambda: jwt_service
+    yield TestClient(app)
+    app.dependency_overrides.clear()
 
 
 @pytest.fixture
@@ -59,24 +93,21 @@ class TestHealthCheck:
 class TestRegistrationAPI:
     """회원가입 API 테스트."""
 
-    @patch("app.presentation.api.dependencies.get_user_repository")
     def test_register_with_valid_data(
         self,
-        mock_get_repo,
         client: TestClient,
+        mock_user_repository: AsyncMock,
     ):
         """유효한 데이터로 회원가입이 성공해야 한다."""
         # Mock 설정
-        mock_repo = AsyncMock()
-        mock_repo.exists_by_email.return_value = False
-        mock_repo.create.return_value = User(
+        mock_user_repository.exists_by_email.return_value = False
+        mock_user_repository.create.return_value = User(
             id=uuid4(),
             email=Email("newuser@example.com"),
             nickname="NewUser",
             country="MX",
             preferred_language="es",
         )
-        mock_get_repo.return_value = mock_repo
 
         # 요청
         response = client.post(
@@ -127,17 +158,14 @@ class TestRegistrationAPI:
 
         assert response.status_code == 422  # Pydantic validation (min_length)
 
-    @patch("app.presentation.api.dependencies.get_user_repository")
     def test_register_with_duplicate_email(
         self,
-        mock_get_repo,
         client: TestClient,
+        mock_user_repository: AsyncMock,
     ):
         """중복된 이메일로 회원가입 시 409 에러를 반환해야 한다."""
         # Mock 설정 - 이메일 이미 존재
-        mock_repo = AsyncMock()
-        mock_repo.exists_by_email.return_value = True
-        mock_get_repo.return_value = mock_repo
+        mock_user_repository.exists_by_email.return_value = True
 
         response = client.post(
             "/v1/auth/register",
@@ -158,26 +186,15 @@ class TestRegistrationAPI:
 class TestLoginAPI:
     """로그인 API 테스트."""
 
-    @patch("app.presentation.api.dependencies.get_user_repository")
-    @patch("app.presentation.api.dependencies.get_jwt_service")
     def test_login_with_valid_credentials(
         self,
-        mock_get_jwt,
-        mock_get_repo,
         client: TestClient,
+        mock_user_repository: AsyncMock,
         mock_user: User,
     ):
         """유효한 자격증명으로 로그인 시 토큰을 반환해야 한다."""
         # Mock 설정
-        mock_repo = AsyncMock()
-        mock_repo.find_by_email.return_value = mock_user
-        mock_get_repo.return_value = mock_repo
-
-        mock_jwt = AsyncMock()
-        mock_jwt.create_access_token.return_value = "test_access_token"
-        mock_jwt.create_refresh_token.return_value = "test_refresh_token"
-        mock_jwt.access_token_expire_seconds = 1800
-        mock_get_jwt.return_value = mock_jwt
+        mock_user_repository.find_by_email.return_value = mock_user
 
         response = client.post(
             "/v1/auth/login",
@@ -191,22 +208,16 @@ class TestLoginAPI:
         data = response.json()
         assert "tokens" in data
         assert "user" in data
-        assert data["tokens"]["access_token"] == "test_access_token"
         assert data["tokens"]["token_type"] == "bearer"
 
-    @patch("app.presentation.api.dependencies.get_user_repository")
-    @patch("app.presentation.api.dependencies.get_jwt_service")
     def test_login_with_wrong_password(
         self,
-        mock_get_jwt,
-        mock_get_repo,
         client: TestClient,
+        mock_user_repository: AsyncMock,
         mock_user: User,
     ):
         """잘못된 비밀번호로 로그인 시 401 에러를 반환해야 한다."""
-        mock_repo = AsyncMock()
-        mock_repo.find_by_email.return_value = mock_user
-        mock_get_repo.return_value = mock_repo
+        mock_user_repository.find_by_email.return_value = mock_user
 
         response = client.post(
             "/v1/auth/login",
@@ -220,18 +231,13 @@ class TestLoginAPI:
         data = response.json()
         assert data["detail"]["code"] == "INVALID_CREDENTIALS"
 
-    @patch("app.presentation.api.dependencies.get_user_repository")
-    @patch("app.presentation.api.dependencies.get_jwt_service")
     def test_login_with_nonexistent_email(
         self,
-        mock_get_jwt,
-        mock_get_repo,
         client: TestClient,
+        mock_user_repository: AsyncMock,
     ):
         """존재하지 않는 이메일로 로그인 시 401 에러를 반환해야 한다."""
-        mock_repo = AsyncMock()
-        mock_repo.find_by_email.return_value = None
-        mock_get_repo.return_value = mock_repo
+        mock_user_repository.find_by_email.return_value = None
 
         response = client.post(
             "/v1/auth/login",

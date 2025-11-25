@@ -5,6 +5,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useProfile } from '@/hooks/useProfile'
 import { Button } from '@/components/common/Button'
 
@@ -54,10 +55,13 @@ export default function ProfilePage() {
         <div className="p-6 border-b border-gray-200">
           <div className="flex items-center gap-4">
             {profile.avatarUrl ? (
-              <img
+              <Image
                 src={profile.avatarUrl}
                 alt={profile.nickname}
+                width={80}
+                height={80}
                 className="w-20 h-20 rounded-full object-cover"
+                unoptimized
               />
             ) : (
               <div className="w-20 h-20 rounded-full bg-pink-600 flex items-center justify-center text-white text-2xl font-bold">
