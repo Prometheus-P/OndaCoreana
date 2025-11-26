@@ -101,6 +101,12 @@ build/
 coverage/
 .nyc_output/
 
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/
+blob-report/
+
 # TypeScript
 *.tsbuildinfo
 

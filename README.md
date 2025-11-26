@@ -158,36 +158,47 @@ make test-integration
 
 ---
 
-## 📁 프로젝트 구조
+## 프로젝트 구조
 
 ```
-📦 hallyulatino/
-├── 📄 CONTEXT.md              # 프로젝트 Single Source of Truth
-├── 📄 README.md               # 이 파일
-├── 📄 ENVIRONMENT.md          # 환경 설정 상세 가이드
-├── 📄 CONTRIBUTING.md         # 기여 가이드
-├── 📄 plan.md                 # TDD 개발 계획
+hallyulatino/
+├── CONTEXT.md              # 프로젝트 Single Source of Truth
+├── README.md               # 이 파일
+├── ENVIRONMENT.md          # 환경 설정 상세 가이드
+├── CONTRIBUTING.md         # 기여 가이드
+├── Makefile                # 빌드/테스트 명령어
+├── docker-compose.yml      # Docker 개발 환경
 │
-├── 📁 docs/                   # 문서
-│   ├── 📁 specs/              # 기술 스펙 (PRD, 아키텍처, API 등)
-│   ├── 📁 guides/             # 개발 가이드 (TDD, 클린코드 등)
-│   ├── 📁 business/           # 비즈니스 문서
-│   └── 📁 operations/         # 운영 문서
+├── docs/                   # 문서
+│   ├── INDEX.md            # 문서 네비게이션 허브
+│   ├── plan.md             # TDD 개발 계획
+│   ├── specs/              # 기술 스펙 (PRD, 아키텍처, API, ADRs)
+│   ├── guides/             # 개발 가이드 (TDD, 코드리뷰, 버저닝)
+│   ├── business/           # 비즈니스 문서
+│   └── operations/         # 운영 문서 (배포 체크리스트)
 │
-├── 📁 src/                    # 소스 코드
-│   ├── 📁 frontend/           # Next.js 프론트엔드
-│   ├── 📁 backend/            # FastAPI 백엔드
-│   ├── 📁 worker/             # AI Worker (번역, 추천)
-│   └── 📁 shared/             # 공유 코드 (타입, 유틸)
+├── src/                    # 소스 코드
+│   ├── frontend/           # Next.js 프론트엔드
+│   │   ├── app/            # App Router (페이지)
+│   │   ├── components/     # React 컴포넌트
+│   │   ├── hooks/          # Custom Hooks
+│   │   ├── services/       # API 서비스
+│   │   └── store/          # 상태 관리
+│   │
+│   └── backend/            # FastAPI 백엔드
+│       ├── app/            # 애플리케이션 코드
+│       │   ├── domain/     # 도메인 레이어 (엔티티, VO)
+│       │   ├── application/# 애플리케이션 레이어 (Use Cases)
+│       │   ├── infrastructure/ # 인프라 레이어 (DB, 외부 서비스)
+│       │   └── presentation/   # 프레젠테이션 레이어 (API)
+│       ├── tests/          # 백엔드 테스트
+│       │   ├── unit/       # 단위 테스트
+│       │   └── integration/# 통합 테스트
+│       └── alembic/        # DB 마이그레이션
 │
-├── 📁 tests/                  # 테스트
-│   ├── 📁 unit/               # 단위 테스트
-│   ├── 📁 integration/        # 통합 테스트
-│   └── 📁 e2e/                # E2E 테스트
-│
-├── 📁 scripts/                # 유틸리티 스크립트
-├── 📁 infra/                  # Infrastructure as Code
-└── 📁 .github/                # GitHub Actions, 이슈 템플릿
+├── n8n/                    # n8n 워크플로우
+├── scripts/                # 유틸리티 스크립트
+└── .github/                # GitHub Actions, 이슈 템플릿
 ```
 
 ---
@@ -201,9 +212,12 @@ make test-integration
 | [CONTEXT.md](./CONTEXT.md) | 프로젝트 전체 컨텍스트 |
 | [ENVIRONMENT.md](./ENVIRONMENT.md) | 개발 환경 설정 상세 |
 | [CONTRIBUTING.md](./CONTRIBUTING.md) | 기여 가이드라인 |
+| [docs/INDEX.md](./docs/INDEX.md) | 문서 네비게이션 허브 |
 | [docs/specs/PRD.md](./docs/specs/PRD.md) | 제품 요구사항 |
 | [docs/specs/ARCHITECTURE.md](./docs/specs/ARCHITECTURE.md) | 시스템 아키텍처 |
 | [docs/specs/API_SPEC.md](./docs/specs/API_SPEC.md) | API 명세 |
+| [docs/guides/TDD_GUIDE.md](./docs/guides/TDD_GUIDE.md) | TDD 가이드 |
+| [docs/guides/CODE_REVIEW_GUIDE.md](./docs/guides/CODE_REVIEW_GUIDE.md) | 코드 리뷰 가이드 |
 
 ### 개발 원칙
 
