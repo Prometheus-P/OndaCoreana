@@ -1,0 +1,125 @@
+---
+interface WebSiteSchema {
+  type: 'WebSite';
+  name?: string;
+  url?: string;
+}
+
+interface OrganizationSchema {
+  type: 'Organization';
+  name?: string;
+  url?: string;
+  logo?: string;
+}
+
+interface ArticleSchema {
+  type: 'Article';
+  headline: string;
+  description: string;
+  image?: string;
+  datePublished: Date;
+  dateModified?: Date;
+  author?: string;
+}
+
+interface BreadcrumbSchema {
+  type: 'BreadcrumbList';
+  items: Array<{
+    name: string;
+    url: string;
+  }>;
+}
+
+type SchemaType = WebSiteSchema | OrganizationSchema | ArticleSchema | BreadcrumbSchema;
+
+interface Props {
+  schema: SchemaType | SchemaType[];
+}
+
+const { schema } = Astro.props;
+const siteUrl = Astro.site?.toString().replace(/\/$/, '') || 'https://hallyulatino.com';
+
+function generateSchema(s: SchemaType): object {
+  switch (s.type) {
+    case 'WebSite':
+      return {
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        name: s.name || 'HallyuLatino',
+        url: s.url || siteUrl,
+        inLanguage: 'es-419',
+        potentialAction: {
+          '@type': 'SearchAction',
+          target: {
+            '@type': 'EntryPoint',
+            urlTemplate: `${siteUrl}/buscar?q={search_term_string}`,
+          },
+          'query-input': 'required name=search_term_string',
+        },
+      };
+
+    case 'Organization':
+      return {
+        '@context': 'https://schema.org',
+        '@type': 'Organization',
+        name: s.name || 'HallyuLatino',
+        url: s.url || siteUrl,
+        logo: s.logo || `${siteUrl}/logo.png`,
+        sameAs: [
+          'https://twitter.com/hallyulatino',
+          'https://facebook.com/hallyulatino',
+          'https://instagram.com/hallyulatino',
+        ],
+      };
+
+    case 'Article':
+      return {
+        '@context': 'https://schema.org',
+        '@type': 'Article',
+        headline: s.headline,
+        description: s.description,
+        image: s.image?.startsWith('http') ? s.image : `${siteUrl}${s.image || '/og-default.jpg'}`,
+        datePublished: s.datePublished.toISOString(),
+        dateModified: (s.dateModified || s.datePublished).toISOString(),
+        author: {
+          '@type': 'Person',
+          name: s.author || 'HallyuLatino',
+        },
+        publisher: {
+          '@type': 'Organization',
+          name: 'HallyuLatino',
+          logo: {
+            '@type': 'ImageObject',
+            url: `${siteUrl}/logo.png`,
+          },
+        },
+        mainEntityOfPage: {
+          '@type': 'WebPage',
+          '@id': Astro.url.href,
+        },
+      };
+
+    case 'BreadcrumbList':
+      return {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: s.items.map((item, index) => ({
+          '@type': 'ListItem',
+          position: index + 1,
+          name: item.name,
+          item: item.url.startsWith('http') ? item.url : `${siteUrl}${item.url}`,
+        })),
+      };
+
+    default:
+      return {};
+  }
+}
+
+const schemas = Array.isArray(schema) ? schema : [schema];
+const jsonLdScripts = schemas.map((s) => JSON.stringify(generateSchema(s)));
+---
+
+{jsonLdScripts.map((script) => (
+  <script type="application/ld+json" set:html={script} />
+))}
