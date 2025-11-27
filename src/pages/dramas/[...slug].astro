@@ -1,0 +1,78 @@
+---
+import { type CollectionEntry, getCollection } from 'astro:content';
+import ArticleLayout from '../../layouts/ArticleLayout.astro';
+
+export async function getStaticPaths() {
+  const dramas = await getCollection('dramas');
+  return dramas.map((drama) => ({
+    params: { slug: drama.slug },
+    props: drama,
+  }));
+}
+
+type Props = CollectionEntry<'dramas'>;
+
+const drama = Astro.props;
+const { Content } = await drama.render();
+---
+
+<ArticleLayout
+  title={drama.data.title}
+  description={drama.data.description}
+  pubDate={drama.data.pubDate}
+  updatedDate={drama.data.updatedDate}
+  heroImage={drama.data.heroImage}
+  heroImageAlt={drama.data.heroImageAlt}
+  author={drama.data.author}
+  tags={drama.data.tags}
+  breadcrumbs={[{ name: 'K-Dramas', url: '/dramas' }]}
+>
+  <!-- Drama Info Box -->
+  <aside class="not-prose mb-8 rounded-lg bg-gray-50 p-6">
+    <h2 class="text-lg font-semibold text-gray-900 mb-4">Información del Drama</h2>
+    <dl class="grid grid-cols-2 gap-4 text-sm">
+      <div>
+        <dt class="font-medium text-gray-500">Título Original</dt>
+        <dd class="text-gray-900">{drama.data.dramaTitle}</dd>
+      </div>
+      {drama.data.dramaYear && (
+        <div>
+          <dt class="font-medium text-gray-500">Año</dt>
+          <dd class="text-gray-900">{drama.data.dramaYear}</dd>
+        </div>
+      )}
+      {drama.data.network && (
+        <div>
+          <dt class="font-medium text-gray-500">Cadena</dt>
+          <dd class="text-gray-900">{drama.data.network}</dd>
+        </div>
+      )}
+      {drama.data.episodes && (
+        <div>
+          <dt class="font-medium text-gray-500">Episodios</dt>
+          <dd class="text-gray-900">{drama.data.episodes}</dd>
+        </div>
+      )}
+      {drama.data.genre && drama.data.genre.length > 0 && (
+        <div class="col-span-2">
+          <dt class="font-medium text-gray-500">Géneros</dt>
+          <dd class="text-gray-900">{drama.data.genre.join(', ')}</dd>
+        </div>
+      )}
+      {drama.data.cast && drama.data.cast.length > 0 && (
+        <div class="col-span-2">
+          <dt class="font-medium text-gray-500">Reparto</dt>
+          <dd class="text-gray-900">{drama.data.cast.join(', ')}</dd>
+        </div>
+      )}
+      {drama.data.whereToWatch && drama.data.whereToWatch.length > 0 && (
+        <div class="col-span-2">
+          <dt class="font-medium text-gray-500">Dónde Ver</dt>
+          <dd class="text-gray-900">{drama.data.whereToWatch.join(', ')}</dd>
+        </div>
+      )}
+    </dl>
+  </aside>
+
+  <Content />
+</ArticleLayout>

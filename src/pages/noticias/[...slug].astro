@@ -1,0 +1,40 @@
+---
+import { type CollectionEntry, getCollection } from 'astro:content';
+import ArticleLayout from '../../layouts/ArticleLayout.astro';
+
+export async function getStaticPaths() {
+  const noticias = await getCollection('noticias');
+  return noticias.map((noticia) => ({
+    params: { slug: noticia.slug },
+    props: noticia,
+  }));
+}
+
+type Props = CollectionEntry<'noticias'>;
+
+const noticia = Astro.props;
+const { Content } = await noticia.render();
+---
+
+<ArticleLayout
+  title={noticia.data.title}
+  description={noticia.data.description}
+  pubDate={noticia.data.pubDate}
+  updatedDate={noticia.data.updatedDate}
+  heroImage={noticia.data.heroImage}
+  heroImageAlt={noticia.data.heroImageAlt}
+  author={noticia.data.author}
+  tags={noticia.data.tags}
+  breadcrumbs={[
+    { name: 'Noticias', url: '/noticias' },
+    { name: noticia.data.category, url: `/noticias/categoria/${noticia.data.category}` },
+  ]}
+>
+  <Content />
+
+  {noticia.data.source && (
+    <p class="mt-8 text-sm text-gray-500 italic">
+      Fuente: {noticia.data.source}
+    </p>
+  )}
+</ArticleLayout>

@@ -1,0 +1,208 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+// Obtener contenido reciente
+const allDramas = await getCollection('dramas', ({ data }) => !data.draft);
+const allKpop = await getCollection('kpop', ({ data }) => !data.draft);
+const allNoticias = await getCollection('noticias', ({ data }) => !data.draft);
+
+// Ordenar por fecha y tomar los más recientes
+const recentDramas = allDramas
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 4);
+
+const recentKpop = allKpop
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 4);
+
+const recentNoticias = allNoticias
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 6);
+---
+
+<BaseLayout
+  title="HallyuLatino - K-Dramas, K-Pop y Cultura Coreana en Español"
+  description="Tu fuente definitiva de información sobre K-Dramas, K-Pop y cultura coreana en español. Noticias, guías, reseñas y más para la comunidad latina."
+>
+  <!-- Hero Section -->
+  <section class="bg-gradient-to-br from-pink-500 to-purple-600 text-white">
+    <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
+      <div class="text-center">
+        <h1 class="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+          Tu portal de cultura coreana en español
+        </h1>
+        <p class="mx-auto mt-6 max-w-2xl text-lg text-pink-100">
+          Descubre los mejores K-Dramas, mantente al día con el K-Pop, y sumérgete en la cultura coreana con guías completas y noticias actualizadas.
+        </p>
+        <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <a
+            href="/dramas"
+            class="w-full rounded-lg bg-white px-8 py-3 text-base font-semibold text-pink-600 shadow-lg hover:bg-pink-50 transition-colors sm:w-auto"
+          >
+            Explorar K-Dramas
+          </a>
+          <a
+            href="/kpop"
+            class="w-full rounded-lg border-2 border-white px-8 py-3 text-base font-semibold text-white hover:bg-white/10 transition-colors sm:w-auto"
+          >
+            Descubrir K-Pop
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Últimas Noticias -->
+  <section class="bg-white py-16">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between">
+        <h2 class="text-2xl font-bold text-gray-900 sm:text-3xl">Últimas Noticias</h2>
+        <a href="/noticias" class="text-pink-600 hover:text-pink-700 font-medium">
+          Ver todas →
+        </a>
+      </div>
+
+      {recentNoticias.length > 0 ? (
+        <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {recentNoticias.map((noticia) => (
+            <article class="group rounded-lg border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow">
+              {noticia.data.heroImage && (
+                <img
+                  src={noticia.data.heroImage}
+                  alt={noticia.data.heroImageAlt || noticia.data.title}
+                  class="mb-4 h-48 w-full rounded-lg object-cover"
+                  loading="lazy"
+                />
+              )}
+              <span class="inline-block rounded-full bg-pink-100 px-3 py-1 text-xs font-medium text-pink-800">
+                {noticia.data.category}
+              </span>
+              <h3 class="mt-3 text-lg font-semibold text-gray-900 group-hover:text-pink-600">
+                <a href={`/noticias/${noticia.slug}`}>
+                  {noticia.data.title}
+                </a>
+              </h3>
+              <p class="mt-2 text-sm text-gray-600 line-clamp-2">
+                {noticia.data.description}
+              </p>
+              <time class="mt-3 block text-xs text-gray-500" datetime={noticia.data.pubDate.toISOString()}>
+                {noticia.data.pubDate.toLocaleDateString('es-419', { year: 'numeric', month: 'long', day: 'numeric' })}
+              </time>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <p class="mt-8 text-center text-gray-600">Próximamente: noticias sobre K-Dramas y K-Pop</p>
+      )}
+    </div>
+  </section>
+
+  <!-- K-Dramas Destacados -->
+  <section class="bg-gray-50 py-16">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between">
+        <h2 class="text-2xl font-bold text-gray-900 sm:text-3xl">K-Dramas Destacados</h2>
+        <a href="/dramas" class="text-pink-600 hover:text-pink-700 font-medium">
+          Ver todos →
+        </a>
+      </div>
+
+      {recentDramas.length > 0 ? (
+        <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {recentDramas.map((drama) => (
+            <article class="group overflow-hidden rounded-lg bg-white shadow-sm hover:shadow-md transition-shadow">
+              {drama.data.heroImage && (
+                <img
+                  src={drama.data.heroImage}
+                  alt={drama.data.heroImageAlt || drama.data.title}
+                  class="h-64 w-full object-cover"
+                  loading="lazy"
+                />
+              )}
+              <div class="p-4">
+                <h3 class="font-semibold text-gray-900 group-hover:text-pink-600">
+                  <a href={`/dramas/${drama.slug}`}>
+                    {drama.data.title}
+                  </a>
+                </h3>
+                {drama.data.network && (
+                  <p class="mt-1 text-sm text-gray-600">{drama.data.network}</p>
+                )}
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <p class="mt-8 text-center text-gray-600">Próximamente: reseñas de los mejores K-Dramas</p>
+      )}
+    </div>
+  </section>
+
+  <!-- K-Pop -->
+  <section class="bg-white py-16">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between">
+        <h2 class="text-2xl font-bold text-gray-900 sm:text-3xl">K-Pop</h2>
+        <a href="/kpop" class="text-pink-600 hover:text-pink-700 font-medium">
+          Ver más →
+        </a>
+      </div>
+
+      {recentKpop.length > 0 ? (
+        <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {recentKpop.map((artist) => (
+            <article class="group text-center">
+              {artist.data.heroImage && (
+                <img
+                  src={artist.data.heroImage}
+                  alt={artist.data.heroImageAlt || artist.data.title}
+                  class="mx-auto h-48 w-48 rounded-full object-cover shadow-lg"
+                  loading="lazy"
+                />
+              )}
+              <h3 class="mt-4 font-semibold text-gray-900 group-hover:text-pink-600">
+                <a href={`/kpop/${artist.slug}`}>
+                  {artist.data.artistName}
+                </a>
+              </h3>
+              {artist.data.agency && (
+                <p class="text-sm text-gray-600">{artist.data.agency}</p>
+              )}
+            </article>
+          ))}
+        </div>
+      ) : (
+        <p class="mt-8 text-center text-gray-600">Próximamente: perfiles de artistas K-Pop</p>
+      )}
+    </div>
+  </section>
+
+  <!-- Newsletter CTA -->
+  <section class="bg-gradient-to-r from-purple-600 to-pink-500 py-16">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="text-center">
+        <h2 class="text-2xl font-bold text-white sm:text-3xl">
+          ¿No quieres perderte nada?
+        </h2>
+        <p class="mx-auto mt-4 max-w-xl text-lg text-pink-100">
+          Suscríbete a nuestro boletín y recibe las últimas noticias de K-Dramas y K-Pop directamente en tu bandeja de entrada.
+        </p>
+        <form class="mx-auto mt-8 flex max-w-md flex-col gap-4 sm:flex-row">
+          <input
+            type="email"
+            placeholder="Tu correo electrónico"
+            class="flex-1 rounded-lg border-0 px-4 py-3 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-white"
+            required
+          />
+          <button
+            type="submit"
+            class="rounded-lg bg-white px-6 py-3 font-semibold text-pink-600 hover:bg-pink-50 transition-colors"
+          >
+            Suscribirse
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

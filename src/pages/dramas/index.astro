@@ -1,0 +1,66 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const allDramas = await getCollection('dramas', ({ data }) => !data.draft);
+const dramas = allDramas.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<BaseLayout
+  title="K-Dramas - Reseñas, Guías y Recomendaciones"
+  description="Descubre los mejores K-Dramas con nuestras reseñas detalladas, guías de visualización y recomendaciones personalizadas. Todo en español."
+>
+  <section class="bg-gradient-to-r from-pink-500 to-rose-500 text-white">
+    <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <h1 class="text-3xl font-bold sm:text-4xl">K-Dramas</h1>
+      <p class="mt-2 text-lg text-pink-100">
+        Reseñas, guías y recomendaciones de los mejores dramas coreanos
+      </p>
+    </div>
+  </section>
+
+  <section class="py-12">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      {dramas.length > 0 ? (
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {dramas.map((drama) => (
+            <article class="group overflow-hidden rounded-lg bg-white shadow-md hover:shadow-lg transition-shadow">
+              {drama.data.heroImage && (
+                <img
+                  src={drama.data.heroImage}
+                  alt={drama.data.heroImageAlt || drama.data.title}
+                  class="h-64 w-full object-cover"
+                  loading="lazy"
+                />
+              )}
+              <div class="p-4">
+                <div class="flex flex-wrap gap-2 mb-2">
+                  {drama.data.genre?.slice(0, 2).map((g) => (
+                    <span class="text-xs bg-pink-100 text-pink-800 px-2 py-1 rounded-full">
+                      {g}
+                    </span>
+                  ))}
+                </div>
+                <h2 class="font-semibold text-gray-900 group-hover:text-pink-600">
+                  <a href={`/dramas/${drama.slug}`}>
+                    {drama.data.title}
+                  </a>
+                </h2>
+                <p class="mt-1 text-sm text-gray-600 line-clamp-2">
+                  {drama.data.description}
+                </p>
+                {drama.data.network && (
+                  <p class="mt-2 text-xs text-gray-500">{drama.data.network}</p>
+                )}
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <div class="text-center py-12">
+          <p class="text-gray-600">Próximamente: reseñas de los mejores K-Dramas</p>
+        </div>
+      )}
+    </div>
+  </section>
+</BaseLayout>

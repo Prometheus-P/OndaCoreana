@@ -1,0 +1,63 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const allKpop = await getCollection('kpop', ({ data }) => !data.draft);
+const artists = allKpop.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<BaseLayout
+  title="K-Pop - Artistas, Grupos y Noticias"
+  description="Todo sobre K-Pop en español: perfiles de artistas, grupos, comebacks, noticias y más. Tu guía completa del mundo del K-Pop."
+>
+  <section class="bg-gradient-to-r from-purple-500 to-pink-500 text-white">
+    <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+      <h1 class="text-3xl font-bold sm:text-4xl">K-Pop</h1>
+      <p class="mt-2 text-lg text-purple-100">
+        Artistas, grupos, comebacks y todo sobre el mundo del K-Pop
+      </p>
+    </div>
+  </section>
+
+  <section class="py-12">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      {artists.length > 0 ? (
+        <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          {artists.map((artist) => (
+            <article class="group text-center">
+              {artist.data.heroImage ? (
+                <img
+                  src={artist.data.heroImage}
+                  alt={artist.data.heroImageAlt || artist.data.artistName}
+                  class="mx-auto h-48 w-48 rounded-full object-cover shadow-lg group-hover:shadow-xl transition-shadow"
+                  loading="lazy"
+                />
+              ) : (
+                <div class="mx-auto h-48 w-48 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center">
+                  <span class="text-4xl text-white font-bold">
+                    {artist.data.artistName.charAt(0)}
+                  </span>
+                </div>
+              )}
+              <h2 class="mt-4 text-lg font-semibold text-gray-900 group-hover:text-pink-600">
+                <a href={`/kpop/${artist.slug}`}>
+                  {artist.data.artistName}
+                </a>
+              </h2>
+              {artist.data.agency && (
+                <p class="text-sm text-gray-600">{artist.data.agency}</p>
+              )}
+              <span class="mt-2 inline-block text-xs bg-purple-100 text-purple-800 px-2 py-1 rounded-full">
+                {artist.data.artistType}
+              </span>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <div class="text-center py-12">
+          <p class="text-gray-600">Próximamente: perfiles de artistas y grupos K-Pop</p>
+        </div>
+      )}
+    </div>
+  </section>
+</BaseLayout>
