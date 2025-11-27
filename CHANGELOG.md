@@ -14,6 +14,25 @@
 
 ---
 
+## [0.4.0-alpha.2] - 2025-11-27
+
+### Added
+- **Phase 4 Content API 완성**
+  - `SupabaseContentRepository` 구현 (Supabase PostgreSQL 연동)
+  - Content REST API 엔드포인트 (GET, POST, PATCH, DELETE)
+  - 콘텐츠 검색 기능 (`search`, `count_search`)
+  - 선택적 인증 패턴 (`get_current_user_optional`)
+  - Content 통합 테스트 14개 추가
+
+- **문서화**
+  - `docs/MANUAL_SETUP.md` - 수동 설정 작업 가이드
+
+### Changed
+- API 엔드포인트에서 Use Case 반환값 직접 사용 (중복 변환 제거)
+- Use Case에 `search` 파라미터 지원 추가
+
+---
+
 ## [0.4.0-alpha.1] - 2025-11-27
 
 ### Added
@@ -119,7 +138,8 @@
 
 ---
 
-[Unreleased]: https://github.com/Prometheus-P/hallyulatino/compare/v0.4.0-alpha.1...HEAD
+[Unreleased]: https://github.com/Prometheus-P/hallyulatino/compare/v0.4.0-alpha.2...HEAD
+[0.4.0-alpha.2]: https://github.com/Prometheus-P/hallyulatino/compare/v0.4.0-alpha.1...v0.4.0-alpha.2
 [0.4.0-alpha.1]: https://github.com/Prometheus-P/hallyulatino/compare/v0.3.0...v0.4.0-alpha.1
 [0.3.0]: https://github.com/Prometheus-P/hallyulatino/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/Prometheus-P/hallyulatino/compare/v0.1.0...v0.2.0
