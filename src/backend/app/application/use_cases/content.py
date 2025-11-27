@@ -93,6 +93,7 @@ class ListContentsUseCase:
         per_page: int = 20,
         content_type: ContentType | None = None,
         genre: str | None = None,
+        search: str | None = None,
     ) -> ContentListResponse:
         """콘텐츠 목록을 조회합니다.
 
@@ -101,13 +102,17 @@ class ListContentsUseCase:
             per_page: 페이지당 항목 수
             content_type: 필터링할 콘텐츠 유형
             genre: 필터링할 장르
+            search: 검색어
 
         Returns:
             ContentListResponse: 콘텐츠 목록 응답
         """
         offset = (page - 1) * per_page
 
-        if content_type:
+        if search:
+            contents = await self._content_repository.search(search, offset, per_page)
+            total = await self._content_repository.count_search(search)
+        elif content_type:
             contents = await self._content_repository.find_by_type(
                 content_type, offset, per_page
             )

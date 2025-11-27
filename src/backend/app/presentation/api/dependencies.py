@@ -26,9 +26,14 @@ from app.domain.repositories.favorite_repository import FavoriteRepository
 from app.infrastructure.repositories.supabase_favorite_repository import (
     SupabaseFavoriteRepository,
 )
+from app.infrastructure.repositories.supabase_content_repository import (
+    SupabaseContentRepository,
+)
+from app.domain.repositories.content_repository import ContentRepository
 
 # Bearer 토큰 인증 스키마
 security = HTTPBearer()
+security_optional = HTTPBearer(auto_error=False)
 
 
 def get_user_repository() -> UserRepository:
@@ -59,6 +64,12 @@ def get_favorite_repository() -> FavoriteRepository:
     """즐겨찾기 리포지토리를 반환합니다."""
     client = get_supabase_client()
     return SupabaseFavoriteRepository(client)
+
+
+def get_content_repository() -> ContentRepository:
+    """콘텐츠 리포지토리를 반환합니다."""
+    client = get_supabase_client()
+    return SupabaseContentRepository(client)
 
 
 async def get_current_user(
@@ -128,3 +139,31 @@ async def get_current_admin_user(
             detail={"code": "FORBIDDEN", "message": "관리자 권한이 필요합니다."},
         )
     return current_user
+
+
+async def get_current_user_optional(
+    credentials: Annotated[
+        HTTPAuthorizationCredentials | None, Depends(security_optional)
+    ],
+    jwt_service: JWTService = Depends(get_jwt_service),
+    user_repository: UserRepository = Depends(get_user_repository),
+) -> User | None:
+    """선택적 인증 - 토큰이 있으면 사용자 반환, 없으면 None.
+
+    인증 없이도 접근 가능하지만, 인증된 사용자에게는 추가 정보를 제공합니다.
+    """
+    if not credentials:
+        return None
+
+    try:
+        payload = jwt_service.verify_access_token(credentials.credentials)
+        user_id = payload.get("sub")
+
+        if not user_id:
+            return None
+
+        user = await user_repository.find_by_id(UUID(user_id))
+        return user if user and user.can_login() else None
+
+    except (TokenExpiredError, InvalidCredentialsError):
+        return None

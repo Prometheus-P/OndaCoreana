@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter
 
-from app.presentation.api.v1 import auth, health, users, watch_history, favorites
+from app.presentation.api.v1 import auth, contents, health, users, watch_history, favorites
 
 api_router = APIRouter()
 
@@ -35,4 +35,10 @@ api_router.include_router(
     favorites.router,
     prefix="/v1/favorites",
     tags=["Favorites"],
+)
+
+api_router.include_router(
+    contents.router,
+    prefix="/v1/contents",
+    tags=["Contents"],
 )

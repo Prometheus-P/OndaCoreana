@@ -141,6 +141,18 @@ class ContentRepository(ABC):
         pass
 
     @abstractmethod
+    async def count_search(self, query: str) -> int:
+        """검색 결과 콘텐츠 수를 반환합니다.
+
+        Args:
+            query: 검색어
+
+        Returns:
+            int: 콘텐츠 수
+        """
+        pass
+
+    @abstractmethod
     async def create(self, content: Content) -> Content:
         """새 콘텐츠를 생성합니다.
 
