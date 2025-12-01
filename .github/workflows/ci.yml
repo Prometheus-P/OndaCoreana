@@ -1,6 +1,7 @@
 # ═══════════════════════════════════════════════════════════════
 # HallyuLatino CI 파이프라인
 # ═══════════════════════════════════════════════════════════════
+# Astro 정적 사이트 생성 프로젝트를 위한 CI/CD 워크플로우
 
 name: CI
 
@@ -15,178 +16,141 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  PYTHON_VERSION: "3.12"
   NODE_VERSION: "20"
 
 jobs:
   # ─────────────────────────────────────────────────────────────
-  # 백엔드 테스트
+  # 코드 품질 및 타입 체크
   # ─────────────────────────────────────────────────────────────
-  backend-test:
-    name: Backend Test
-    runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: pgvector/pgvector:pg16
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: hallyulatino_test
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-      redis:
-        image: redis:7-alpine
-        ports:
-          - 6379:6379
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Check if backend exists
-        id: check-backend
-        run: |
-          if [ -f "./src/backend/requirements.txt" ]; then
-            echo "exists=true" >> $GITHUB_OUTPUT
-          else
-            echo "exists=false" >> $GITHUB_OUTPUT
-            echo "Backend not initialized yet, skipping..."
-          fi
-
-      - name: Set up Python
-        if: steps.check-backend.outputs.exists == 'true'
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ env.PYTHON_VERSION }}
-
-      - name: Cache pip dependencies
-        if: steps.check-backend.outputs.exists == 'true'
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements*.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-
-      - name: Install dependencies
-        if: steps.check-backend.outputs.exists == 'true'
-        working-directory: ./src/backend
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install -r requirements-dev.txt || echo "requirements-dev.txt not found"
-
-      - name: Run linting (Ruff)
-        if: steps.check-backend.outputs.exists == 'true'
-        working-directory: ./src/backend
-        run: |
-          pip install ruff
-          ruff check . || echo "Lint errors found"
-        continue-on-error: true
-
-      - name: Run type checking (mypy)
-        if: steps.check-backend.outputs.exists == 'true'
-        working-directory: ./src/backend
-        run: |
-          pip install mypy
-          mypy . --ignore-missing-imports || echo "Type errors found"
-        continue-on-error: true
-
-      - name: Run tests
-        if: steps.check-backend.outputs.exists == 'true'
-        working-directory: ./src/backend
-        env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/hallyulatino_test
-          REDIS_URL: redis://localhost:6379/0
-          SECRET_KEY: test-secret-key
-        run: |
-          pip install pytest pytest-cov
-          pytest tests/ -v --cov=. --cov-report=xml || echo "Tests not configured yet"
-        continue-on-error: true
-
-      - name: Upload coverage
-        if: steps.check-backend.outputs.exists == 'true'
-        uses: codecov/codecov-action@v4
-        with:
-          files: ./src/backend/coverage.xml
-          flags: backend
-          fail_ci_if_error: false
-
-  # ─────────────────────────────────────────────────────────────
-  # 프론트엔드 테스트
-  # ─────────────────────────────────────────────────────────────
-  frontend-test:
-    name: Frontend Test
+  quality-check:
+    name: Quality Check
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Check if frontend exists
-        id: check-frontend
-        run: |
-          if [ -f "./src/frontend/package.json" ]; then
-            echo "exists=true" >> $GITHUB_OUTPUT
-          else
-            echo "exists=false" >> $GITHUB_OUTPUT
-            echo "Frontend not initialized yet, skipping..."
-          fi
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
 
       - name: Set up Node.js
-        if: steps.check-frontend.outputs.exists == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
 
       - name: Install dependencies
-        if: steps.check-frontend.outputs.exists == 'true'
-        working-directory: ./src/frontend
-        run: npm install
+        run: pnpm install --frozen-lockfile
 
-      - name: Run linting (ESLint)
-        if: steps.check-frontend.outputs.exists == 'true'
-        working-directory: ./src/frontend
-        run: npm run lint || echo "Lint not configured yet"
-        continue-on-error: true
+      - name: Run TypeScript type checking
+        run: pnpm check
 
-      - name: Run type checking (TypeScript)
-        if: steps.check-frontend.outputs.exists == 'true'
-        working-directory: ./src/frontend
-        run: npm run type-check || echo "TypeScript not configured yet"
-        continue-on-error: true
+      - name: Run content validation tests
+        run: pnpm test:content
 
-      - name: Run tests
-        if: steps.check-frontend.outputs.exists == 'true'
-        working-directory: ./src/frontend
-        run: npm run test -- --passWithNoTests || echo "Tests not configured yet"
-        continue-on-error: true
+  # ─────────────────────────────────────────────────────────────
+  # 빌드 테스트
+  # ─────────────────────────────────────────────────────────────
+  build-test:
+    name: Build Test
+    runs-on: ubuntu-latest
 
-      - name: Build
-        if: steps.check-frontend.outputs.exists == 'true'
-        working-directory: ./src/frontend
-        run: npm run build || echo "Build not configured yet"
-        continue-on-error: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Upload coverage
-        if: steps.check-frontend.outputs.exists == 'true'
-        uses: codecov/codecov-action@v4
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
         with:
-          files: ./src/frontend/coverage/lcov.info
-          flags: frontend
-          fail_ci_if_error: false
+          version: 10
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run production build
+        run: pnpm build
+
+      - name: Run build validation tests
+        run: pnpm test:build
+
+      - name: Run SEO validation tests
+        run: pnpm test:seo
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/
+          retention-days: 1
+
+  # ─────────────────────────────────────────────────────────────
+  # E2E 테스트 (Playwright)
+  # ─────────────────────────────────────────────────────────────
+  e2e-test:
+    name: E2E Test
+    runs-on: ubuntu-latest
+    needs: build-test
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright Browsers
+        run: pnpm exec playwright install --with-deps chromium webkit
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+
+      - name: Verify build artifacts
+        run: |
+          echo "Checking dist directory..."
+          ls -la dist/
+          echo "Checking for index.html..."
+          test -f dist/index.html && echo "✅ index.html found" || echo "❌ index.html not found"
+
+      - name: Run Playwright E2E tests
+        run: pnpm test:e2e
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
+
+      - name: Upload Playwright test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-results
+          path: test-results/
+          retention-days: 7
 
   # ─────────────────────────────────────────────────────────────
   # 보안 스캔
@@ -215,75 +179,27 @@ jobs:
           sarif_file: "trivy-results.sarif"
 
   # ─────────────────────────────────────────────────────────────
-  # Docker 빌드 테스트
-  # ─────────────────────────────────────────────────────────────
-  docker-build:
-    name: Docker Build
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Check if Dockerfiles exist
-        id: check-dockerfiles
-        run: |
-          if [ -f "./src/backend/Dockerfile" ]; then
-            echo "backend_exists=true" >> $GITHUB_OUTPUT
-          else
-            echo "backend_exists=false" >> $GITHUB_OUTPUT
-            echo "Backend Dockerfile not found, skipping..."
-          fi
-          if [ -f "./src/frontend/Dockerfile" ]; then
-            echo "frontend_exists=true" >> $GITHUB_OUTPUT
-          else
-            echo "frontend_exists=false" >> $GITHUB_OUTPUT
-            echo "Frontend Dockerfile not found, skipping..."
-          fi
-
-      - name: Set up Docker Buildx
-        if: steps.check-dockerfiles.outputs.backend_exists == 'true' || steps.check-dockerfiles.outputs.frontend_exists == 'true'
-        uses: docker/setup-buildx-action@v3
-
-      - name: Build Backend
-        if: steps.check-dockerfiles.outputs.backend_exists == 'true'
-        uses: docker/build-push-action@v5
-        with:
-          context: ./src/backend
-          file: ./src/backend/Dockerfile
-          push: false
-          tags: hallyulatino-backend:test
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: Build Frontend
-        if: steps.check-dockerfiles.outputs.frontend_exists == 'true'
-        uses: docker/build-push-action@v5
-        with:
-          context: ./src/frontend
-          file: ./src/frontend/Dockerfile
-          push: false
-          tags: hallyulatino-frontend:test
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-  # ─────────────────────────────────────────────────────────────
   # 전체 상태 체크
   # ─────────────────────────────────────────────────────────────
   ci-status:
     name: CI Status
     runs-on: ubuntu-latest
-    needs: [backend-test, frontend-test, security-scan, docker-build]
+    needs: [quality-check, build-test, e2e-test, security-scan]
     if: always()
 
     steps:
       - name: Check CI status
         run: |
-          if [[ "${{ needs.backend-test.result }}" == "failure" || \
-                "${{ needs.frontend-test.result }}" == "failure" || \
-                "${{ needs.security-scan.result }}" == "failure" || \
-                "${{ needs.docker-build.result }}" == "failure" ]]; then
-            echo "CI failed"
+          echo "Quality Check: ${{ needs.quality-check.result }}"
+          echo "Build Test: ${{ needs.build-test.result }}"
+          echo "E2E Test: ${{ needs.e2e-test.result }}"
+          echo "Security Scan: ${{ needs.security-scan.result }}"
+
+          if [[ "${{ needs.quality-check.result }}" == "failure" || \
+                "${{ needs.build-test.result }}" == "failure" || \
+                "${{ needs.e2e-test.result }}" == "failure" || \
+                "${{ needs.security-scan.result }}" == "failure" ]]; then
+            echo "❌ CI failed"
             exit 1
           fi
-          echo "CI passed"
+          echo "✅ CI passed"
