@@ -1,6 +1,7 @@
 ---
 import BaseLayout from './BaseLayout.astro';
 import JsonLd from '../components/seo/JsonLd.astro';
+import ShareButtons from '../components/ui/ShareButtons.astro';
 
 interface Props {
   title: string;
@@ -111,6 +112,15 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString('es-419', {
             <span>Actualizado: <time datetime={updatedDate.toISOString()}>{formattedUpdatedDate}</time></span>
           </>
         )}
+      </div>
+
+      <!-- Share Buttons -->
+      <div class="mt-4">
+        <ShareButtons
+          title={title}
+          url={`https://hallyulatino.com${Astro.url.pathname}`}
+          description={description}
+        />
       </div>
 
       {tags.length > 0 && (
