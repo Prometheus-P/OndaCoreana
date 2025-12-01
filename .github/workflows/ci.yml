@@ -126,6 +126,13 @@ jobs:
           name: dist
           path: dist/
 
+      - name: Verify build artifacts
+        run: |
+          echo "Checking dist directory..."
+          ls -la dist/
+          echo "Checking for index.html..."
+          test -f dist/index.html && echo "✅ index.html found" || echo "❌ index.html not found"
+
       - name: Run Playwright E2E tests
         run: pnpm test:e2e
 
