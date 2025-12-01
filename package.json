@@ -1,7 +1,7 @@
 {
   "name": "hallyulatino",
   "type": "module",
-  "version": "1.1.0",
+  "version": "1.0.0",
   "description": "Portal de K-Dramas, K-Pop y cultura coreana en español",
   "scripts": {
     "dev": "astro dev",
