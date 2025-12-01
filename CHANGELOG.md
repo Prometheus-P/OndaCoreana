@@ -12,6 +12,41 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ---
 
+## [1.1.0] - 2024-12-01
+
+### Added
+
+#### UI/UX Improvements
+- Página 404 personalizada con diseño coreano
+- Componente ShareButtons para compartir en redes sociales
+  - Twitter, Facebook, WhatsApp, Telegram, Copy link
+  - Diseño responsivo con iconos SVG
+
+#### Content Expansion (Noticias: 10 artículos)
+- IVE concierto en México
+- Stray Kids récord Billboard
+- Song Hye-kyo nuevo drama
+- Squid Game temporada 2
+- BLACKPINK extensión gira mundial
+- NewJeans x Pepsi colaboración
+- BTS reunión militar
+- SEVENTEEN Arena CDMX
+- Vincenzo película confirmada
+
+### Fixed
+
+#### SEO Improvements
+- Twitter meta tags: `property` → `name` (estándar correcto)
+- Títulos optimizados para ≤60 caracteres
+  - Crash Landing on You
+  - aespa
+  - Guías (aprender coreano, dónde ver)
+
+### Changed
+- Lighthouse scores: 100/96/96/100 (Perf/A11y/BP/SEO)
+
+---
+
 ## [1.0.0] - 2024-11-28
 
 ### Added
@@ -119,6 +154,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ### Links
 
-[Unreleased]: https://github.com/Prometheus-P/hallyulatino/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/Prometheus-P/hallyulatino/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/Prometheus-P/hallyulatino/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/Prometheus-P/hallyulatino/compare/v0.4.0-alpha.2...v1.0.0
 [0.4.0-alpha.2]: https://github.com/Prometheus-P/hallyulatino/releases/tag/v0.4.0-alpha.2
