@@ -1,0 +1,107 @@
+---
+import type { SearchResult } from '../../types/search';
+import SearchResultCard from './SearchResultCard.astro';
+
+interface Props {
+  results: SearchResult[];
+  totalCount: number;
+  query: string;
+  hasMore?: boolean;
+  isLoading?: boolean;
+}
+
+const { results, totalCount, query, hasMore = false, isLoading = false } = Astro.props;
+
+// Format result count message
+const resultMessage = totalCount === 1
+  ? `1 resultado para "${query}"`
+  : `${totalCount} resultados para "${query}"`;
+---
+
+<div class="search-results" data-testid="search-results">
+  {/* Result count header */}
+  <div class="mb-6">
+    <p class="text-sm text-gray-600" data-testid="result-count">
+      {resultMessage}
+    </p>
+  </div>
+
+  {/* Results list */}
+  {results.length > 0 ? (
+    <div class="space-y-4">
+      {results.map((result) => (
+        <SearchResultCard result={result} query={query} />
+      ))}
+    </div>
+  ) : (
+    <div
+      class="rounded-lg border border-gray-200 bg-gray-50 p-8 text-center"
+      data-testid="no-results"
+    >
+      <svg
+        class="mx-auto h-12 w-12 text-gray-400"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+        />
+      </svg>
+      <h3 class="mt-4 text-lg font-medium text-gray-900">
+        No se encontraron resultados
+      </h3>
+      <p class="mt-2 text-sm text-gray-600">
+        No encontramos artículos que coincidan con "{query}".
+        Intenta con otros términos de búsqueda.
+      </p>
+      <div class="mt-4">
+        <p class="text-sm text-gray-500">Sugerencias:</p>
+        <ul class="mt-2 text-sm text-gray-600 list-disc list-inside">
+          <li>Verifica la ortografía</li>
+          <li>Usa palabras más generales</li>
+          <li>Prueba con menos palabras clave</li>
+        </ul>
+      </div>
+    </div>
+  )}
+
+  {/* Load more button */}
+  {hasMore && (
+    <div class="mt-8 text-center">
+      <button
+        type="button"
+        class="inline-flex items-center rounded-lg bg-pink-600 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 disabled:opacity-50"
+        data-testid="load-more-button"
+        disabled={isLoading}
+      >
+        {isLoading ? (
+          <>
+            <svg class="mr-2 h-4 w-4 animate-spin" viewBox="0 0 24 24">
+              <circle
+                class="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                stroke-width="4"
+                fill="none"
+              />
+              <path
+                class="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              />
+            </svg>
+            Cargando...
+          </>
+        ) : (
+          'Cargar más resultados'
+        )}
+      </button>
+    </div>
+  )}
+</div>

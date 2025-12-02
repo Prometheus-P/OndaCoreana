@@ -29,6 +29,7 @@ const { Content } = await noticia.render();
     { name: 'Noticias', url: '/noticias' },
     { name: noticia.data.category, url: `/noticias/categoria/${noticia.data.category}` },
   ]}
+  contentType="noticias"
 >
   <Content />
 

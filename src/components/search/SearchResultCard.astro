@@ -1,0 +1,87 @@
+---
+import type { SearchResult } from '../../types/search';
+import { contentTypeLabels } from '../../types/search';
+
+interface Props {
+  result: SearchResult;
+  query: string;
+}
+
+const { result, query } = Astro.props;
+
+// Highlight query terms in excerpt
+function highlightExcerpt(excerpt: string, query: string): string {
+  if (!query.trim()) return excerpt;
+  const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+  return excerpt.replace(regex, '<mark class="bg-yellow-200 text-yellow-900 rounded px-0.5">$1</mark>');
+}
+
+// Format date in Spanish locale
+const formattedDate = result.pubDate.toLocaleDateString('es-419', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+// Get content type badge color
+const typeColors: Record<string, string> = {
+  dramas: 'bg-pink-100 text-pink-800',
+  kpop: 'bg-purple-100 text-purple-800',
+  noticias: 'bg-blue-100 text-blue-800',
+  guias: 'bg-teal-100 text-teal-800',
+  all: 'bg-gray-100 text-gray-800',
+};
+
+const typeColor = typeColors[result.contentType] || typeColors.all;
+const typeLabel = contentTypeLabels[result.contentType] || result.contentType;
+---
+
+<article class="search-result-card group" data-testid="search-result-card">
+  <a href={result.url} class="block rounded-lg border border-gray-200 bg-white p-4 transition-all hover:border-pink-300 hover:shadow-md">
+    <div class="flex gap-4">
+      {result.heroImage && (
+        <div class="hidden sm:block flex-shrink-0">
+          <img
+            src={result.heroImage}
+            alt=""
+            class="h-24 w-24 rounded-lg object-cover"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+      )}
+
+      <div class="flex-1 min-w-0">
+        <div class="flex items-center gap-2 mb-2">
+          <span
+            class={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${typeColor}`}
+            data-testid="result-type"
+          >
+            {typeLabel}
+          </span>
+        </div>
+
+        <h3
+          class="text-lg font-semibold text-gray-900 group-hover:text-pink-600 line-clamp-2"
+          data-testid="result-title"
+        >
+          {result.title}
+        </h3>
+
+        <p
+          class="mt-1 text-sm text-gray-600 line-clamp-2"
+          data-testid="result-excerpt"
+          set:html={highlightExcerpt(result.excerpt, query)}
+        />
+
+        <time
+          datetime={result.pubDate.toISOString()}
+          class="mt-2 block text-xs text-gray-500"
+          data-testid="result-date"
+        >
+          {formattedDate}
+        </time>
+      </div>
+    </div>
+  </a>
+</article>
