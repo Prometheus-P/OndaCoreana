@@ -193,6 +193,18 @@
     --md-sys-shape-corner-full: 9999px;
 
     /* ============================================
+       SPACING SYSTEM
+       ============================================ */
+
+    --md-sys-spacing-xs: 0.25rem; /* 4px */
+    --md-sys-spacing-sm: 0.5rem; /* 8px */
+    --md-sys-spacing-md: 1rem; /* 16px */
+    --md-sys-spacing-lg: 1.5rem; /* 24px */
+    --md-sys-spacing-xl: 2rem; /* 32px */
+    --md-sys-spacing-2xl: 2.5rem; /* 40px */
+    --md-sys-spacing-3xl: 3rem; /* 48px */
+
+    /* ============================================
        ELEVATION SYSTEM
        ============================================ */
 
@@ -303,6 +315,29 @@
       /* Shadow & Scrim */
       --md-sys-color-shadow: #000000;
       --md-sys-color-scrim: #000000;
+    }
+  }
+
+  /* Reduced Motion */
+  @media (prefers-reduced-motion: reduce) {
+    :root {
+      /* Override motion tokens for accessibility */
+      --md-sys-motion-duration-short1: 0ms;
+      --md-sys-motion-duration-short2: 0ms;
+      --md-sys-motion-duration-short3: 0ms;
+      --md-sys-motion-duration-short4: 0ms;
+      --md-sys-motion-duration-medium1: 0ms;
+      --md-sys-motion-duration-medium2: 0ms;
+      --md-sys-motion-duration-medium3: 0ms;
+      --md-sys-motion-duration-medium4: 0ms;
+      --md-sys-motion-duration-long1: 0ms;
+      --md-sys-motion-duration-long2: 0ms;
+      --md-sys-motion-duration-long3: 0ms;
+      --md-sys-motion-duration-long4: 0ms;
+      --md-sys-motion-duration-extra-long1: 0ms;
+      --md-sys-motion-duration-extra-long2: 0ms;
+      --md-sys-motion-duration-extra-long3: 0ms;
+      --md-sys-motion-duration-extra-long4: 0ms;
     }
   }
 }
