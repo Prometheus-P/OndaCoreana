@@ -10,12 +10,12 @@
     "astro": "astro",
     "check": "astro check",
     "test": "pnpm test:content && pnpm test:build && pnpm test:seo",
-    "test:content": "npx ts-node tests/content/validate-frontmatter.test.ts",
-    "test:build": "npx ts-node tests/build/validate-build.test.ts",
-    "test:seo": "npx ts-node tests/seo/validate-seo.test.ts",
+    "test:content": "tsx tests/content/validate-frontmatter.test.ts",
+    "test:build": "tsx tests/build/validate-build.test.ts",
+    "test:seo": "tsx tests/seo/validate-seo.test.ts",
     "test:e2e": "npx playwright test",
     "test:e2e:ui": "npx playwright test --ui",
-    "test:tdd": "npx ts-node tests/run-tdd.ts",
+    "test:tdd": "tsx tests/run-tdd.ts",
     "tdd:red": "echo '🔴 RED: Creating failing test...' && pnpm test",
     "tdd:green": "echo '🟢 GREEN: Verifying tests pass...' && pnpm build && pnpm test",
     "tdd:refactor": "echo '🔵 REFACTOR: Improving code...' && pnpm check && pnpm test"
@@ -37,6 +37,7 @@
     "jsdom": "^24.0.0",
     "pagefind": "^1.4.0",
     "ts-node": "^10.9.0",
+    "tsx": "^4.21.0",
     "typescript": "^5.0.0",
     "zod": "^3.23.0"
   }
