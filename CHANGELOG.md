@@ -12,6 +12,36 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ---
 
+## [1.3.0] - 2024-12-02
+
+### Changed
+
+#### Branding Update
+- Updated project name from `ondacorea` to `ondacoreana`
+- Updated package name in package.json
+- Updated domain to ondacoreana.com
+- Updated brand display name to OndaCoreana
+- Updated social media handles to @ondacoreana
+- Updated all author references in content (21 articles)
+- Updated all documentation and examples
+- Regenerated package-lock.json with new package name
+
+#### Updated Files (55 total)
+- Source files: layouts, components, pages, styles
+- Content files: all dramas, kpop, noticias, and guias articles
+- SEO components: JsonLd, SEOHead
+- Configuration: package.json, astro.config.mjs
+- Documentation: README, CONTRIBUTING, guides, specs
+- Test files and GitHub templates
+
+### Technical
+- All tests passing: 21 content + 11 build + 130 SEO tests ✓
+- Build successful: 28 pages generated
+- Sitemap regenerated with updated domain
+- No breaking changes to functionality
+
+---
+
 ## [1.1.1] - 2024-12-01
 
 ### Added
@@ -172,8 +202,9 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ### Links
 
-[Unreleased]: https://github.com/Prometheus-P/ondacoreana/compare/v1.1.1...HEAD
-[1.1.1]: https://github.com/Prometheus-P/ondacoreana/compare/v1.1.0...v1.1.1
-[1.1.0]: https://github.com/Prometheus-P/ondacoreana/compare/v1.0.0...v1.1.0
-[1.0.0]: https://github.com/Prometheus-P/ondacoreana/compare/v0.4.0-alpha.2...v1.0.0
-[0.4.0-alpha.2]: https://github.com/Prometheus-P/ondacoreana/releases/tag/v0.4.0-alpha.2
+[Unreleased]: https://github.com/Prometheus-P/OndaCoreana/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/Prometheus-P/OndaCoreana/compare/v1.1.1...v1.3.0
+[1.1.1]: https://github.com/Prometheus-P/OndaCoreana/compare/v1.1.0...v1.1.1
+[1.1.0]: https://github.com/Prometheus-P/OndaCoreana/compare/v1.0.0...v1.1.0
+[1.0.0]: https://github.com/Prometheus-P/OndaCoreana/compare/v0.4.0-alpha.2...v1.0.0
+[0.4.0-alpha.2]: https://github.com/Prometheus-P/OndaCoreana/releases/tag/v0.4.0-alpha.2
