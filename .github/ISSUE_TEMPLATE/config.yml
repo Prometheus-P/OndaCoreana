@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
   - name: 💬 질문 & 토론
-    url: https://github.com/hallyulatino/hallyulatino/discussions
+    url: https://github.com/Prometheus-P/ondacorea/discussions
     about: 기능 요청이나 버그가 아닌 일반적인 질문은 Discussions를 이용해 주세요.
   - name: 📚 문서
-    url: https://github.com/hallyulatino/hallyulatino/wiki
+    url: https://github.com/Prometheus-P/ondacorea/wiki
     about: 프로젝트 문서를 확인해 보세요.

@@ -8,7 +8,7 @@ const baseArticleSchema = z.object({
   updatedDate: z.coerce.date().optional(),
   heroImage: z.string().optional(),
   heroImageAlt: z.string().optional(),
-  author: z.string().default('HallyuLatino'),
+  author: z.string().default('OndaCorea'),
   tags: z.array(z.string()).default([]),
   draft: z.boolean().default(false),
 });

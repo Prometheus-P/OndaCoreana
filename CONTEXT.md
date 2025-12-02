@@ -1,14 +1,14 @@
 ---
-title: HallyuLatino - Project Context (Single Source of Truth)
+title: OndaCorea - Project Context (Single Source of Truth)
 version: 1.0.0
 status: Approved
-owner: @hallyulatino-team
+owner: @OndaCorea-team
 created: 2024-11-28
 updated: 2024-11-28
 reviewers: []
 ---
 
-# CONTEXT.md - HallyuLatino Project
+# CONTEXT.md - OndaCorea Project
 
 > **이 문서는 프로젝트의 Single Source of Truth입니다.**
 > AI 에이전트와 인간 개발자 모두 이 문서를 참조하여 프로젝트 컨텍스트를 이해합니다.
@@ -29,8 +29,8 @@ reviewers: []
 
 | 항목 | 값 |
 |------|-----|
-| **프로젝트명** | HallyuLatino |
-| **도메인** | https://hallyulatino.com |
+| **프로젝트명** | OndaCorea |
+| **도메인** | https://ondacorea.com |
 | **설명** | 스페인어권 사용자를 위한 K-Culture (K-Drama, K-Pop) 정보 포털 |
 | **언어** | 스페인어 (es-MX, es-419) |
 | **버전** | 1.0.0 |
@@ -165,7 +165,7 @@ Goals:
 ### 4.1 디렉토리 구조
 
 ```
-📦 hallyulatino/
+📦 ondacorea/
 │
 ├── 📄 CONTEXT.md                    # 이 파일 (Single Source of Truth)
 ├── 📄 README.md                     # 프로젝트 소개 & 빠른 시작
@@ -232,7 +232,7 @@ interface BaseArticle {
   updatedDate?: Date;
   heroImage?: string;
   heroImageAlt?: string;
-  author: string;          // default: 'HallyuLatino'
+  author: string;          // default: 'OndaCorea'
   tags: string[];
   draft: boolean;          // default: false
 }
@@ -484,7 +484,7 @@ description: "Reseña completa de Queen of Tears..."
 pubDate: 2024-03-15
 heroImage: "/images/dramas/queen-of-tears.jpg"
 heroImageAlt: "Póster de Queen of Tears"
-author: "HallyuLatino"
+author: "OndaCorea"
 tags: ["romance", "comedia", "2024"]
 dramaTitle: "눈물의 여왕"
 dramaYear: 2024
@@ -568,11 +568,11 @@ whereToWatch: ["Netflix"]
 
 | 역할 | 담당 |
 |------|------|
-| Project Owner | @hallyulatino-team |
-| Technical Lead | @hallyulatino-team |
-| Content Lead | @hallyulatino-team |
+| Project Owner | @OndaCorea-team |
+| Technical Lead | @OndaCorea-team |
+| Content Lead | @OndaCorea-team |
 
-**Repository**: https://github.com/Prometheus-P/hallyulatino
+**Repository**: https://github.com/Prometheus-P/ondacorea
 
 ---
 

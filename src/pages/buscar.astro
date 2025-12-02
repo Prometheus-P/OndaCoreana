@@ -1,0 +1,588 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SearchInput from '../components/search/SearchInput.astro';
+import SearchFilters from '../components/search/SearchFilters.astro';
+
+// SEO meta - default for SSG (client-side will update based on query)
+const title = 'Buscar | OndaCorea';
+const description = 'Busca contenido sobre K-Dramas, K-Pop, noticias y guías de cultura coreana en español.';
+
+// Get the base site URL for canonical
+const siteUrl = Astro.site?.toString().replace(/\/$/, '') || 'https://ondacorea.com';
+---
+
+<BaseLayout title={title} description={description} noindex={true}>
+  <main id="main-content" class="min-h-screen bg-gray-50 py-8" data-pagefind-ignore>
+    <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+      {/* Page header */}
+      <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">Buscar</h1>
+        <p class="mt-2 text-gray-600">
+          Encuentra K-Dramas, K-Pop, noticias y guías
+        </p>
+      </div>
+
+      {/* Search input */}
+      <div class="mb-6">
+        <SearchInput
+          placeholder="Buscar K-Dramas, K-Pop, noticias..."
+          size="lg"
+          showInlineResults={false}
+        />
+        <p id="truncation-warning" class="mt-2 text-sm text-amber-600 hidden">
+          La búsqueda se ha limitado a 100 caracteres.
+        </p>
+      </div>
+
+      {/* Filter tabs */}
+      <div class="mb-6">
+        <SearchFilters />
+      </div>
+
+      {/* Results section - dynamically rendered by client-side JS */}
+      <div id="search-results-container"></div>
+    </div>
+  </main>
+</BaseLayout>
+
+<script>
+  // Type definitions for client-side use
+  type ContentType = 'all' | 'dramas' | 'kpop' | 'noticias' | 'guias';
+
+  interface SearchResult {
+    title: string;
+    excerpt: string;
+    url: string;
+    contentType: ContentType;
+    pubDate: Date;
+    heroImage?: string;
+    relevanceScore: number;
+  }
+
+  // Store pagefind instance globally
+  let pagefindInstance: any = null;
+
+  // Pagination state
+  let currentSearchResults: any[] = [];
+  let currentQuery = '';
+  let displayedCount = 0;
+  const RESULTS_PER_PAGE = 10;
+
+  // Get pagefind instance (lazy load once)
+  async function getPagefind() {
+    if (!pagefindInstance) {
+      const pagefindPath = '/pagefind/pagefind.js';
+      pagefindInstance = await import(/* @vite-ignore */ pagefindPath);
+      await pagefindInstance.init();
+    }
+    return pagefindInstance;
+  }
+
+  // Load more results (pagination)
+  async function loadMoreResults(container: HTMLElement, query: string) {
+    const startIndex = displayedCount;
+    const endIndex = Math.min(startIndex + RESULTS_PER_PAGE, currentSearchResults.length);
+    const hasMore = endIndex < currentSearchResults.length;
+
+    // Load result data for the current page
+    const resultsData = await Promise.all(
+      currentSearchResults.slice(startIndex, endIndex).map((result: any) => result.data())
+    );
+
+    // Transform to our SearchResult type
+    const results: SearchResult[] = resultsData.map((data: any, index: number) => ({
+      title: data.meta?.title || 'Sin título',
+      excerpt: data.excerpt || data.meta?.description || '',
+      url: data.url,
+      contentType: (data.meta?.contentType as ContentType) || 'all',
+      pubDate: data.meta?.pubDate ? new Date(data.meta.pubDate) : new Date(),
+      heroImage: data.meta?.heroImage,
+      relevanceScore: currentSearchResults[startIndex + index]?.score || 0,
+    }));
+
+    displayedCount = endIndex;
+
+    if (startIndex === 0) {
+      // Initial render
+      container.innerHTML = renderSearchResults(results, currentSearchResults.length, query, hasMore);
+    } else {
+      // Append more results
+      const resultsContainer = container.querySelector('.space-y-4');
+      if (resultsContainer) {
+        resultsContainer.insertAdjacentHTML('beforeend', results.map(result => renderResultCard(result, query)).join(''));
+      }
+      // Update or remove load more button
+      const loadMoreContainer = container.querySelector('#load-more-container');
+      if (loadMoreContainer) {
+        if (hasMore) {
+          loadMoreContainer.innerHTML = renderLoadMoreButton();
+        } else {
+          loadMoreContainer.remove();
+        }
+      }
+    }
+
+    // Attach click handler to load more button
+    const loadMoreBtn = container.querySelector('#load-more-btn');
+    if (loadMoreBtn) {
+      loadMoreBtn.addEventListener('click', () => loadMoreResults(container, query));
+    }
+  }
+
+  // Update SEO meta tags dynamically based on query
+  function updateSEOMetaTags(query: string, resultCount: number = 0) {
+    const siteUrl = window.location.origin;
+    const hasValidQuery = query.length >= 2;
+
+    // Helper to update or create meta tag
+    function setMetaTag(selector: string, attribute: string, value: string) {
+      let tag = document.querySelector(selector) as HTMLMetaElement | HTMLLinkElement | null;
+      if (tag) {
+        if (attribute === 'content') {
+          (tag as HTMLMetaElement).content = value;
+        } else if (attribute === 'href') {
+          (tag as HTMLLinkElement).href = value;
+        }
+      }
+    }
+
+    if (hasValidQuery) {
+      const newTitle = `Resultados para "${query}" | Buscar | OndaCorea`;
+      const newDescription = `${resultCount} resultado${resultCount !== 1 ? 's' : ''} encontrado${resultCount !== 1 ? 's' : ''} para "${query}" en OndaCorea. Explora K-Dramas, K-Pop, noticias y guías.`;
+      const canonicalUrl = `${siteUrl}/buscar?q=${encodeURIComponent(query)}`;
+
+      // Update title
+      document.title = newTitle;
+      setMetaTag('meta[name="title"]', 'content', newTitle);
+
+      // Update description
+      setMetaTag('meta[name="description"]', 'content', newDescription);
+
+      // Update canonical URL
+      setMetaTag('link[rel="canonical"]', 'href', canonicalUrl);
+
+      // Update Open Graph tags
+      setMetaTag('meta[property="og:title"]', 'content', newTitle);
+      setMetaTag('meta[property="og:description"]', 'content', newDescription);
+      setMetaTag('meta[property="og:url"]', 'content', canonicalUrl);
+
+      // Update Twitter tags
+      setMetaTag('meta[name="twitter:title"]', 'content', newTitle);
+      setMetaTag('meta[name="twitter:description"]', 'content', newDescription);
+      setMetaTag('meta[name="twitter:url"]', 'content', canonicalUrl);
+
+      // Remove noindex for valid queries (allow indexing)
+      const robotsMeta = document.querySelector('meta[name="robots"]');
+      if (robotsMeta) {
+        robotsMeta.remove();
+      }
+    } else {
+      // Reset to default for empty queries
+      const defaultTitle = 'Buscar | OndaCorea';
+      const defaultDescription = 'Busca contenido sobre K-Dramas, K-Pop, noticias y guías de cultura coreana en español.';
+      const canonicalUrl = `${siteUrl}/buscar`;
+
+      document.title = defaultTitle;
+      setMetaTag('meta[name="title"]', 'content', defaultTitle);
+      setMetaTag('meta[name="description"]', 'content', defaultDescription);
+      setMetaTag('link[rel="canonical"]', 'href', canonicalUrl);
+      setMetaTag('meta[property="og:title"]', 'content', defaultTitle);
+      setMetaTag('meta[property="og:description"]', 'content', defaultDescription);
+      setMetaTag('meta[property="og:url"]', 'content', canonicalUrl);
+      setMetaTag('meta[name="twitter:title"]', 'content', defaultTitle);
+      setMetaTag('meta[name="twitter:description"]', 'content', defaultDescription);
+      setMetaTag('meta[name="twitter:url"]', 'content', canonicalUrl);
+
+      // Ensure noindex is present for empty queries
+      let robotsMeta = document.querySelector('meta[name="robots"]');
+      if (!robotsMeta) {
+        robotsMeta = document.createElement('meta');
+        robotsMeta.setAttribute('name', 'robots');
+        robotsMeta.setAttribute('content', 'noindex, nofollow');
+        document.head.appendChild(robotsMeta);
+      }
+    }
+  }
+
+  // Update filter tab active states
+  function updateFilterActiveStates(activeType: ContentType) {
+    const filterTabs = document.querySelectorAll('[data-testid="search-filters"] a');
+    filterTabs.forEach((tab) => {
+      const tabType = tab.getAttribute('data-filter-type') as ContentType;
+      const isActive = tabType === activeType;
+      tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
+
+      // Update visual styling
+      if (isActive) {
+        tab.classList.remove('bg-gray-100', 'text-gray-700', 'hover:bg-gray-200');
+        tab.classList.add('bg-pink-600', 'text-white');
+      } else {
+        tab.classList.remove('bg-pink-600', 'text-white');
+        tab.classList.add('bg-gray-100', 'text-gray-700', 'hover:bg-gray-200');
+      }
+    });
+  }
+
+  // Initialize search on page load
+  async function initSearch() {
+    const container = document.getElementById('search-results-container');
+    // Use the search input specifically on the buscar page (in main-content)
+    const searchInput = document.querySelector('#main-content [data-testid="search-input"]') as HTMLInputElement;
+    const truncationWarning = document.getElementById('truncation-warning');
+
+    if (!container) return;
+
+    // Get query and filter from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    let query = urlParams.get('q')?.trim() || '';
+    const filterType = (urlParams.get('type') as ContentType) || 'all';
+
+    // Update filter tab active states
+    updateFilterActiveStates(filterType);
+
+    // Check for truncation
+    const wasQueryTruncated = query.length > 100;
+    if (wasQueryTruncated) {
+      query = query.substring(0, 100);
+      truncationWarning?.classList.remove('hidden');
+    }
+
+    // Update search input with query value
+    if (searchInput && query) {
+      searchInput.value = query;
+    }
+
+    // Validate query (FR-016: min 2 non-whitespace chars)
+    const isValidQuery = query.length >= 2;
+
+    if (!isValidQuery) {
+      // Update SEO for empty/invalid query
+      updateSEOMetaTags(query, 0);
+
+      if (query.length > 0) {
+        // Invalid query (too short)
+        container.innerHTML = renderMinLengthWarning();
+      } else {
+        // Empty query - show welcome state
+        container.innerHTML = renderEmptyState();
+      }
+      return;
+    }
+
+    // Show loading state
+    container.innerHTML = renderLoadingState();
+
+    try {
+      // Load Pagefind dynamically at runtime (not bundled by Vite)
+      const pagefind = await getPagefind();
+
+      // Perform search with optional filter
+      const searchOptions: any = {};
+      if (filterType !== 'all') {
+        searchOptions.filters = {
+          contentType: filterType
+        };
+      }
+      const search = await pagefind.search(query, searchOptions);
+
+      // Store search results for pagination
+      currentSearchResults = search.results;
+      currentQuery = query;
+      displayedCount = 0;
+
+      // Update SEO meta tags with result count
+      updateSEOMetaTags(query, search.results.length);
+
+      // Load and render initial results
+      if (search.results.length > 0) {
+        await loadMoreResults(container, query);
+      } else {
+        container.innerHTML = renderNoResults(query);
+      }
+    } catch (error) {
+      console.error('Search error:', error);
+      container.innerHTML = renderErrorState();
+      // Update SEO even on error (with 0 results)
+      updateSEOMetaTags(query, 0);
+    }
+  }
+
+  // Render loading state
+  function renderLoadingState(): string {
+    return `
+      <div id="search-loading" class="py-12 text-center">
+        <svg class="mx-auto h-8 w-8 animate-spin text-pink-600" viewBox="0 0 24 24">
+          <circle
+            class="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            stroke-width="4"
+            fill="none"
+          />
+          <path
+            class="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+          />
+        </svg>
+        <p class="mt-4 text-gray-600">Buscando...</p>
+      </div>
+    `;
+  }
+
+  // Render empty state (no query)
+  function renderEmptyState(): string {
+    return `
+      <div class="rounded-lg border border-gray-200 bg-white p-8 text-center">
+        <svg
+          class="mx-auto h-12 w-12 text-gray-400"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+          />
+        </svg>
+        <h2 class="mt-4 text-lg font-medium text-gray-900">
+          ¿Qué quieres encontrar?
+        </h2>
+        <p class="mt-2 text-sm text-gray-600">
+          Usa el campo de búsqueda para encontrar K-Dramas, artistas de K-Pop,
+          noticias y guías sobre cultura coreana.
+        </p>
+      </div>
+    `;
+  }
+
+  // Render min length warning
+  function renderMinLengthWarning(): string {
+    return `
+      <div class="rounded-lg border border-amber-200 bg-amber-50 p-6 text-center">
+        <p class="text-amber-800">
+          Por favor ingresa al menos 2 caracteres para buscar.
+        </p>
+      </div>
+    `;
+  }
+
+  // Render error state
+  function renderErrorState(): string {
+    return `
+      <div class="py-12 text-center">
+        <p class="text-red-600">Error al cargar los resultados de búsqueda.</p>
+        <p class="mt-2 text-sm text-gray-600">Por favor intenta de nuevo más tarde.</p>
+      </div>
+    `;
+  }
+
+  // Render load more button
+  function renderLoadMoreButton(): string {
+    return `
+      <button
+        id="load-more-btn"
+        class="w-full py-3 px-6 text-pink-600 font-medium hover:bg-pink-50 rounded-lg border border-pink-200 transition-colors focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
+        data-testid="load-more-btn"
+      >
+        Cargar más resultados
+      </button>
+    `;
+  }
+
+  // Render full search results section
+  function renderSearchResults(results: SearchResult[], totalCount: number, query: string, hasMore: boolean = false): string {
+    const resultMessage = totalCount === 1
+      ? `1 resultado para "${escapeHtml(query)}"`
+      : `${totalCount} resultados para "${escapeHtml(query)}"`;
+
+    const loadMoreHtml = hasMore ? `
+      <div id="load-more-container" class="mt-8 text-center">
+        ${renderLoadMoreButton()}
+      </div>
+    ` : '';
+
+    return `
+      <div class="search-results" data-testid="search-results">
+        <div class="mb-6">
+          <p class="text-sm text-gray-600" data-testid="result-count">
+            ${resultMessage}
+          </p>
+        </div>
+        <div class="space-y-4">
+          ${results.map(result => renderResultCard(result, query)).join('')}
+        </div>
+        ${loadMoreHtml}
+      </div>
+    `;
+  }
+
+  // Render no results state
+  function renderNoResults(query: string): string {
+    return `
+      <div class="search-results" data-testid="search-results">
+        <div class="mb-6">
+          <p class="text-sm text-gray-600" data-testid="result-count">
+            0 resultados para "${escapeHtml(query)}"
+          </p>
+        </div>
+        <div
+          class="rounded-lg border border-gray-200 bg-gray-50 p-8 text-center"
+          data-testid="no-results"
+        >
+          <svg
+            class="mx-auto h-12 w-12 text-gray-400"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
+          </svg>
+          <h3 class="mt-4 text-lg font-medium text-gray-900">
+            No se encontraron resultados
+          </h3>
+          <p class="mt-2 text-sm text-gray-600">
+            No encontramos artículos que coincidan con "${escapeHtml(query)}".
+            Intenta con otros términos de búsqueda.
+          </p>
+          <div class="mt-4">
+            <p class="text-sm text-gray-500">Sugerencias:</p>
+            <ul class="mt-2 text-sm text-gray-600 list-disc list-inside">
+              <li>Verifica la ortografía</li>
+              <li>Usa palabras más generales</li>
+              <li>Prueba con menos palabras clave</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  // Render a single result card
+  function renderResultCard(result: SearchResult, query: string): string {
+    const typeColors: Record<string, string> = {
+      dramas: 'bg-pink-100 text-pink-800',
+      kpop: 'bg-purple-100 text-purple-800',
+      noticias: 'bg-blue-100 text-blue-800',
+      guias: 'bg-teal-100 text-teal-800',
+      all: 'bg-gray-100 text-gray-800',
+    };
+
+    const typeLabels: Record<string, string> = {
+      dramas: 'K-Drama',
+      kpop: 'K-Pop',
+      noticias: 'Noticia',
+      guias: 'Guía',
+      all: 'Contenido',
+    };
+
+    const typeColor = typeColors[result.contentType] || typeColors.all;
+    const typeLabel = typeLabels[result.contentType] || result.contentType;
+
+    const formattedDate = result.pubDate.toLocaleDateString('es-419', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+
+    // Highlight query in excerpt
+    const highlightedExcerpt = highlightText(result.excerpt, query);
+
+    const heroImageHtml = result.heroImage ? `
+      <div class="hidden sm:block flex-shrink-0">
+        <img
+          src="${escapeHtml(result.heroImage)}"
+          alt=""
+          class="h-24 w-24 rounded-lg object-cover"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+    ` : '';
+
+    return `
+      <article class="search-result-card group" data-testid="search-result-card">
+        <a href="${escapeHtml(result.url)}" class="block rounded-lg border border-gray-200 bg-white p-4 transition-all hover:border-pink-300 hover:shadow-md">
+          <div class="flex gap-4">
+            ${heroImageHtml}
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 mb-2">
+                <span
+                  class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${typeColor}"
+                  data-testid="result-type"
+                >
+                  ${typeLabel}
+                </span>
+              </div>
+              <h3
+                class="text-lg font-semibold text-gray-900 group-hover:text-pink-600 line-clamp-2"
+                data-testid="result-title"
+              >
+                ${escapeHtml(result.title)}
+              </h3>
+              <p
+                class="mt-1 text-sm text-gray-600 line-clamp-2"
+                data-testid="result-excerpt"
+              >
+                ${highlightedExcerpt}
+              </p>
+              <time
+                datetime="${result.pubDate.toISOString()}"
+                class="mt-2 block text-xs text-gray-500"
+                data-testid="result-date"
+              >
+                ${formattedDate}
+              </time>
+            </div>
+          </div>
+        </a>
+      </article>
+    `;
+  }
+
+  // Highlight search terms in text
+  function highlightText(text: string, query: string): string {
+    if (!query.trim()) return escapeHtml(text);
+    const escaped = escapeHtml(text);
+    const regex = new RegExp(`(${escapeRegex(query)})`, 'gi');
+    return escaped.replace(regex, '<mark class="bg-yellow-200 text-yellow-900 rounded px-0.5">$1</mark>');
+  }
+
+  // Escape HTML entities
+  function escapeHtml(text: string): string {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  // Escape regex special characters
+  function escapeRegex(str: string): string {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  // Initialize on page load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSearch);
+  } else {
+    initSearch();
+  }
+
+  // Listen for filter changes (SPA-like navigation from SearchFilters)
+  window.addEventListener('filterchange', () => {
+    initSearch();
+  });
+
+  // Handle browser back/forward navigation
+  window.addEventListener('popstate', () => {
+    initSearch();
+  });
+</script>

@@ -13,6 +13,7 @@ interface Props {
   author?: string;
   tags?: string[];
   breadcrumbs?: Array<{ name: string; url: string }>;
+  contentType?: 'dramas' | 'kpop' | 'noticias' | 'guias';
 }
 
 const {
@@ -22,9 +23,10 @@ const {
   updatedDate,
   heroImage,
   heroImageAlt = title,
-  author = 'HallyuLatino',
+  author = 'OndaCorea',
   tags = [],
   breadcrumbs = [],
+  contentType,
 } = Astro.props;
 
 const formattedPubDate = pubDate.toLocaleDateString('es-419', {
@@ -74,7 +76,7 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString('es-419', {
     />
   </Fragment>
 
-  <article class="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+  <article class="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8" data-pagefind-body>
     <!-- Breadcrumbs -->
     {breadcrumbs.length > 0 && (
       <nav aria-label="Breadcrumb" class="mb-6">
@@ -98,9 +100,13 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString('es-419', {
 
     <!-- Header -->
     <header class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900 sm:text-4xl lg:text-5xl">
+      <h1 class="text-3xl font-bold text-gray-900 sm:text-4xl lg:text-5xl" data-pagefind-meta="title">
         {title}
       </h1>
+      <span data-pagefind-meta="description" class="hidden">{description}</span>
+      <span data-pagefind-meta="pubDate" class="hidden">{pubDate.toISOString()}</span>
+      {contentType && <span data-pagefind-meta="contentType" data-pagefind-filter="contentType" class="hidden">{contentType}</span>}
+      {heroImage && <span data-pagefind-meta="heroImage" class="hidden">{heroImage}</span>}
 
       <div class="mt-4 flex flex-wrap items-center gap-4 text-sm text-gray-600">
         <span>Por {author}</span>
@@ -118,7 +124,7 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString('es-419', {
       <div class="mt-4">
         <ShareButtons
           title={title}
-          url={`https://hallyulatino.com${Astro.url.pathname}`}
+          url={`https://ondacorea.com${Astro.url.pathname}`}
           description={description}
         />
       </div>

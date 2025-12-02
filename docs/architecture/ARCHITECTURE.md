@@ -1,8 +1,8 @@
 ---
-title: HallyuLatino - Architecture Documentation
+title: OndaCorea - Architecture Documentation
 version: 1.0.0
 status: Approved
-owner: "@hallyulatino-team"
+owner: "@OndaCorea-team"
 created: 2024-11-28
 updated: 2024-11-28
 ---
@@ -15,7 +15,7 @@ updated: 2024-11-28
 |-------|-------|
 | Versión | 1.0.0 |
 | Última actualización | 2024-11-28 |
-| Autor | HallyuLatino Team |
+| Autor | OndaCorea Team |
 | Estado | Activo |
 
 ---
@@ -39,7 +39,7 @@ updated: 2024-11-28
 
 ### 1.1 Propósito del Sistema
 
-HallyuLatino es un portal de contenido estático optimizado para SEO, diseñado para servir contenido sobre cultura coreana (K-Dramas, K-Pop, noticias, guías) a la comunidad hispanohablante.
+OndaCorea es un portal de contenido estático optimizado para SEO, diseñado para servir contenido sobre cultura coreana (K-Dramas, K-Pop, noticias, guías) a la comunidad hispanohablante.
 
 ### 1.2 Objetivos Arquitectónicos
 
@@ -106,7 +106,7 @@ HallyuLatino es un portal de contenido estático optimizado para SEO, diseñado 
 
 ### 2.1 Patrón Arquitectónico: Jamstack
 
-HallyuLatino implementa el patrón **Jamstack** (JavaScript, APIs, Markup):
+OndaCorea implementa el patrón **Jamstack** (JavaScript, APIs, Markup):
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -220,7 +220,7 @@ export default defineConfig({
 ### 4.1 Árbol de Proyecto
 
 ```
-hallyulatino/
+ondacorea/
 ├── public/                    # Archivos estáticos (copiados as-is)
 │   ├── favicon.svg
 │   ├── robots.txt
@@ -514,7 +514,7 @@ const { Content } = await drama.render();
 ```
 Estructura plana optimizada para SEO:
 
-https://hallyulatino.com/dramas/goblin-guardian
+https://ondacorea.com/dramas/goblin-guardian
                         ├──────┴────────────────┘
                         │
                         └── Categoría + slug descriptivo
@@ -531,18 +531,18 @@ https://hallyulatino.com/dramas/goblin-guardian
 <!-- Ejemplo de meta tags para un artículo de drama -->
 <head>
   <!-- Primary -->
-  <title>Goblin: El Guardián Solitario - Reseña | HallyuLatino</title>
+  <title>Goblin: El Guardián Solitario - Reseña | OndaCorea</title>
   <meta name="description" content="Descubre por qué Goblin es uno de los mejores K-Dramas de fantasía. Reseña completa con sinopsis, elenco y dónde verlo.">
 
   <!-- Canonical -->
-  <link rel="canonical" href="https://hallyulatino.com/dramas/goblin">
+  <link rel="canonical" href="https://ondacorea.com/dramas/goblin">
 
   <!-- Open Graph -->
   <meta property="og:type" content="article">
   <meta property="og:title" content="Goblin: El Guardián Solitario - Reseña">
   <meta property="og:description" content="...">
-  <meta property="og:image" content="https://hallyulatino.com/images/dramas/goblin-og.jpg">
-  <meta property="og:url" content="https://hallyulatino.com/dramas/goblin">
+  <meta property="og:image" content="https://ondacorea.com/images/dramas/goblin-og.jpg">
+  <meta property="og:url" content="https://ondacorea.com/dramas/goblin">
   <meta property="og:locale" content="es_MX">
 
   <!-- Twitter -->
@@ -550,9 +550,9 @@ https://hallyulatino.com/dramas/goblin-guardian
   <meta name="twitter:title" content="Goblin: El Guardián Solitario - Reseña">
 
   <!-- i18n -->
-  <link rel="alternate" hreflang="es" href="https://hallyulatino.com/dramas/goblin">
-  <link rel="alternate" hreflang="pt" href="https://hallyulatino.com/pt/dramas/goblin">
-  <link rel="alternate" hreflang="x-default" href="https://hallyulatino.com/dramas/goblin">
+  <link rel="alternate" hreflang="es" href="https://ondacorea.com/dramas/goblin">
+  <link rel="alternate" hreflang="pt" href="https://ondacorea.com/pt/dramas/goblin">
+  <link rel="alternate" hreflang="x-default" href="https://ondacorea.com/dramas/goblin">
 </head>
 ```
 
@@ -813,7 +813,7 @@ Node.js version: 18
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│                    HallyuLatino                           │
+│                    OndaCorea                           │
 │                 (Static Content Site)                     │
 │                                                           │
 │  ┌─────────┐  ┌─────────┐  ┌─────────┐  ┌─────────┐    │
@@ -849,4 +849,4 @@ Node.js version: 18
 
 ---
 
-*Documento mantenido por el equipo de HallyuLatino.*
+*Documento mantenido por el equipo de OndaCorea.*
