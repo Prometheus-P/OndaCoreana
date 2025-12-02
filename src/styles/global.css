@@ -13,11 +13,11 @@
        COLOR SYSTEM - Material Design 3
        ============================================ */
 
-    /* Primary Colors */
-    --md-sys-color-primary: #6750a4;
+    /* Primary Colors - OndaCorea Pink */
+    --md-sys-color-primary: #ec4899;
     --md-sys-color-on-primary: #ffffff;
-    --md-sys-color-primary-container: #eaddff;
-    --md-sys-color-on-primary-container: #21005d;
+    --md-sys-color-primary-container: #fce7f3;
+    --md-sys-color-on-primary-container: #831843;
 
     /* Secondary Colors */
     --md-sys-color-secondary: #625b71;
@@ -262,11 +262,11 @@
   /* Dark Theme */
   @media (prefers-color-scheme: dark) {
     :root {
-      /* Primary Colors */
-      --md-sys-color-primary: #d0bcff;
-      --md-sys-color-on-primary: #381e72;
-      --md-sys-color-primary-container: #4f378b;
-      --md-sys-color-on-primary-container: #eaddff;
+      /* Primary Colors - OndaCorea Pink Dark */
+      --md-sys-color-primary: #f9a8d4;
+      --md-sys-color-on-primary: #831843;
+      --md-sys-color-primary-container: #be185d;
+      --md-sys-color-on-primary-container: #fce7f3;
 
       /* Secondary Colors */
       --md-sys-color-secondary: #ccc2dc;
