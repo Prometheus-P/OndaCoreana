@@ -1,8 +1,8 @@
 ---
-title: HallyuLatino - Code Review Guide
+title: OndaCorea - Code Review Guide
 version: 1.0.0
 status: Approved
-owner: @hallyulatino-team
+owner: @OndaCorea-team
 created: 2024-11-28
 updated: 2024-11-28
 reviewers: []

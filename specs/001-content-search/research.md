@@ -135,7 +135,7 @@ export default defineConfig({
 
 ## Conclusion
 
-Pagefind is the optimal choice for HallyuLatino search:
+Pagefind is the optimal choice for OndaCorea search:
 - Meets all constitution requirements
 - Zero-config Astro integration
 - Excellent performance characteristics

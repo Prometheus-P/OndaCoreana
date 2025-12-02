@@ -7,7 +7,7 @@
 
 - Node.js 18+
 - pnpm installed
-- HallyuLatino repo cloned and dependencies installed
+- OndaCorea repo cloned and dependencies installed
 
 ## Setup
 

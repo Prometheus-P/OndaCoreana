@@ -1,8 +1,8 @@
 ---
-title: HallyuLatino - Development Plan (TDD)
+title: OndaCorea - Development Plan (TDD)
 version: 1.0.0
 status: Active
-owner: @hallyulatino-team
+owner: @OndaCorea-team
 created: 2024-11-28
 updated: 2024-11-28
 reviewers: []

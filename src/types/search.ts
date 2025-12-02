@@ -1,5 +1,5 @@
 /**
- * Search Types for HallyuLatino Content Search
+ * Search Types for OndaCorea Content Search
  */
 
 // T008: ContentType enum

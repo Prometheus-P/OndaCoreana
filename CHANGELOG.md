@@ -172,8 +172,8 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 
 ### Links
 
-[Unreleased]: https://github.com/Prometheus-P/hallyulatino/compare/v1.1.1...HEAD
-[1.1.1]: https://github.com/Prometheus-P/hallyulatino/compare/v1.1.0...v1.1.1
-[1.1.0]: https://github.com/Prometheus-P/hallyulatino/compare/v1.0.0...v1.1.0
-[1.0.0]: https://github.com/Prometheus-P/hallyulatino/compare/v0.4.0-alpha.2...v1.0.0
-[0.4.0-alpha.2]: https://github.com/Prometheus-P/hallyulatino/releases/tag/v0.4.0-alpha.2
+[Unreleased]: https://github.com/Prometheus-P/ondacorea/compare/v1.1.1...HEAD
+[1.1.1]: https://github.com/Prometheus-P/ondacorea/compare/v1.1.0...v1.1.1
+[1.1.0]: https://github.com/Prometheus-P/ondacorea/compare/v1.0.0...v1.1.0
+[1.0.0]: https://github.com/Prometheus-P/ondacorea/compare/v0.4.0-alpha.2...v1.0.0
+[0.4.0-alpha.2]: https://github.com/Prometheus-P/ondacorea/releases/tag/v0.4.0-alpha.2

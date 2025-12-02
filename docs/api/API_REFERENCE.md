@@ -1,8 +1,8 @@
 ---
-title: HallyuLatino - API Reference
+title: OndaCorea - API Reference
 version: 1.0.0
 status: Approved
-owner: "@hallyulatino-team"
+owner: "@OndaCorea-team"
 created: 2024-11-28
 updated: 2024-11-28
 ---
@@ -15,7 +15,7 @@ updated: 2024-11-28
 |-------|-------|
 | Versión | 1.0.0 |
 | Última actualización | 2024-11-28 |
-| Autor | HallyuLatino Team |
+| Autor | OndaCorea Team |
 | Estado | Activo |
 
 ---
@@ -32,7 +32,7 @@ updated: 2024-11-28
 
 ## 1. Content Collections API
 
-HallyuLatino utiliza Astro Content Collections para gestionar contenido tipado.
+OndaCorea utiliza Astro Content Collections para gestionar contenido tipado.
 
 ### 1.1 Colecciones Disponibles
 
@@ -56,7 +56,7 @@ const baseArticleSchema = z.object({
   updatedDate: z.coerce.date().optional(), // Última actualización
   heroImage: z.string().optional(),     // URL de imagen principal
   heroImageAlt: z.string().optional(),  // Alt text de imagen
-  author: z.string().default('HallyuLatino'), // Autor
+  author: z.string().default('OndaCorea'), // Autor
   tags: z.array(z.string()).default([]), // Etiquetas
   draft: z.boolean().default(false),    // Borrador (no se publica)
 });
@@ -257,7 +257,7 @@ import SEOHead from '@/components/seo/SEOHead.astro';
     imageAlt="Poster de Goblin"
     type="article"
     publishedTime={new Date('2024-01-15')}
-    author="HallyuLatino"
+    author="OndaCorea"
     tags={['goblin', 'kdrama', 'fantasia']}
   />
 </head>
@@ -266,14 +266,14 @@ import SEOHead from '@/components/seo/SEOHead.astro';
 #### Output Generado
 
 ```html
-<title>Goblin: Reseña Completa | HallyuLatino</title>
+<title>Goblin: Reseña Completa | OndaCorea</title>
 <meta name="description" content="Todo sobre el K-Drama Goblin...">
-<link rel="canonical" href="https://hallyulatino.com/dramas/goblin">
+<link rel="canonical" href="https://ondacorea.com/dramas/goblin">
 
 <!-- Open Graph -->
 <meta property="og:title" content="Goblin: Reseña Completa">
 <meta property="og:description" content="Todo sobre el K-Drama Goblin...">
-<meta property="og:image" content="https://hallyulatino.com/images/dramas/goblin-og.jpg">
+<meta property="og:image" content="https://ondacorea.com/images/dramas/goblin-og.jpg">
 <meta property="og:type" content="article">
 
 <!-- Twitter Cards -->
@@ -342,12 +342,12 @@ import JsonLd from '@/components/seo/JsonLd.astro';
   data={{
     headline: "Goblin: Reseña Completa",
     description: "Todo sobre el K-Drama Goblin...",
-    image: "https://hallyulatino.com/images/goblin.jpg",
+    image: "https://ondacorea.com/images/goblin.jpg",
     datePublished: "2024-01-15T00:00:00Z",
     dateModified: "2024-01-20T00:00:00Z",
     author: {
-      name: "HallyuLatino",
-      url: "https://hallyulatino.com"
+      name: "OndaCorea",
+      url: "https://ondacorea.com"
     }
   }}
 />
@@ -357,9 +357,9 @@ import JsonLd from '@/components/seo/JsonLd.astro';
   type="BreadcrumbList"
   data={{
     items: [
-      { name: "Inicio", url: "https://hallyulatino.com" },
-      { name: "Dramas", url: "https://hallyulatino.com/dramas" },
-      { name: "Goblin", url: "https://hallyulatino.com/dramas/goblin" }
+      { name: "Inicio", url: "https://ondacorea.com" },
+      { name: "Dramas", url: "https://ondacorea.com/dramas" },
+      { name: "Goblin", url: "https://ondacorea.com/dramas/goblin" }
     ]
   }}
 />
@@ -446,7 +446,7 @@ import ArticleLayout from '@/layouts/ArticleLayout.astro';
   pubDate={new Date('2024-01-15')}
   heroImage="/images/dramas/goblin.jpg"
   heroImageAlt="Poster de Goblin"
-  author="HallyuLatino"
+  author="OndaCorea"
   tags={['fantasía', 'romance']}
   readingTime={8}
   breadcrumbs={[
@@ -497,11 +497,11 @@ function calculateReadingTime(content: string): number;
 // src/config/seo.ts (futuro)
 
 export const SEO_CONFIG = {
-  siteName: 'HallyuLatino',
-  siteUrl: 'https://hallyulatino.com',
+  siteName: 'OndaCorea',
+  siteUrl: 'https://ondacorea.com',
   defaultLocale: 'es-MX',
-  defaultAuthor: 'HallyuLatino',
-  twitterHandle: '@hallyulatino',
+  defaultAuthor: 'OndaCorea',
+  twitterHandle: '@ondacorea',
 
   // Límites
   titleMaxLength: 60,
@@ -685,7 +685,7 @@ const apiKey = import.meta.env.PUBLIC_API_KEY;
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  site: 'https://hallyulatino.com',
+  site: 'https://ondacorea.com',
   integrations: [
     sitemap({
       i18n: {
@@ -785,4 +785,4 @@ import { getCollection } from 'astro:content';
 
 ---
 
-*Documento mantenido por el equipo de HallyuLatino.*
+*Documento mantenido por el equipo de OndaCorea.*

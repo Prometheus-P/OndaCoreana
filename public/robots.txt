@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://hallyulatino.com/sitemap-index.xml
+Sitemap: https://ondacorea.com/sitemap-index.xml
 
 # Crawl-delay (optional, for politeness)
 Crawl-delay: 1

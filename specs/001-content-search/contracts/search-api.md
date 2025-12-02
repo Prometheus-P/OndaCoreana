@@ -192,13 +192,13 @@
 ### SEO Meta Tags
 
 ```html
-<title>Buscar: {query} | HallyuLatino</title>
-<meta name="description" content="Resultados de búsqueda para '{query}' en HallyuLatino" />
+<title>Buscar: {query} | OndaCorea</title>
+<meta name="description" content="Resultados de búsqueda para '{query}' en OndaCorea" />
 <meta name="robots" content="noindex, follow" /> <!-- Don't index empty searches -->
-<link rel="canonical" href="https://hallyulatino.com/buscar?q={query}" />
+<link rel="canonical" href="https://ondacorea.com/buscar?q={query}" />
 
 <!-- Open Graph -->
-<meta property="og:title" content="Buscar: {query} | HallyuLatino" />
+<meta property="og:title" content="Buscar: {query} | OndaCorea" />
 <meta property="og:description" content="Encuentra K-Dramas, K-Pop y más..." />
 <meta property="og:type" content="website" />
 ```

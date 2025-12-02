@@ -5,7 +5,7 @@ test.describe('Navigation', () => {
     await page.goto('/');
 
     // Check title
-    await expect(page).toHaveTitle(/HallyuLatino/);
+    await expect(page).toHaveTitle(/OndaCorea/);
 
     // Check main heading
     await expect(page.locator('h1')).toBeVisible();

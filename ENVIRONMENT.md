@@ -1,8 +1,8 @@
 ---
-title: HallyuLatino - Environment Setup Guide
+title: OndaCorea - Environment Setup Guide
 version: 1.0.0
 status: Approved
-owner: @hallyulatino-team
+owner: @OndaCorea-team
 created: 2024-11-28
 updated: 2024-11-28
 reviewers: []
@@ -97,8 +97,8 @@ pnpm --version
 
 ```bash
 # 1. 저장소 클론
-git clone https://github.com/Prometheus-P/hallyulatino.git
-cd hallyulatino
+git clone https://github.com/Prometheus-P/ondacorea.git
+cd ondacorea
 
 # 2. 의존성 설치
 pnpm install
@@ -234,7 +234,7 @@ PUBLIC_BUTTONDOWN_API_KEY=
 ```javascript
 // 핵심 설정
 export default defineConfig({
-  site: 'https://hallyulatino.com',  // 프로덕션 URL
+  site: 'https://ondacorea.com',  // 프로덕션 URL
   output: 'static',                   // SSG 모드
   trailingSlash: 'never',             // URL 끝에 슬래시 없음
 

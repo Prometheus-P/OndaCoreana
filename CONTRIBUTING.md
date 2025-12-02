@@ -1,8 +1,8 @@
 ---
-title: HallyuLatino - Contributing Guide
+title: OndaCorea - Contributing Guide
 version: 1.0.0
 status: Approved
-owner: @hallyulatino-team
+owner: @OndaCorea-team
 created: 2024-11-28
 updated: 2024-11-28
 reviewers: []
@@ -10,7 +10,7 @@ reviewers: []
 
 # CONTRIBUTING.md - 기여 가이드
 
-> **HallyuLatino 프로젝트에 기여해 주셔서 감사합니다!**
+> **OndaCorea 프로젝트에 기여해 주셔서 감사합니다!**
 > 이 문서는 프로젝트에 기여하는 방법을 안내합니다.
 
 ---
@@ -100,11 +100,11 @@ reviewers: []
 # 1. 저장소 포크 (GitHub UI에서)
 
 # 2. 포크한 저장소 클론
-git clone https://github.com/YOUR_USERNAME/hallyulatino.git
-cd hallyulatino
+git clone https://github.com/YOUR_USERNAME/ondacorea.git
+cd ondacorea
 
 # 3. 업스트림 원격 저장소 추가
-git remote add upstream https://github.com/Prometheus-P/hallyulatino.git
+git remote add upstream https://github.com/Prometheus-P/ondacorea.git
 
 # 4. 의존성 설치
 pnpm install
@@ -411,7 +411,7 @@ description: "Descubre todo sobre [드라마]. Sinopsis, reparto, episodios y d�
 pubDate: 2024-01-15
 heroImage: "/images/dramas/[slug].jpg"
 heroImageAlt: "Póster oficial de [드라마]"
-author: "HallyuLatino"
+author: "OndaCorea"
 tags: ["romance", "comedia", "2024", "tvN"]
 dramaTitle: "한국어 제목"
 dramaYear: 2024
@@ -469,7 +469,7 @@ description: "Todo sobre [아티스트]. Historia, miembros, álbumes y últimas
 pubDate: 2024-01-15
 heroImage: "/images/kpop/[slug].jpg"
 heroImageAlt: "[아티스트] foto oficial"
-author: "HallyuLatino"
+author: "OndaCorea"
 tags: ["girl group", "SM Entertainment", "4ta generación"]
 artistName: "아티스트명"
 artistType: "grupo"
@@ -589,4 +589,4 @@ members: ["Member 1", "Member 2", "Member 3"]
 
 **기여해 주셔서 감사합니다! 🙏**
 
-*HallyuLatino Team*
+*OndaCorea Team*

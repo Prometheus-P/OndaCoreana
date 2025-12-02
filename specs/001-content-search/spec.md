@@ -57,7 +57,7 @@ A visitor on the search results page wants to narrow down results to a specific 
 
 ### User Story 4 - SEO-Friendly Search Results Page (Priority: P4)
 
-Search results pages with query parameters are discoverable by search engines, allowing users to find HallyuLatino through Google searches like "hallyulatino BTS".
+Search results pages with query parameters are discoverable by search engines, allowing users to find OndaCorea through Google searches like "ondacorea BTS".
 
 **Why this priority**: Important for SEO goals but depends on search functionality (P1) existing first. Enhances organic traffic acquisition.
 

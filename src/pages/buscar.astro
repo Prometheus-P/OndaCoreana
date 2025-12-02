@@ -4,11 +4,11 @@ import SearchInput from '../components/search/SearchInput.astro';
 import SearchFilters from '../components/search/SearchFilters.astro';
 
 // SEO meta - default for SSG (client-side will update based on query)
-const title = 'Buscar | HallyuLatino';
+const title = 'Buscar | OndaCorea';
 const description = 'Busca contenido sobre K-Dramas, K-Pop, noticias y guías de cultura coreana en español.';
 
 // Get the base site URL for canonical
-const siteUrl = Astro.site?.toString().replace(/\/$/, '') || 'https://hallyulatino.com';
+const siteUrl = Astro.site?.toString().replace(/\/$/, '') || 'https://ondacorea.com';
 ---
 
 <BaseLayout title={title} description={description} noindex={true}>
@@ -147,8 +147,8 @@ const siteUrl = Astro.site?.toString().replace(/\/$/, '') || 'https://hallyulati
     }
 
     if (hasValidQuery) {
-      const newTitle = `Resultados para "${query}" | Buscar | HallyuLatino`;
-      const newDescription = `${resultCount} resultado${resultCount !== 1 ? 's' : ''} encontrado${resultCount !== 1 ? 's' : ''} para "${query}" en HallyuLatino. Explora K-Dramas, K-Pop, noticias y guías.`;
+      const newTitle = `Resultados para "${query}" | Buscar | OndaCorea`;
+      const newDescription = `${resultCount} resultado${resultCount !== 1 ? 's' : ''} encontrado${resultCount !== 1 ? 's' : ''} para "${query}" en OndaCorea. Explora K-Dramas, K-Pop, noticias y guías.`;
       const canonicalUrl = `${siteUrl}/buscar?q=${encodeURIComponent(query)}`;
 
       // Update title
@@ -178,7 +178,7 @@ const siteUrl = Astro.site?.toString().replace(/\/$/, '') || 'https://hallyulati
       }
     } else {
       // Reset to default for empty queries
-      const defaultTitle = 'Buscar | HallyuLatino';
+      const defaultTitle = 'Buscar | OndaCorea';
       const defaultDescription = 'Busca contenido sobre K-Dramas, K-Pop, noticias y guías de cultura coreana en español.';
       const canonicalUrl = `${siteUrl}/buscar`;
 

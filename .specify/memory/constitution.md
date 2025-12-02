@@ -17,7 +17,7 @@ Templates requiring updates:
 Follow-up TODOs: None
 -->
 
-# HallyuLatino Constitution
+# OndaCorea Constitution
 
 ## Core Principles
 
