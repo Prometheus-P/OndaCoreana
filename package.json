@@ -1,7 +1,7 @@
 {
   "name": "ondacorea",
   "type": "module",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Portal de K-Dramas, K-Pop y cultura coreana en español",
   "scripts": {
     "dev": "astro dev",
