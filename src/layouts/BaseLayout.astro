@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import SEOHead from '../components/seo/SEOHead.astro';
 import JsonLd from '../components/seo/JsonLd.astro';
+import SearchInput from '../components/search/SearchInput.astro';
 
 interface Props {
   title: string;
@@ -80,6 +81,11 @@ const props = Astro.props;
           </li>
         </ul>
 
+        <!-- Desktop search -->
+        <div class="hidden md:block w-64">
+          <SearchInput placeholder="Buscar..." size="sm" />
+        </div>
+
         <!-- Mobile menu button -->
         <button
           type="button"
@@ -95,6 +101,10 @@ const props = Astro.props;
 
       <!-- Mobile menu -->
       <div class="hidden md:hidden" id="mobile-menu">
+        <!-- Mobile search -->
+        <div class="px-4 pb-4">
+          <SearchInput placeholder="Buscar..." size="md" />
+        </div>
         <ul class="space-y-1 px-4 pb-4">
           <li>
             <a href="/dramas" class="block py-2 text-gray-600 hover:text-pink-600">K-Dramas</a>
