@@ -1,29 +1,147 @@
-# build output
-dist/
+# ============================================
+# SECURITY - Sensitive Files (CRITICAL)
+# ============================================
 
-# generated types
+# Environment & Secrets
+.env
+.env.*
+!.env.example
+*.env
+.secrets
+secrets/
+*.secret
+*.secrets
+
+# API Keys & Tokens
+*.key
+*.pem
+*.p12
+*.pfx
+*.crt
+*.cer
+*credentials*
+*token*.json
+api-keys/
+.api-key
+
+# SSH Keys
+id_rsa*
+id_ed25519*
+id_dsa*
+*.pub
+
+# Cloud Provider Credentials
+.aws/
+.gcp/
+.azure/
+credentials.json
+service-account*.json
+
+# ============================================
+# Development Environment (Local Only)
+# ============================================
+
+# Claude Code - Local Settings
+.claude/settings.local.json
+.claude/*.local.*
+
+# Speckit - Memory & Local State
+.specify/memory/
+.specify/cache/
+.specify/*.local.*
+
+# Editor/IDE Local Settings
+.vscode/settings.json
+.vscode/launch.json
+.vscode/*.local.*
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# ============================================
+# Build & Dependencies
+# ============================================
+
+# Build Output
+dist/
+build/
+.output/
+.vercel/
+.netlify/
+
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Astro Generated
 .astro/
 
-# dependencies
-node_modules/
+# ============================================
+# Testing & Reports
+# ============================================
 
-# logs
+# Playwright
+test-results/
+playwright-report/
+playwright/.cache/
+blob-report/
+
+# Coverage
+coverage/
+.nyc_output/
+*.lcov
+
+# ============================================
+# Logs & Temporary Files
+# ============================================
+
+# Logs
+logs/
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+lerna-debug.log*
 
-# environment variables
-.env
-.env.production
+# Temporary Files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+.cache/
+.temp/
+.tmp/
 
-# macOS-specific files
+# ============================================
+# OS-Specific Files
+# ============================================
+
+# macOS
 .DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
 
-# jetbrains setting folder
-.idea/
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
 
-# playwright test results
-test-results/
-playwright-report/
-playwright/.cache/
+# Linux
+*~
+.directory
+.Trash-*
+
+# ============================================
+# Package Manager Lock Files (Optional)
+# ============================================
+# Uncomment if you want to ignore lock files
+# package-lock.json
+# pnpm-lock.yaml
+# yarn.lock
