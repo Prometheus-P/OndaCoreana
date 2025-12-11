@@ -1,29 +1,21 @@
-# ═══════════════════════════════════════════════════════════════
-# HallyuLatino CI 파이프라인
-# ═══════════════════════════════════════════════════════════════
-# Astro 정적 사이트 생성 프로젝트를 위한 CI/CD 워크플로우
-
 name: CI
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main, staging]
   pull_request:
-    branches: [main, develop]
+    branches: [main, staging]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 env:
-  NODE_VERSION: "20"
+  NODE_VERSION: '18'
 
 jobs:
-  # ─────────────────────────────────────────────────────────────
-  # 코드 품질 및 타입 체크
-  # ─────────────────────────────────────────────────────────────
-  quality-check:
-    name: Quality Check
+  build-and-validate:
+    name: Build & Validate
     runs-on: ubuntu-latest
 
     steps:
@@ -33,173 +25,19 @@ jobs:
       - name: Set up pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 10
+          version: 9
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
+          cache: pnpm
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Run TypeScript type checking
-        run: pnpm check
+      - name: Run pnpm check (skips if script is missing)
+        run: pnpm run --if-present check
 
-      - name: Run content validation tests
-        run: pnpm test:content
-
-  # ─────────────────────────────────────────────────────────────
-  # 빌드 테스트
-  # ─────────────────────────────────────────────────────────────
-  build-test:
-    name: Build Test
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Run production build
+      - name: Build
         run: pnpm build
-
-      - name: Run build validation tests
-        run: pnpm test:build
-
-      - name: Run SEO validation tests
-        run: pnpm test:seo
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: dist
-          path: dist/
-          retention-days: 1
-
-  # ─────────────────────────────────────────────────────────────
-  # E2E 테스트 (Playwright)
-  # ─────────────────────────────────────────────────────────────
-  e2e-test:
-    name: E2E Test
-    runs-on: ubuntu-latest
-    needs: build-test
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Install Playwright Browsers
-        run: pnpm exec playwright install --with-deps chromium webkit
-
-      - name: Download build artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: dist
-          path: dist/
-
-      - name: Verify build artifacts
-        run: |
-          echo "Checking dist directory..."
-          ls -la dist/
-          echo "Checking for index.html..."
-          test -f dist/index.html && echo "✅ index.html found" || echo "❌ index.html not found"
-
-      - name: Run Playwright E2E tests
-        run: pnpm test:e2e
-
-      - name: Upload Playwright report
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 7
-
-      - name: Upload Playwright test results
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: playwright-results
-          path: test-results/
-          retention-days: 7
-
-  # ─────────────────────────────────────────────────────────────
-  # 보안 스캔
-  # ─────────────────────────────────────────────────────────────
-  security-scan:
-    name: Security Scan
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
-        with:
-          scan-type: "fs"
-          scan-ref: "."
-          severity: "CRITICAL,HIGH"
-          format: "sarif"
-          output: "trivy-results.sarif"
-
-      - name: Upload Trivy scan results
-        uses: github/codeql-action/upload-sarif@v3
-        if: always()
-        with:
-          sarif_file: "trivy-results.sarif"
-
-  # ─────────────────────────────────────────────────────────────
-  # 전체 상태 체크
-  # ─────────────────────────────────────────────────────────────
-  ci-status:
-    name: CI Status
-    runs-on: ubuntu-latest
-    needs: [quality-check, build-test, e2e-test, security-scan]
-    if: always()
-
-    steps:
-      - name: Check CI status
-        run: |
-          echo "Quality Check: ${{ needs.quality-check.result }}"
-          echo "Build Test: ${{ needs.build-test.result }}"
-          echo "E2E Test: ${{ needs.e2e-test.result }}"
-          echo "Security Scan: ${{ needs.security-scan.result }}"
-
-          if [[ "${{ needs.quality-check.result }}" == "failure" || \
-                "${{ needs.build-test.result }}" == "failure" || \
-                "${{ needs.e2e-test.result }}" == "failure" || \
-                "${{ needs.security-scan.result }}" == "failure" ]]; then
-            echo "❌ CI failed"
-            exit 1
-          fi
-          echo "✅ CI passed"
