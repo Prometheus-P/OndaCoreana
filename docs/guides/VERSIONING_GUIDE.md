@@ -124,7 +124,7 @@ git push origin --delete v1.0.0
 
 ```
 ┌─────────────┐     ┌─────────────┐     ┌─────────────┐
-│   Develop   │────▶│   Release   │────▶│    Main     │
+│   Staging   │────▶│   Release   │────▶│    Main     │
 │   Branch    │     │   Branch    │     │   (Prod)    │
 └─────────────┘     └─────────────┘     └─────────────┘
        │                   │                    │
@@ -167,7 +167,7 @@ git push origin --delete v1.0.0
 - [ ] Verificar sitio en producción
 - [ ] Crear GitHub Release con notas
 - [ ] Anunciar release (si es significativo)
-- [ ] Merge release branch de vuelta a develop
+- [ ] Merge release branch de vuelta a staging
 - [ ] Eliminar branch de release
 
 ### 3.3 Comandos de Release
@@ -280,7 +280,7 @@ y este proyecto adhiere a [Semantic Versioning](https://semver.org/lang/es/).
 | Branch | Propósito | Protección |
 |--------|-----------|------------|
 | `main` | Producción | Protected, require PR |
-| `develop` | Desarrollo activo | Protected, require PR |
+| staging | Desarrollo activo | Protected, require PR |
 
 ### 5.2 Branches de Soporte
 
@@ -319,8 +319,8 @@ git tag -a v1.0.1 -m "Hotfix v1.0.1 - Fix canonical URL"
 git push origin main
 git push origin v1.0.1
 
-# 9. Merge a develop también
-git checkout develop
+# 9. Merge a staging también
+git checkout staging
 git merge main
 
 # 10. Cleanup
