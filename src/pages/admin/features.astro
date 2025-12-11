@@ -111,19 +111,125 @@ import FeaturePreview from '../../components/admin/FeaturePreview.astro';
     }
   };
 
+  // Validation helper
+  interface ValidationError {
+    field: string;
+    message: string;
+  }
+
+  const validateForm = (): ValidationError[] => {
+    const errors: ValidationError[] = [];
+
+    const title = getField('title')?.value?.trim();
+    if (!title) {
+      errors.push({ field: 'title', message: 'El título es obligatorio' });
+    }
+
+    const descriptionEs = getField('descriptionEs')?.value?.trim();
+    if (!descriptionEs) {
+      errors.push({ field: 'descriptionEs', message: 'La descripción es obligatoria' });
+    }
+
+    const category = (getField<HTMLSelectElement>('category'))?.value;
+    if (!category) {
+      errors.push({ field: 'category', message: 'Selecciona una categoría' });
+    }
+
+    const countries = parseList(getField('countries')?.value || '');
+    if (!countries.length) {
+      errors.push({ field: 'countries', message: 'Añade al menos un país' });
+    }
+
+    const latamHook = parseList(getField('latamHook')?.value || '');
+    if (!latamHook.length) {
+      errors.push({ field: 'latamHook', message: 'Añade al menos un gancho LatAm' });
+    }
+
+    const publishDate = getField('publishDate')?.value;
+    if (!publishDate) {
+      errors.push({ field: 'publishDate', message: 'La fecha de publicación es obligatoria' });
+    }
+
+    const heroImage = getField('heroImage')?.value?.trim();
+    if (!heroImage) {
+      errors.push({ field: 'heroImage', message: 'La imagen hero es obligatoria' });
+    }
+
+    const heroImageAlt = getField('heroImageAlt')?.value?.trim();
+    if (!heroImageAlt) {
+      errors.push({ field: 'heroImageAlt', message: 'El texto alt de la imagen es obligatorio' });
+    }
+
+    return errors;
+  };
+
+  // Slug generation helper
+  const generateSlug = (title: string): string => {
+    return title
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '') // Remove diacritics
+      .replace(/[^a-z0-9\s-]/g, '') // Remove special chars
+      .trim()
+      .replace(/\s+/g, '-') // Replace spaces with hyphens
+      .replace(/-+/g, '-'); // Remove consecutive hyphens
+  };
+
+  // Known existing slugs (loaded at build time, this is a simplified check)
+  // In production, this would ideally check against the actual content directory
+  const existingSlugs = new Set(['latam-demo']); // Add known slugs here
+
+  const isSlugUnique = (slug: string): boolean => {
+    return !existingSlugs.has(slug);
+  };
+
+  const showValidationErrors = (errors: ValidationError[]) => {
+    // Clear previous errors
+    form?.querySelectorAll('.field-error').forEach((el) => el.remove());
+    form?.querySelectorAll('.error-border').forEach((el) => el.classList.remove('error-border'));
+
+    errors.forEach((err) => {
+      const field = getField(err.field);
+      if (field) {
+        field.classList.add('error-border');
+        const errorEl = document.createElement('span');
+        errorEl.className = 'field-error';
+        errorEl.textContent = err.message;
+        errorEl.style.cssText = 'color: #ff7787; font-size: 12px; display: block; margin-top: 4px;';
+        field.parentElement?.appendChild(errorEl);
+      }
+    });
+
+    // Alert summary
+    const messages = errors.map((e) => `• ${e.message}`).join('\n');
+    alert(`Corrige los siguientes errores antes de exportar:\n\n${messages}`);
+  };
+
   const exportMdx = () => {
     if (!form) return;
-    const hooks = parseList(getField('latamHook')?.value || '');
-    if (!hooks.length) {
-      alert('Añade al menos un gancho LatAm antes de exportar.');
+
+    // Validate all required fields
+    const errors = validateForm();
+    if (errors.length > 0) {
+      showValidationErrors(errors);
       return;
     }
+
+    const title = getField('title')?.value || 'Nueva nota';
+    const slug = generateSlug(title);
+
+    // Check for duplicate slug
+    if (!isSlugUnique(slug)) {
+      alert(`El slug "${slug}" ya existe. Por favor cambia el título para generar un slug único.`);
+      return;
+    }
+
     const payload = {
-      title: getField('title')?.value || 'Nueva nota',
+      title,
       descriptionEs: getField('descriptionEs')?.value || '',
       category: (getField<HTMLSelectElement>('category'))?.value || 'culture',
       countries: parseList(getField('countries')?.value || ''),
-      latamHook: hooks,
+      latamHook: parseList(getField('latamHook')?.value || ''),
       heroImage: getField('heroImage')?.value || '',
       heroImageAlt: getField('heroImageAlt')?.value || '',
       publishDate: getField('publishDate')?.value || new Date().toISOString().slice(0, 10),
@@ -158,9 +264,12 @@ import FeaturePreview from '../../components/admin/FeaturePreview.astro';
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'feature-latam.mdx';
+    a.download = `${slug}.mdx`;
     a.click();
     URL.revokeObjectURL(url);
+
+    // Add slug to known slugs to prevent immediate duplicate
+    existingSlugs.add(slug);
   };
 
   const handleAi = () => {
