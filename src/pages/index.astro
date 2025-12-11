@@ -188,9 +188,10 @@ const recentNoticias = allNoticias
         <p class="mx-auto mt-4 max-w-xl text-lg text-pink-100">
           Suscríbete a nuestro boletín y recibe las últimas noticias de K-Dramas y K-Pop directamente en tu bandeja de entrada.
         </p>
-        <form class="mx-auto mt-8 flex max-w-md flex-col gap-4 sm:flex-row">
+        <form id="newsletter-form" class="mx-auto mt-8 flex max-w-md flex-col gap-4 sm:flex-row">
           <input
             type="email"
+            id="newsletter-email"
             placeholder="Tu correo electrónico"
             class="flex-1 rounded-lg border-0 px-4 py-3 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-white"
             required
@@ -202,7 +203,32 @@ const recentNoticias = allNoticias
             Suscribirse
           </button>
         </form>
+        <p
+          id="newsletter-success"
+          class="mx-auto mt-4 max-w-md text-center text-white hidden"
+          role="status"
+          aria-live="polite"
+          aria-hidden="true"
+        >
+          ¡Gracias! Te avisaremos cuando lancemos el boletín.
+        </p>
       </div>
     </div>
   </section>
 </BaseLayout>
+
+<script>
+  const form = document.getElementById('newsletter-form');
+  const successMessage = document.getElementById('newsletter-success');
+  const emailInput = document.getElementById('newsletter-email');
+
+  form?.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    if (emailInput instanceof HTMLInputElement && emailInput.checkValidity()) {
+      form.classList.add('hidden');
+      successMessage?.classList.remove('hidden');
+      successMessage?.setAttribute('aria-hidden', 'false');
+    }
+  });
+</script>
