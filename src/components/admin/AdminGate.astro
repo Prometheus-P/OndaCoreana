@@ -70,9 +70,9 @@ const redirectPath = Astro.props.redirect ?? '/admin/features';
   }
 </style>
 
-<script>
-  const code = '{accessCode}';
-  const redirect = '{redirectPath}';
+<script define:vars={{ accessCode, redirectPath }}>
+  const code = accessCode;
+  const redirect = redirectPath;
   const SESSION_KEY = 'oc-admin-session';
   const ATTEMPTS_KEY = 'oc-admin-attempts';
   const LOCKOUT_KEY = 'oc-admin-lockout';
