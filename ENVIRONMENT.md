@@ -196,34 +196,51 @@ code .
 
 ### 4.1 현재 상태
 
-**이 프로젝트는 100% 정적 사이트로, 빌드 시 환경 변수가 필요하지 않습니다.**
-
-모든 설정은 `astro.config.mjs`에 하드코딩되어 있습니다.
-
-### 4.2 향후 환경 변수 (예정)
-
-향후 기능 추가 시 필요할 수 있는 환경 변수:
+환경 변수는 `.env` 파일에서 관리됩니다. `.env.example`을 복사하여 설정하세요:
 
 ```bash
-# .env.example (향후 생성 예정)
+cp .env.example .env
+```
 
-# Analytics (Phase 2)
+### 4.2 환경 변수 목록
+
+```bash
+# ============================================
+# Google Analytics 4
+# ============================================
+# GA4 Measurement ID (Admin > Property > Data Streams)
 PUBLIC_GA_MEASUREMENT_ID=G-XXXXXXXXXX
 
-# Search (Phase 3)
-PUBLIC_ALGOLIA_APP_ID=
-PUBLIC_ALGOLIA_SEARCH_KEY=
+# ============================================
+# Newsletter - Buttondown
+# ============================================
+# Buttondown username (buttondown.email/your-username)
+PUBLIC_BUTTONDOWN_USERNAME=ondacoreana
 
-# Newsletter (Phase 3)
-PUBLIC_BUTTONDOWN_API_KEY=
+# ============================================
+# Admin Features
+# ============================================
+# Access code for admin panel (client-side gate)
+# WARNING: This is exposed client-side - use as friction, not security
+PUBLIC_ADMIN_ACCESS_CODE=your-admin-code-here
+
+# AI Design Agent API (optional)
+# AI_AGENT_ENDPOINT=https://api.example.com/generate
+# AI_AGENT_KEY=your-api-key-here
 ```
 
 ### 4.3 환경 변수 규칙
 
 | 접두사 | 용도 | 클라이언트 노출 |
 |--------|------|----------------|
-| `PUBLIC_` | 클라이언트 사이드 | ✅ 노출됨 |
+| `PUBLIC_` | 클라이언트 사이드 | ✅ 노출됨 (빌드에 포함) |
 | (없음) | 서버 사이드 only | ❌ 노출 안됨 |
+
+### 4.4 보안 고려사항
+
+- `PUBLIC_ADMIN_ACCESS_CODE`: 클라이언트 사이드에서 노출되므로 진정한 보안 대책이 아닙니다. 단순 접근 제한(friction) 용도로만 사용하세요.
+- `AI_AGENT_KEY`: `PUBLIC_` 접두사 없이 서버 사이드에서만 사용해야 합니다.
+- Cloudflare Pages에서 환경 변수 설정: Settings > Environment variables
 
 ---
 

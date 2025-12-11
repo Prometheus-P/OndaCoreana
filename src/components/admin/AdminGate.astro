@@ -74,12 +74,64 @@ const redirectPath = Astro.props.redirect ?? '/admin/features';
   const code = '{accessCode}';
   const redirect = '{redirectPath}';
   const SESSION_KEY = 'oc-admin-session';
+  const ATTEMPTS_KEY = 'oc-admin-attempts';
+  const LOCKOUT_KEY = 'oc-admin-lockout';
+  const MAX_ATTEMPTS = 5;
+  const LOCKOUT_DURATION = 5 * 60 * 1000; // 5 minutes in ms
 
-  const gate = document.getElementById('admin-gate');
   const form = document.getElementById('admin-gate-form') as HTMLFormElement;
   const slot = document.getElementById('admin-slot');
   const error = document.getElementById('gate-error');
   const logout = document.getElementById('logout-btn');
+  const submitBtn = form?.querySelector('button[type="submit"]') as HTMLButtonElement;
+
+  // Rate limiting helpers
+  const getAttempts = (): number => {
+    const val = window.localStorage.getItem(ATTEMPTS_KEY);
+    return val ? parseInt(val, 10) : 0;
+  };
+
+  const setAttempts = (count: number) => {
+    window.localStorage.setItem(ATTEMPTS_KEY, count.toString());
+  };
+
+  const getLockoutTime = (): number => {
+    const val = window.localStorage.getItem(LOCKOUT_KEY);
+    return val ? parseInt(val, 10) : 0;
+  };
+
+  const setLockout = () => {
+    window.localStorage.setItem(LOCKOUT_KEY, (Date.now() + LOCKOUT_DURATION).toString());
+  };
+
+  const clearLockout = () => {
+    window.localStorage.removeItem(LOCKOUT_KEY);
+    window.localStorage.removeItem(ATTEMPTS_KEY);
+  };
+
+  const isLockedOut = (): boolean => {
+    const lockoutTime = getLockoutTime();
+    if (!lockoutTime) return false;
+    if (Date.now() < lockoutTime) return true;
+    clearLockout();
+    return false;
+  };
+
+  const getRemainingLockoutSeconds = (): number => {
+    const lockoutTime = getLockoutTime();
+    return Math.ceil((lockoutTime - Date.now()) / 1000);
+  };
+
+  const updateLockoutUI = () => {
+    if (!isLockedOut()) return;
+    const remaining = getRemainingLockoutSeconds();
+    if (error) {
+      error.textContent = `Demasiados intentos. Espera ${Math.ceil(remaining / 60)} minuto(s).`;
+      error.removeAttribute('hidden');
+    }
+    if (submitBtn) submitBtn.disabled = true;
+    setTimeout(updateLockoutUI, 1000);
+  };
 
   const unlock = () => {
     if (!slot) return;
@@ -87,6 +139,7 @@ const redirectPath = Astro.props.redirect ?? '/admin/features';
     logout?.removeAttribute('hidden');
     error?.setAttribute('hidden', 'true');
     slot.removeAttribute('hidden');
+    clearLockout();
   };
 
   const lock = () => {
@@ -95,6 +148,11 @@ const redirectPath = Astro.props.redirect ?? '/admin/features';
     slot?.setAttribute('hidden', 'true');
     if (error) error.setAttribute('hidden', 'true');
   };
+
+  // Check lockout on load
+  if (isLockedOut()) {
+    updateLockoutUI();
+  }
 
   const stored = window.localStorage.getItem(SESSION_KEY);
   if (stored === code && code) {
@@ -107,17 +165,40 @@ const redirectPath = Astro.props.redirect ?? '/admin/features';
   form?.addEventListener('submit', (event) => {
     event.preventDefault();
     if (!form) return;
+
+    // Check lockout before processing
+    if (isLockedOut()) {
+      updateLockoutUI();
+      return;
+    }
+
     const formData = new FormData(form);
     const value = (formData.get('code') || '').toString().trim();
+
     if (value === code && code) {
       window.localStorage.setItem(SESSION_KEY, value);
+      clearLockout();
       unlock();
       if (redirect && window.location.pathname === '/admin') {
         window.location.href = redirect;
       }
       return;
     }
-    error?.removeAttribute('hidden');
+
+    // Invalid attempt - increment counter
+    const attempts = getAttempts() + 1;
+    setAttempts(attempts);
+
+    if (attempts >= MAX_ATTEMPTS) {
+      setLockout();
+      updateLockoutUI();
+      return;
+    }
+
+    if (error) {
+      error.textContent = `Código inválido. ${MAX_ATTEMPTS - attempts} intento(s) restante(s).`;
+      error.removeAttribute('hidden');
+    }
   });
 
   logout?.addEventListener('click', () => {
