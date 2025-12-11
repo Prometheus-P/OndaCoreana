@@ -203,7 +203,13 @@ const recentNoticias = allNoticias
             Suscribirse
           </button>
         </form>
-        <p id="newsletter-success" class="mx-auto mt-4 max-w-md text-center text-white hidden">
+        <p
+          id="newsletter-success"
+          class="mx-auto mt-4 max-w-md text-center text-white hidden"
+          role="status"
+          aria-live="polite"
+          aria-hidden="true"
+        >
           ¡Gracias! Te avisaremos cuando lancemos el boletín.
         </p>
       </div>
@@ -214,14 +220,15 @@ const recentNoticias = allNoticias
 <script>
   const form = document.getElementById('newsletter-form');
   const successMessage = document.getElementById('newsletter-success');
-  const emailInput = document.getElementById('newsletter-email') as HTMLInputElement;
+  const emailInput = document.getElementById('newsletter-email');
 
   form?.addEventListener('submit', (event) => {
     event.preventDefault();
 
-    if (emailInput && emailInput.checkValidity()) {
+    if (emailInput instanceof HTMLInputElement && emailInput.checkValidity()) {
       form.classList.add('hidden');
       successMessage?.classList.remove('hidden');
+      successMessage?.setAttribute('aria-hidden', 'false');
     }
   });
 </script>
