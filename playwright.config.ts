@@ -23,10 +23,10 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'pnpm preview',
-    url: 'http://localhost:4321',
+    command: 'pnpm preview --host 0.0.0.0 --port 5173',
+    url: 'http://127.0.0.1:5173',
     reuseExistingServer: !process.env.CI,
-    timeout: 60000, // Increased timeout for CI
+    timeout: 120000, // Increased timeout for CI
     stdout: 'pipe',
     stderr: 'pipe',
   },

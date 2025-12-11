@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview",
+    "preview": "astro preview --host 0.0.0.0 --port 5173",
     "astro": "astro",
     "check": "astro check",
     "test": "pnpm test:content && pnpm test:build && pnpm test:seo",
