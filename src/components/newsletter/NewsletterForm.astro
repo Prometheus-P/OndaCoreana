@@ -1,0 +1,159 @@
+---
+/**
+ * Newsletter subscription form with Buttondown integration.
+ * Works in SSG mode using Buttondown's direct form submission.
+ *
+ * Setup:
+ * 1. Create a Buttondown account at https://buttondown.email
+ * 2. Get your username from your Buttondown settings
+ * 3. Set PUBLIC_BUTTONDOWN_USERNAME in .env (or use the default form action)
+ *
+ * Note: This uses Buttondown's embedded form which works without API keys
+ * and handles double opt-in automatically.
+ */
+
+interface Props {
+  variant?: 'inline' | 'card';
+  class?: string;
+}
+
+const { variant = 'inline', class: className = '' } = Astro.props;
+
+// Buttondown username - can be configured via environment variable
+const buttondownUsername = import.meta.env.PUBLIC_BUTTONDOWN_USERNAME || 'ondacoreana';
+const formAction = `https://buttondown.email/api/emails/embed-subscribe/${buttondownUsername}`;
+---
+
+{variant === 'card' ? (
+  <div class={`rounded-xl bg-gradient-to-r from-purple-600 to-pink-500 p-8 ${className}`}>
+    <div class="text-center">
+      <h2 class="text-2xl font-bold text-white sm:text-3xl">
+        ¿No quieres perderte nada?
+      </h2>
+      <p class="mx-auto mt-4 max-w-xl text-lg text-pink-100">
+        Suscríbete a nuestro boletín y recibe las últimas noticias de K-Dramas y K-Pop directamente en tu bandeja de entrada.
+      </p>
+      <form
+        action={formAction}
+        method="post"
+        target="popupwindow"
+        class="embeddable-buttondown-form mx-auto mt-8 flex max-w-md flex-col gap-4 sm:flex-row"
+        data-newsletter-form
+      >
+        <input
+          type="email"
+          name="email"
+          id="bd-email"
+          placeholder="Tu correo electrónico"
+          class="flex-1 rounded-lg border-0 px-4 py-3 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-white"
+          required
+          aria-label="Correo electrónico"
+        />
+        <button
+          type="submit"
+          class="rounded-lg bg-white px-6 py-3 font-semibold text-pink-600 hover:bg-pink-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          data-submit-btn
+        >
+          <span data-btn-text>Suscribirse</span>
+          <span data-btn-loading class="hidden">Enviando...</span>
+        </button>
+      </form>
+      <p
+        class="mx-auto mt-4 max-w-md text-center text-white hidden"
+        role="status"
+        aria-live="polite"
+        data-success-message
+      >
+        ¡Gracias! Revisa tu correo para confirmar la suscripción.
+      </p>
+      <p
+        class="mx-auto mt-4 max-w-md text-center text-red-200 hidden"
+        role="alert"
+        aria-live="polite"
+        data-error-message
+      >
+        Hubo un error. Por favor intenta de nuevo.
+      </p>
+      <p class="mt-4 text-xs text-pink-200">
+        Respetamos tu privacidad. Sin spam, solo contenido de calidad.
+      </p>
+    </div>
+  </div>
+) : (
+  <form
+    action={formAction}
+    method="post"
+    target="popupwindow"
+    class={`embeddable-buttondown-form flex flex-col gap-4 sm:flex-row ${className}`}
+    data-newsletter-form
+  >
+    <input
+      type="email"
+      name="email"
+      placeholder="Tu correo electrónico"
+      class="flex-1 rounded-lg border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
+      required
+      aria-label="Correo electrónico"
+    />
+    <button
+      type="submit"
+      class="rounded-lg bg-pink-600 px-6 py-3 font-semibold text-white hover:bg-pink-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      data-submit-btn
+    >
+      <span data-btn-text>Suscribirse</span>
+      <span data-btn-loading class="hidden">Enviando...</span>
+    </button>
+  </form>
+)}
+
+<script>
+  // Progressive enhancement for newsletter forms
+  document.querySelectorAll('[data-newsletter-form]').forEach((form) => {
+    const submitBtn = form.querySelector('[data-submit-btn]') as HTMLButtonElement;
+    const btnText = form.querySelector('[data-btn-text]') as HTMLElement;
+    const btnLoading = form.querySelector('[data-btn-loading]') as HTMLElement;
+    const successMessage = form.parentElement?.querySelector('[data-success-message]') as HTMLElement;
+    const errorMessage = form.parentElement?.querySelector('[data-error-message]') as HTMLElement;
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(form as HTMLFormElement);
+      const email = formData.get('email') as string;
+
+      if (!email) return;
+
+      // Show loading state
+      if (submitBtn) submitBtn.disabled = true;
+      if (btnText) btnText.classList.add('hidden');
+      if (btnLoading) btnLoading.classList.remove('hidden');
+
+      try {
+        // Submit to Buttondown API (CORS-friendly endpoint)
+        const response = await fetch((form as HTMLFormElement).action, {
+          method: 'POST',
+          body: formData,
+          mode: 'no-cors', // Buttondown doesn't support CORS from browser
+        });
+
+        // Since mode is 'no-cors', we can't read the response
+        // Assume success if no error thrown
+        (form as HTMLElement).classList.add('hidden');
+        if (successMessage) {
+          successMessage.classList.remove('hidden');
+          successMessage.setAttribute('aria-hidden', 'false');
+        }
+      } catch (error) {
+        console.error('Newsletter subscription error:', error);
+        if (errorMessage) {
+          errorMessage.classList.remove('hidden');
+          errorMessage.setAttribute('aria-hidden', 'false');
+        }
+        // Reset button state on error
+        if (submitBtn) submitBtn.disabled = false;
+        if (btnText) btnText.classList.remove('hidden');
+        if (btnLoading) btnLoading.classList.add('hidden');
+      }
+    });
+  });
+</script>

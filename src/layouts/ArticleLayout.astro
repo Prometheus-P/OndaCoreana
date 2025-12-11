@@ -132,9 +132,13 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString('es-419', {
       {tags.length > 0 && (
         <div class="flex flex-wrap" style="margin-top: var(--md-sys-spacing-md); gap: var(--md-sys-spacing-sm);">
           {tags.map((tag) => (
-            <span class="inline-flex items-center text-sm font-medium" style="border-radius: var(--md-sys-shape-corner-full); background-color: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container); padding: var(--md-sys-spacing-xs) var(--md-sys-spacing-md);">
-              {tag}
-            </span>
+            <a
+              href={`/tags/${tag.toLowerCase()}`}
+              class="inline-flex items-center text-sm font-medium hover:opacity-80 transition-opacity"
+              style="border-radius: var(--md-sys-shape-corner-full); background-color: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container); padding: var(--md-sys-spacing-xs) var(--md-sys-spacing-md);"
+            >
+              #{tag}
+            </a>
           ))}
         </div>
       )}
@@ -166,9 +170,9 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString('es-419', {
         <div class="flex flex-wrap" style="margin-top: var(--md-sys-spacing-md); gap: var(--md-sys-spacing-sm);">
           {tags.map((tag) => (
             <a
-              href={`/etiquetas/${tag.toLowerCase().replace(/\s+/g, '-')}`}
-              class="inline-flex items-center text-sm font-medium"
-              style="border-radius: var(--md-sys-shape-corner-full); background-color: var(--md-sys-color-surface-variant); color: var(--md-sys-color-on-surface-variant); padding: var(--md-sys-spacing-sm) var(--md-sys-spacing-md); transition: background-color var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);"
+              href={`/tags/${tag.toLowerCase()}`}
+              class="inline-flex items-center text-sm font-medium hover:bg-pink-100 hover:text-pink-700"
+              style="border-radius: var(--md-sys-shape-corner-full); background-color: var(--md-sys-color-surface-variant); color: var(--md-sys-color-on-surface-variant); padding: var(--md-sys-spacing-sm) var(--md-sys-spacing-md); transition: all 0.2s ease;"
             >
               #{tag}
             </a>

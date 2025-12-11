@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import NewsletterForm from '../components/newsletter/NewsletterForm.astro';
 import { getCollection } from 'astro:content';
 
 // Obtener contenido reciente
@@ -179,56 +180,9 @@ const recentNoticias = allNoticias
   </section>
 
   <!-- Newsletter CTA -->
-  <section class="bg-gradient-to-r from-purple-600 to-pink-500 py-16">
+  <section class="py-16">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="text-center">
-        <h2 class="text-2xl font-bold text-white sm:text-3xl">
-          ¿No quieres perderte nada?
-        </h2>
-        <p class="mx-auto mt-4 max-w-xl text-lg text-pink-100">
-          Suscríbete a nuestro boletín y recibe las últimas noticias de K-Dramas y K-Pop directamente en tu bandeja de entrada.
-        </p>
-        <form id="newsletter-form" class="mx-auto mt-8 flex max-w-md flex-col gap-4 sm:flex-row">
-          <input
-            type="email"
-            id="newsletter-email"
-            placeholder="Tu correo electrónico"
-            class="flex-1 rounded-lg border-0 px-4 py-3 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-white"
-            required
-          />
-          <button
-            type="submit"
-            class="rounded-lg bg-white px-6 py-3 font-semibold text-pink-600 hover:bg-pink-50 transition-colors"
-          >
-            Suscribirse
-          </button>
-        </form>
-        <p
-          id="newsletter-success"
-          class="mx-auto mt-4 max-w-md text-center text-white hidden"
-          role="status"
-          aria-live="polite"
-          aria-hidden="true"
-        >
-          ¡Gracias! Te avisaremos cuando lancemos el boletín.
-        </p>
-      </div>
+      <NewsletterForm variant="card" />
     </div>
   </section>
 </BaseLayout>
-
-<script>
-  const form = document.getElementById('newsletter-form');
-  const successMessage = document.getElementById('newsletter-success');
-  const emailInput = document.getElementById('newsletter-email');
-
-  form?.addEventListener('submit', (event) => {
-    event.preventDefault();
-
-    if (emailInput instanceof HTMLInputElement && emailInput.checkValidity()) {
-      form.classList.add('hidden');
-      successMessage?.classList.remove('hidden');
-      successMessage?.setAttribute('aria-hidden', 'false');
-    }
-  });
-</script>

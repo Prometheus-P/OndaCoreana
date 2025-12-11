@@ -1,10 +1,10 @@
 ---
 title: OndaCoreana - Project Context (Single Source of Truth)
-version: 1.0.0
+version: 1.4.0
 status: Approved
 owner: @OndaCoreana-team
 created: 2024-11-28
-updated: 2024-11-28
+updated: 2025-12-12
 reviewers: []
 ---
 
@@ -19,6 +19,8 @@ reviewers: []
 
 | 버전 | 날짜 | 작성자 | 변경 내용 |
 |------|------|--------|----------|
+| 1.4.0 | 2025-12-12 | @claude | GA4 통합, 태그 시스템, 뉴스레터 Buttondown 통합 |
+| 1.3.0 | 2025-12-12 | @claude | MVP 폴리싱 - 브랜드 일관성, 법적 페이지, 뉴스레터 UX |
 | 1.0.0 | 2024-11-28 | @claude | Astro SSG 마이그레이션 후 최초 작성 |
 
 ---
@@ -520,16 +522,17 @@ whereToWatch: ["Netflix"]
 ### Phase 2: Content & SEO (1-3개월)
 
 - [ ] 콘텐츠 50개 이상 작성
-- [ ] Google Analytics 연동
+- [x] Google Analytics 연동 (GA4 gtag 통합 완료 - v1.4.0)
 - [ ] Google Search Console 등록
 - [ ] Image optimization (Cloudflare Images)
-- [ ] 검색 기능 추가
+- [x] 검색 기능 추가 (Pagefind 통합 완료)
+- [x] 태그 시스템 추가 (`/tags`, `/tags/[tag]` - v1.4.0)
 
 ### Phase 3: Growth (3-6개월)
 
 - [ ] Google AdSense 연동
 - [ ] 소셜 미디어 공유 최적화
-- [ ] 뉴스레터 구독 기능
+- [x] 뉴스레터 구독 기능 (Buttondown 통합 완료 - v1.4.0)
 - [ ] 관련 콘텐츠 추천
 
 ### Phase 4: Monetization (6-12개월)

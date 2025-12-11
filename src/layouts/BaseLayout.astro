@@ -18,6 +18,9 @@ interface Props {
 }
 
 const props = Astro.props;
+
+// GA4 Measurement ID from environment variable
+const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
 ---
 
 <!doctype html>
@@ -43,6 +46,19 @@ const props = Astro.props;
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
     <slot name="head" />
+
+    {/* Google Analytics 4 */}
+    {gaMeasurementId && (
+      <>
+        <script async src={`https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}`}></script>
+        <script is:inline define:vars={{ gaMeasurementId }}>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', gaMeasurementId);
+        </script>
+      </>
+    )}
   </head>
   <body class="min-h-screen antialiased" style="background-color: var(--md-color-surface); color: var(--md-color-on-surface); font-family: var(--md-typo-font-family);">
     <a
