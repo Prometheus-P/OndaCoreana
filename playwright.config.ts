@@ -23,7 +23,7 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'pnpm preview --host 0.0.0.0 --port 5173',
+    command: 'pnpm start:e2e',
     url: 'http://127.0.0.1:5173',
     reuseExistingServer: !process.env.CI,
     timeout: 120000, // Increased timeout for CI
