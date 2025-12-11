@@ -76,7 +76,7 @@ const redirectPath = Astro.props.redirect ?? '/admin/features';
   const SESSION_KEY = 'oc-admin-session';
 
   const gate = document.getElementById('admin-gate');
-  const form = document.getElementById('admin-gate-form');
+  const form = document.getElementById('admin-gate-form') as HTMLFormElement;
   const slot = document.getElementById('admin-slot');
   const error = document.getElementById('gate-error');
   const logout = document.getElementById('logout-btn');
@@ -106,6 +106,7 @@ const redirectPath = Astro.props.redirect ?? '/admin/features';
 
   form?.addEventListener('submit', (event) => {
     event.preventDefault();
+    if (!form) return;
     const formData = new FormData(form);
     const value = (formData.get('code') || '').toString().trim();
     if (value === code && code) {

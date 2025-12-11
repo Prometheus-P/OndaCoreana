@@ -62,7 +62,7 @@ import FeaturePreview from '../../components/admin/FeaturePreview.astro';
     heroImage: document.querySelector('[data-preview="heroImage"]'),
   };
 
-  const getField = (id) => (form?.querySelector(`#${id}`) as HTMLInputElement | HTMLTextAreaElement | null);
+  const getField = <T extends HTMLElement = HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>(id: string) => (form?.querySelector(`#${id}`) as T | null);
 
   const parseList = (value: string) =>
     value
@@ -74,7 +74,7 @@ import FeaturePreview from '../../components/admin/FeaturePreview.astro';
     if (!form) return;
     const title = getField('title')?.value || 'Título de la nota';
     const description = getField('descriptionEs')?.value || 'Descripción en español para la audiencia latina.';
-    const category = (getField('category') as HTMLSelectElement)?.value || 'Categoría';
+    const category = (getField<HTMLSelectElement>('category'))?.value || 'Categoría';
     const countries = parseList(getField('countries')?.value || 'MX, CL').join(', ');
     const hooks = parseList(getField('latamHook')?.value || 'Engagement, Cultura');
     const tags = parseList(getField('tags')?.value || 'kpop, eventos').join(', ');
@@ -121,7 +121,7 @@ import FeaturePreview from '../../components/admin/FeaturePreview.astro';
     const payload = {
       title: getField('title')?.value || 'Nueva nota',
       descriptionEs: getField('descriptionEs')?.value || '',
-      category: (getField('category') as HTMLSelectElement)?.value || 'culture',
+      category: (getField<HTMLSelectElement>('category'))?.value || 'culture',
       countries: parseList(getField('countries')?.value || ''),
       latamHook: hooks,
       heroImage: getField('heroImage')?.value || '',

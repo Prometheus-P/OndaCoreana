@@ -587,7 +587,7 @@ name: Test & Build
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main, staging]
   pull_request:
     branches: [main]
 

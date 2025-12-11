@@ -8,7 +8,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
   use: {
-    baseURL: 'http://localhost:4321',
+    baseURL: 'http://localhost:5173',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },
@@ -23,10 +23,10 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'pnpm preview',
-    url: 'http://localhost:4321',
+    command: 'pnpm start:e2e',
+    url: 'http://127.0.0.1:5173',
     reuseExistingServer: !process.env.CI,
-    timeout: 60000, // Increased timeout for CI
+    timeout: 120000, // Increased timeout for CI
     stdout: 'pipe',
     stderr: 'pipe',
   },
