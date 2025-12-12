@@ -40,12 +40,7 @@ export default defineConfig({
         },
       },
     }),
-    pagefind({
-      site: 'dist',
-      indexing: {
-        verbose: false,
-      },
-    }), // Must be LAST integration
+    pagefind(), // Must be LAST integration
   ],
 
   build: {
