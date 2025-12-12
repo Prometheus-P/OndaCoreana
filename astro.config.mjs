@@ -41,8 +41,10 @@ export default defineConfig({
       },
     }),
     pagefind({
-      forceLanguage: 'es',
-      ui: false,
+      site: 'dist',
+      indexing: {
+        verbose: false,
+      },
     }), // Must be LAST integration
   ],
 

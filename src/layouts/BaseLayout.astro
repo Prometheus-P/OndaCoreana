@@ -67,7 +67,7 @@ const enableSearchSw = import.meta.env.PUBLIC_ENABLE_SEARCH_SW === 'true';
     {/* Google Analytics 4 */}
     {gaMeasurementId && (
       <>
-        <script async src={`https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}`}></script>
+        <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}`}></script>
         <script is:inline define:vars={{ gaMeasurementId }}>
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
