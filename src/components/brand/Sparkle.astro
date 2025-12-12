@@ -1,0 +1,35 @@
+---
+/**
+ * OndaCoreana Sparkle Icon
+ * Brand identity element - the signature 4-point star
+ */
+interface Props {
+  size?: number;
+  color?: string;
+  animate?: 'none' | 'spin' | 'pop';
+  class?: string;
+}
+
+const {
+  size = 40,
+  color = 'var(--oc-color-pink)',
+  animate = 'none',
+  class: className = ''
+} = Astro.props;
+
+const animationClass = animate === 'spin' ? 'oc-sparkle-spin' : animate === 'pop' ? 'oc-sparkle-pop' : '';
+---
+
+<svg
+  class:list={[animationClass, className]}
+  width={size}
+  height={size}
+  viewBox="0 0 40 40"
+  xmlns="http://www.w3.org/2000/svg"
+  aria-hidden="true"
+>
+  <path
+    fill={color}
+    d="M20,0 C20,15 35,20 40,20 C35,20 20,25 20,40 C20,25 5,20 0,20 C5,20 20,15 20,0 Z"
+  />
+</svg>

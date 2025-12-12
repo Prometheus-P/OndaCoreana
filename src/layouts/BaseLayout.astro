@@ -3,6 +3,7 @@ import '../styles/global.css';
 import SEOHead from '../components/seo/SEOHead.astro';
 import JsonLd from '../components/seo/JsonLd.astro';
 import SearchInput from '../components/search/SearchInput.astro';
+import { Logo } from '../components/brand';
 
 interface Props {
   title: string;
@@ -21,6 +22,22 @@ const props = Astro.props;
 
 // GA4 Measurement ID from environment variable
 const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
+// Google AdSense Publisher ID from environment variable
+const adsensePublisherId = import.meta.env.PUBLIC_ADSENSE_PUBLISHER_ID;
+
+const primaryNav = [
+  { href: '/dramas', label: 'K-Dramas' },
+  { href: '/kpop', label: 'K-Pop' },
+  { href: '/noticias', label: 'Noticias' },
+  { href: '/guias', label: 'Guías' },
+];
+
+const footerLinks = [
+  { href: '/privacidad', label: 'Política de Privacidad' },
+  { href: '/terminos', label: 'Términos de Uso' },
+];
+
+const enableSearchSw = import.meta.env.PUBLIC_ENABLE_SEARCH_SW === 'true';
 ---
 
 <!doctype html>
@@ -50,7 +67,7 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
     {/* Google Analytics 4 */}
     {gaMeasurementId && (
       <>
-        <script async src={`https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}`}></script>
+        <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${gaMeasurementId}`}></script>
         <script is:inline define:vars={{ gaMeasurementId }}>
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
@@ -59,42 +76,45 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
         </script>
       </>
     )}
+
+    {/* Google AdSense */}
+    {adsensePublisherId && (
+      <script
+        is:inline
+        async
+        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsensePublisherId}`}
+        crossorigin="anonymous"
+      ></script>
+    )}
   </head>
-  <body class="min-h-screen antialiased" style="background-color: var(--md-color-surface); color: var(--md-color-on-surface); font-family: var(--md-typo-font-family);">
+  <body class="min-h-screen antialiased">
     <a
       href="#main-content"
-      class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-pink-600 focus:text-white focus:px-4 focus:py-2 focus:rounded"
+      class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50"
+      style="background-color: var(--md-color-primary); color: var(--md-color-on-primary); padding: var(--md-spacing-sm) var(--md-spacing-lg); border-radius: var(--md-shape-sm); box-shadow: var(--md-elevation-2);"
     >
       Saltar al contenido principal
     </a>
 
-    <header class="sticky top-0 z-40 w-full backdrop-blur" style="border-bottom: 1px solid var(--md-color-outline-variant); background-color: var(--md-color-surface); background-color: color-mix(in srgb, var(--md-color-surface) 95%, transparent);" data-pagefind-ignore>
-      <nav class="mx-auto flex max-w-7xl items-center justify-between" style="padding: var(--md-spacing-md) var(--md-spacing-md);">
-        <a href="/" class="flex items-center gap-2 text-xl font-bold" style="color: var(--md-color-primary);">
-          <span>OndaCoreana</span>
+    <header
+      class="sticky top-0 z-40 w-full border-b"
+      style="border-color: color-mix(in srgb, var(--md-color-outline-variant) 70%, transparent); background: color-mix(in srgb, var(--md-color-surface) 88%, transparent); backdrop-filter: blur(18px);"
+      data-pagefind-ignore="all"
+    >
+      <nav class="mx-auto flex max-w-7xl items-center justify-between" style="padding: var(--md-spacing-md) var(--md-spacing-md); gap: var(--md-spacing-md);">
+        <a href="/" class="flex items-center gap-3" aria-label="Inicio OndaCoreana">
+          <Logo variant="horizontal" height={36} class="hidden sm:block" />
+          <Logo variant="icon" height={40} class="sm:hidden" />
         </a>
 
         <ul class="hidden items-center md:flex" style="gap: var(--md-spacing-lg);">
-          <li>
-            <a href="/dramas" class="nav-link">
-              K-Dramas
-            </a>
-          </li>
-          <li>
-            <a href="/kpop" class="nav-link">
-              K-Pop
-            </a>
-          </li>
-          <li>
-            <a href="/noticias" class="nav-link">
-              Noticias
-            </a>
-          </li>
-          <li>
-            <a href="/guias" class="nav-link">
-              Guías
-            </a>
-          </li>
+          {primaryNav.map((item) => (
+            <li>
+              <a href={item.href} class="nav-link">
+                {item.label}
+              </a>
+            </li>
+          ))}
         </ul>
 
         <!-- Desktop search -->
@@ -105,9 +125,10 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
         <!-- Mobile menu button -->
         <button
           type="button"
-          class="md:hidden p-2"
-          style="color: var(--md-color-on-surface);"
+          class="md:hidden rounded-md p-2"
+          style="color: var(--md-color-on-surface); border: 1px solid color-mix(in srgb, var(--md-color-outline) 70%, transparent);"
           aria-label="Abrir menú"
+          aria-expanded="false"
           id="mobile-menu-button"
         >
           <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -117,24 +138,19 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
       </nav>
 
       <!-- Mobile menu -->
-      <div class="hidden md:hidden" id="mobile-menu" style="background-color: var(--md-color-surface);">
+      <div class="hidden border-t md:hidden" id="mobile-menu" style="border-color: color-mix(in srgb, var(--md-color-outline-variant) 70%, transparent); background-color: var(--md-color-surface);">
         <!-- Mobile search -->
         <div class="px-4 pb-4">
           <SearchInput placeholder="Buscar..." size="md" />
         </div>
         <ul class="space-y-1 px-4 pb-4">
-          <li>
-            <a href="/dramas" class="block py-2 nav-link">K-Dramas</a>
-          </li>
-          <li>
-            <a href="/kpop" class="block py-2 nav-link">K-Pop</a>
-          </li>
-          <li>
-            <a href="/noticias" class="block py-2 nav-link">Noticias</a>
-          </li>
-          <li>
-            <a href="/guias" class="block py-2 nav-link">Guías</a>
-          </li>
+          {primaryNav.map((item) => (
+            <li>
+              <a href={item.href} class="block py-2 nav-link">
+                {item.label}
+              </a>
+            </li>
+          ))}
         </ul>
       </div>
     </header>
@@ -143,12 +159,12 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
       <slot />
     </main>
 
-    <footer class="border-t" style="border-color: var(--md-color-outline-variant); background-color: var(--md-color-surface-container-low);" data-pagefind-ignore>
+    <footer class="border-t" style="border-color: color-mix(in srgb, var(--md-color-outline-variant) 70%, transparent); background-color: var(--md-color-surface-container-low);" data-pagefind-ignore="all">
       <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 gap-8 md:grid-cols-4">
-          <div>
-            <h3 class="text-lg font-semibold" style="color: var(--md-color-on-surface);">OndaCoreana</h3>
-            <p class="mt-2 text-sm" style="color: var(--md-color-on-surface-variant);">
+          <div class="space-y-3">
+            <Logo variant="horizontal" height={32} />
+            <p class="text-sm subtle-text">
               Tu fuente de información sobre K-Dramas, K-Pop y cultura coreana en español.
             </p>
           </div>
@@ -156,18 +172,18 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
           <div>
             <h4 class="font-semibold" style="color: var(--md-color-on-surface);">Contenido</h4>
             <ul class="mt-2 space-y-2 text-sm">
-              <li><a href="/dramas" class="nav-link">K-Dramas</a></li>
-              <li><a href="/kpop" class="nav-link">K-Pop</a></li>
-              <li><a href="/noticias" class="nav-link">Noticias</a></li>
-              <li><a href="/guias" class="nav-link">Guías</a></li>
+              {primaryNav.map((item) => (
+                <li><a href={item.href} class="nav-link">{item.label}</a></li>
+              ))}
             </ul>
           </div>
 
           <div>
             <h4 class="font-semibold" style="color: var(--md-color-on-surface);">Legal</h4>
             <ul class="mt-2 space-y-2 text-sm">
-              <li><a href="/privacidad" class="nav-link">Política de Privacidad</a></li>
-              <li><a href="/terminos" class="nav-link">Términos de Uso</a></li>
+              {footerLinks.map((link) => (
+                <li><a href={link.href} class="nav-link">{link.label}</a></li>
+              ))}
             </ul>
           </div>
 
@@ -199,8 +215,16 @@ const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
       const mobileMenu = document.getElementById('mobile-menu');
 
       menuButton?.addEventListener('click', () => {
-        mobileMenu?.classList.toggle('hidden');
+        const menuIsHidden = mobileMenu?.classList.toggle('hidden');
+        const expanded = !(menuIsHidden ?? true);
+        menuButton?.setAttribute('aria-expanded', expanded ? 'true' : 'false');
       });
     </script>
+    {enableSearchSw && (
+      <script type="module" is:inline>
+        import { registerSearchServiceWorker } from '../scripts/register-sw.ts';
+        registerSearchServiceWorker();
+      </script>
+    )}
   </body>
 </html>

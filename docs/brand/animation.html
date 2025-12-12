@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OndaCoreana UI Animations</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&display=swap');
+
+        :root {
+            --k-pink: #ec4899;
+            --k-black: #111111;
+            --bg-gray: #F4F5F7;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--bg-gray);
+            color: var(--k-black);
+            overflow-x: hidden;
+        }
+
+        section {
+            padding: 60px 20px;
+            border-bottom: 1px solid #ddd;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 50vh;
+        }
+
+        h2.guide-title {
+            font-size: 0.9rem;
+            color: #888;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* =========================================
+           1. HERO REVEAL ANIMATION (인트로 타이틀)
+           ========================================= */
+        .hero-container {
+            text-align: center;
+            overflow: hidden;
+            /* 텍스트가 아래에서 올라올 때 가려줌 */
+        }
+
+        .reveal-text-box {
+            overflow: hidden;
+            display: inline-block;
+            vertical-align: bottom;
+        }
+
+        .reveal-text {
+            font-size: 4rem;
+            font-weight: 900;
+            line-height: 1;
+            display: block;
+            transform: translateY(100%);
+            animation: slideUp 1s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+        }
+
+        /* 두 번째 줄은 딜레이 */
+        .reveal-text.delay {
+            animation-delay: 0.2s;
+        }
+
+        .hero-sparkle {
+            width: 60px;
+            display: inline-block;
+            transform: scale(0);
+            animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            animation-delay: 0.8s;
+            /* 텍스트 다 올라온 뒤 등장 */
+            vertical-align: top;
+            margin-left: 10px;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(110%);
+            }
+
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes popIn {
+            from {
+                transform: scale(0) rotate(-45deg);
+            }
+
+            to {
+                transform: scale(1) rotate(0deg);
+            }
+        }
+
+        /* =========================================
+           2. HOLOGRAM CARD HOVER (포토카드 효과)
+           ========================================= */
+        .card-grid {
+            display: flex;
+            gap: 20px;
+        }
+
+        .k-card {
+            width: 200px;
+            height: 280px;
+            background: #111;
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+        }
+
+        .k-card:hover {
+            transform: translateY(-10px);
+        }
+
+        /* 홀로그램 빛 효과 (Sweep) */
+        .k-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(to right,
+                    rgba(255, 255, 255, 0) 0%,
+                    rgba(255, 255, 255, 0.3) 50%,
+                    rgba(255, 255, 255, 0) 100%);
+            transform: skewX(-25deg);
+            transition: none;
+        }
+
+        .k-card:hover::after {
+            animation: shine 0.75s;
+        }
+
+        @keyframes shine {
+            100% {
+                left: 150%;
+            }
+        }
+
+        .card-img-placeholder {
+            opacity: 0.3;
+            font-size: 0.8rem;
+        }
+
+        /* =========================================
+           3. RHYTHM BUTTON (비트감 있는 버튼)
+           ========================================= */
+        .btn-rhythm {
+            background: var(--k-black);
+            color: white;
+            padding: 20px 50px;
+            font-size: 1.2rem;
+            font-weight: 900;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            /* 기본 그림자 */
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Hover 시 핑크빛 네온 효과 및 펌핑 */
+        .btn-rhythm:hover {
+            background: var(--k-black);
+            animation: pulse-pink 1.5s infinite;
+        }
+
+        @keyframes pulse-pink {
+            0% {
+                box-shadow: 0 0 0 0 rgba(255, 0, 85, 0.7);
+                transform: scale(1);
+            }
+
+            70% {
+                box-shadow: 0 0 0 20px rgba(255, 0, 85, 0);
+                transform: scale(1.05);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(255, 0, 85, 0);
+                transform: scale(1);
+            }
+        }
+
+        /* =========================================
+           4. INFINITE MARQUEE (흐르는 텍스트 띠)
+           ========================================= */
+        .marquee-wrapper {
+            width: 100%;
+            background: var(--k-pink);
+            padding: 20px 0;
+            overflow: hidden;
+            white-space: nowrap;
+            position: relative;
+        }
+
+        .marquee-track {
+            display: inline-block;
+            animation: scrollText 10s linear infinite;
+        }
+
+        .marquee-item {
+            display: inline-block;
+            font-size: 2rem;
+            font-weight: 900;
+            color: white;
+            margin-right: 60px;
+            /* 아이템 간 간격 */
+        }
+
+        .marquee-item span {
+            color: var(--k-black);
+            /* 포인트 컬러 */
+        }
+
+        @keyframes scrollText {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
+
+            /* 텍스트 길이의 절반만큼 이동 후 루프 */
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- 1. Hero Text Reveal -->
+    <section>
+        <h2 class="guide-title">01. Hero Reveal (인트로용)</h2>
+        <div class="hero-container">
+            <div class="reveal-text-box">
+                <span class="reveal-text">FEEL THE</span>
+            </div>
+            <br>
+            <div class="reveal-text-box">
+                <span class="reveal-text delay">NEW WAVE</span>
+            </div>
+            <!-- 확정된 Sparkle Logo -->
+            <svg class="hero-sparkle" viewBox="0 0 40 40">
+                <path d="M20,0 C20,15 35,20 40,20 C35,20 20,25 20,40 C20,25 5,20 0,20 C5,20 20,15 20,0 Z"
+                    fill="#ec4899" />
+            </svg>
+        </div>
+    </section>
+
+    <!-- 2. Hologram Card Effect -->
+    <section>
+        <h2 class="guide-title">02. Hologram Card (뉴스/아티스트 카드)</h2>
+        <div class="card-grid">
+            <div class="k-card">
+                <span class="card-img-placeholder">NEWS CARD 01</span>
+            </div>
+            <div class="k-card" style="background: var(--k-pink);">
+                <span class="card-img-placeholder">ARTIST CARD 02</span>
+            </div>
+            <div class="k-card">
+                <span class="card-img-placeholder">EVENT CARD 03</span>
+            </div>
+        </div>
+        <p style="margin-top:20px; color:#666; font-size:0.8rem;">* 마우스를 올려보세요 (Hover Me)</p>
+    </section>
+
+    <!-- 3. Rhythm Button -->
+    <section>
+        <h2 class="guide-title">03. Rhythm Pulse Button (CTA)</h2>
+        <button class="btn-rhythm">Join the Wave</button>
+        <p style="margin-top:20px; color:#666; font-size:0.8rem;">* 마우스를 올리면 비트가 느껴집니다</p>
+    </section>
+
+    <!-- 4. Infinite Marquee -->
+    <section style="padding: 0; min-height: 20vh; justify-content: center;">
+        <div style="width:100%; text-align:center; margin-bottom: 20px;">
+            <h2 class="guide-title">04. Infinite Marquee (배너/푸터)</h2>
+        </div>
+
+        <div class="marquee-wrapper">
+            <!-- 텍스트가 끊기지 않게 두 번 반복해서 넣어줍니다 -->
+            <div class="marquee-track">
+                <div class="marquee-item">ONDA <span>COREANA</span></div>
+                <div class="marquee-item">K-POP <span>CULTURE</span></div>
+                <div class="marquee-item">SEOUL <span>VIBE</span></div>
+                <div class="marquee-item">LATIN <span>SOUL</span></div>
+                <!-- 반복 구간 (Seamless Loop를 위해 필수) -->
+                <div class="marquee-item">ONDA <span>COREANA</span></div>
+                <div class="marquee-item">K-POP <span>CULTURE</span></div>
+                <div class="marquee-item">SEOUL <span>VIBE</span></div>
+                <div class="marquee-item">LATIN <span>SOUL</span></div>
+            </div>
+        </div>
+    </section>
+
+</body>
+
+</html>

@@ -2,48 +2,198 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import SearchInput from '../components/search/SearchInput.astro';
 import SearchFilters from '../components/search/SearchFilters.astro';
+import type { ContentType } from '../types/search';
 
-// SEO meta - default for SSG (client-side will update based on query)
 const title = 'Buscar | OndaCoreana';
 const description = 'Busca contenido sobre K-Dramas, K-Pop, noticias y guías de cultura coreana en español.';
-
-// Get the base site URL for canonical
 const siteUrl = Astro.site?.toString().replace(/\/$/, '') || 'https://ondacoreana.com';
+const allowedFilters: ContentType[] = ['all', 'dramas', 'kpop', 'noticias', 'guias'];
+
+const url = Astro.url;
+const rawQuery = url.searchParams.get('q') ?? '';
+const normalizedQuery = rawQuery.trim().slice(0, 100);
+const requestedFilter = (url.searchParams.get('type') ?? 'all') as ContentType;
+const initialFilter = allowedFilters.includes(requestedFilter) ? requestedFilter : 'all';
+const canonical = `${siteUrl}${url.pathname}${url.search}`;
+const pageTitle = normalizedQuery ? `Buscar “${normalizedQuery}” | OndaCoreana` : title;
+const shouldNoIndex = normalizedQuery.length === 0;
 ---
 
-<BaseLayout title={title} description={description} noindex={true}>
-  <main id="main-content" class="min-h-screen bg-gray-50 py-8" data-pagefind-ignore>
-    <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+<BaseLayout title={pageTitle} description={description} noindex={shouldNoIndex} canonical={canonical}>
+  <main
+    id="main-content"
+    class="min-h-screen"
+    style="background: color-mix(in srgb, var(--md-color-surface) 90%, var(--md-color-surface-container)); padding: var(--md-spacing-3xl) 0;"
+    data-search-page
+    data-initial-query={normalizedQuery}
+    data-initial-filter={initialFilter}
+  >
+    <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 space-y-8">
       {/* Page header */}
-      <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900">Buscar</h1>
-        <p class="mt-2 text-gray-600">
-          Encuentra K-Dramas, K-Pop, noticias y guías
+      <div class="space-y-3">
+        <p class="chip" style="--chip-bg: color-mix(in srgb, var(--md-color-primary) 18%, transparent); --chip-color: var(--md-color-on-primary-container); width: fit-content;">
+          Buscar
+        </p>
+        <h1 class="text-4xl font-bold" style="color: var(--md-color-on-surface); font-family: var(--md-typo-font-family);">
+          Encuentra contenido de OndaCoreana
+        </h1>
+        <p class="text-lg" style="color: var(--md-color-on-surface-variant);">
+          Explora reseñas de K-Dramas, perfiles de K-Pop, noticias y guías en un solo lugar.
         </p>
       </div>
 
       {/* Search input */}
-      <div class="mb-6">
+      <div class="surface-card" style="padding: var(--md-spacing-xl); background: var(--md-color-surface-container-low);">
         <SearchInput
           placeholder="Buscar K-Dramas, K-Pop, noticias..."
           size="lg"
+          initialValue={normalizedQuery}
           showInlineResults={false}
         />
-        <p id="truncation-warning" class="mt-2 text-sm text-amber-600 hidden">
+        <p id="truncation-warning" class="hidden" style="margin-top: var(--md-spacing-sm); color: #b45309; font-size: var(--md-typo-label-medium-size);">
           La búsqueda se ha limitado a 100 caracteres.
         </p>
       </div>
 
       {/* Filter tabs */}
-      <div class="mb-6">
-        <SearchFilters />
+      <div class="surface-card" style="padding: var(--md-spacing-lg); background-color: var(--md-color-surface-container-low);">
+        <SearchFilters activeFilter={initialFilter} query={normalizedQuery} />
       </div>
 
       {/* Results section - dynamically rendered by client-side JS */}
-      <div id="search-results-container"></div>
+      <div
+        id="search-results-container"
+        class="space-y-4"
+        aria-live="polite"
+        aria-busy="true"
+      ></div>
     </div>
   </main>
 </BaseLayout>
+
+<style>
+  .search-results {
+    display: flex;
+    flex-direction: column;
+    gap: var(--md-spacing-lg);
+  }
+
+  .result-count {
+    font-size: var(--md-typo-body-medium-size);
+    color: var(--md-color-on-surface-variant);
+  }
+
+  .search-result-card__link {
+    display: flex;
+    gap: var(--md-spacing-md);
+    border-radius: var(--md-shape-xl);
+    border: 1px solid color-mix(in srgb, var(--md-color-outline-variant) 80%, transparent);
+    background-color: var(--md-color-surface-container-low);
+    box-shadow: var(--md-elevation-1);
+    transition: border-color var(--md-motion-duration-short) var(--md-motion-easing-standard), transform var(--md-motion-duration-short) var(--md-motion-easing-standard), box-shadow var(--md-motion-duration-short) var(--md-motion-easing-standard);
+    padding: var(--md-spacing-md);
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .search-result-card__link:hover {
+    border-color: var(--md-color-primary);
+    transform: translateY(-2px);
+    box-shadow: var(--md-elevation-2);
+  }
+
+  .search-result-card__media img {
+    border-radius: var(--md-shape-lg);
+    object-fit: cover;
+    width: 96px;
+    height: 96px;
+  }
+
+  @media (max-width: 640px) {
+    .search-result-card__media img {
+      width: 72px;
+      height: 72px;
+    }
+  }
+
+  .search-result-chip {
+    border-radius: var(--md-shape-full);
+    padding: var(--md-spacing-xs) var(--md-spacing-sm);
+    font-size: var(--md-typo-label-medium-size);
+    font-weight: 600;
+  }
+
+  .search-result-chip[data-variant="dramas"] {
+    background-color: var(--md-color-primary-container);
+    color: var(--md-color-on-primary-container);
+  }
+
+  .search-result-chip[data-variant="kpop"] {
+    background-color: var(--md-color-tertiary-container);
+    color: var(--md-color-on-tertiary-container);
+  }
+
+  .search-result-chip[data-variant="noticias"] {
+    background-color: var(--md-color-secondary-container);
+    color: var(--md-color-on-secondary-container);
+  }
+
+  .search-result-chip[data-variant="guias"],
+  .search-result-chip[data-variant="all"] {
+    background-color: color-mix(in srgb, var(--md-color-primary) 12%, var(--md-color-surface-variant));
+    color: var(--md-color-on-surface);
+  }
+
+  .search-result-title {
+    font-size: var(--md-typo-title-medium-size);
+    font-weight: 600;
+    color: var(--md-color-on-surface);
+    margin: 0;
+  }
+
+  .search-result-excerpt {
+    font-size: var(--md-typo-body-medium-size);
+    color: var(--md-color-on-surface-variant);
+    margin: var(--md-spacing-xs) 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .search-result-date {
+    font-size: var(--md-typo-label-medium-size);
+    color: color-mix(in srgb, var(--md-color-on-surface-variant) 80%, transparent);
+  }
+
+  .search-empty {
+    border-radius: var(--md-shape-xl);
+    border: 1px dashed color-mix(in srgb, var(--md-color-outline) 80%, transparent);
+    padding: var(--md-spacing-2xl);
+    background-color: color-mix(in srgb, var(--md-color-surface-variant) 30%, transparent);
+    text-align: center;
+    color: var(--md-color-on-surface);
+  }
+
+  .search-empty h3 {
+    font-size: var(--md-typo-title-medium-size);
+    margin-bottom: var(--md-spacing-sm);
+  }
+
+  .search-empty p {
+    color: var(--md-color-on-surface-variant);
+  }
+
+  .search-highlight {
+    background-color: color-mix(in srgb, var(--md-color-primary) 25%, transparent);
+    border-radius: var(--md-shape-sm);
+    padding: 0 var(--md-spacing-xxs, 0.125rem);
+  }
+
+  #load-more-container {
+    margin-top: var(--md-spacing-lg);
+  }
+</style>
 
 <script>
   // Type definitions for client-side use
@@ -211,15 +361,7 @@ const siteUrl = Astro.site?.toString().replace(/\/$/, '') || 'https://ondacorean
       const tabType = tab.getAttribute('data-filter-type') as ContentType;
       const isActive = tabType === activeType;
       tab.setAttribute('aria-selected', isActive ? 'true' : 'false');
-
-      // Update visual styling
-      if (isActive) {
-        tab.classList.remove('bg-gray-100', 'text-gray-700', 'hover:bg-gray-200');
-        tab.classList.add('bg-pink-600', 'text-white');
-      } else {
-        tab.classList.remove('bg-pink-600', 'text-white');
-        tab.classList.add('bg-gray-100', 'text-gray-700', 'hover:bg-gray-200');
-      }
+      tab.setAttribute('data-active', isActive ? 'true' : 'false');
     });
   }
 
@@ -311,7 +453,7 @@ const siteUrl = Astro.site?.toString().replace(/\/$/, '') || 'https://ondacorean
   function renderLoadingState(): string {
     return `
       <div id="search-loading" class="py-12 text-center">
-        <svg class="mx-auto h-8 w-8 animate-spin text-pink-600" viewBox="0 0 24 24">
+        <svg class="mx-auto h-8 w-8 animate-spin" viewBox="0 0 24 24" style="color: var(--md-color-primary);">
           <circle
             class="opacity-25"
             cx="12"
@@ -327,7 +469,7 @@ const siteUrl = Astro.site?.toString().replace(/\/$/, '') || 'https://ondacorean
             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
           />
         </svg>
-        <p class="mt-4 text-gray-600">Buscando...</p>
+        <p style="margin-top: var(--md-spacing-sm); color: var(--md-color-on-surface-variant);">Buscando...</p>
       </div>
     `;
   }
@@ -335,13 +477,8 @@ const siteUrl = Astro.site?.toString().replace(/\/$/, '') || 'https://ondacorean
   // Render empty state (no query)
   function renderEmptyState(): string {
     return `
-      <div class="rounded-lg border border-gray-200 bg-white p-8 text-center">
-        <svg
-          class="mx-auto h-12 w-12 text-gray-400"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
+      <div class="search-empty" style="text-align: center;">
+        <svg class="mx-auto h-12 w-12" style="color: var(--md-color-on-surface-variant);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path
             stroke-linecap="round"
             stroke-linejoin="round"
@@ -349,12 +486,11 @@ const siteUrl = Astro.site?.toString().replace(/\/$/, '') || 'https://ondacorean
             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
           />
         </svg>
-        <h2 class="mt-4 text-lg font-medium text-gray-900">
+        <h2 style="margin-top: var(--md-spacing-sm); font-size: var(--md-typo-title-medium-size); color: var(--md-color-on-surface);">
           ¿Qué quieres encontrar?
         </h2>
-        <p class="mt-2 text-sm text-gray-600">
-          Usa el campo de búsqueda para encontrar K-Dramas, artistas de K-Pop,
-          noticias y guías sobre cultura coreana.
+        <p style="margin-top: var(--md-spacing-xs); color: var(--md-color-on-surface-variant);">
+          Usa el campo de búsqueda para encontrar K-Dramas, artistas de K-Pop, noticias y guías sobre cultura coreana.
         </p>
       </div>
     `;
@@ -363,10 +499,8 @@ const siteUrl = Astro.site?.toString().replace(/\/$/, '') || 'https://ondacorean
   // Render min length warning
   function renderMinLengthWarning(): string {
     return `
-      <div class="rounded-lg border border-amber-200 bg-amber-50 p-6 text-center">
-        <p class="text-amber-800">
-          Por favor ingresa al menos 2 caracteres para buscar.
-        </p>
+      <div class="search-empty">
+        <p>Por favor ingresa al menos 2 caracteres para buscar.</p>
       </div>
     `;
   }
@@ -374,9 +508,9 @@ const siteUrl = Astro.site?.toString().replace(/\/$/, '') || 'https://ondacorean
   // Render error state
   function renderErrorState(): string {
     return `
-      <div class="py-12 text-center">
-        <p class="text-red-600">Error al cargar los resultados de búsqueda.</p>
-        <p class="mt-2 text-sm text-gray-600">Por favor intenta de nuevo más tarde.</p>
+      <div class="search-empty" role="status">
+        <h3>Error al cargar los resultados</h3>
+        <p>Por favor intenta de nuevo más tarde.</p>
       </div>
     `;
   }
@@ -386,7 +520,8 @@ const siteUrl = Astro.site?.toString().replace(/\/$/, '') || 'https://ondacorean
     return `
       <button
         id="load-more-btn"
-        class="w-full py-3 px-6 text-pink-600 font-medium hover:bg-pink-50 rounded-lg border border-pink-200 transition-colors focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2"
+        class="btn btn--outline"
+        style="width: 100%;"
         data-testid="load-more-btn"
       >
         Cargar más resultados
@@ -401,82 +536,50 @@ const siteUrl = Astro.site?.toString().replace(/\/$/, '') || 'https://ondacorean
       : `${totalCount} resultados para "${escapeHtml(query)}"`;
 
     const loadMoreHtml = hasMore ? `
-      <div id="load-more-container" class="mt-8 text-center">
+      <div id="load-more-container">
         ${renderLoadMoreButton()}
       </div>
     ` : '';
 
     return `
-      <div class="search-results" data-testid="search-results">
-        <div class="mb-6">
-          <p class="text-sm text-gray-600" data-testid="result-count">
-            ${resultMessage}
-          </p>
-        </div>
-        <div class="space-y-4">
-          ${results.map(result => renderResultCard(result, query)).join('')}
-        </div>
+      <section class="search-results" data-testid="search-results">
+        <p class="result-count" data-testid="result-count">
+          ${resultMessage}
+        </p>
+        ${results.map(result => renderResultCard(result, query)).join('')}
         ${loadMoreHtml}
-      </div>
+      </section>
     `;
   }
 
   // Render no results state
   function renderNoResults(query: string): string {
     return `
-      <div class="search-results" data-testid="search-results">
-        <div class="mb-6">
-          <p class="text-sm text-gray-600" data-testid="result-count">
-            0 resultados para "${escapeHtml(query)}"
-          </p>
-        </div>
-        <div
-          class="rounded-lg border border-gray-200 bg-gray-50 p-8 text-center"
-          data-testid="no-results"
-        >
-          <svg
-            class="mx-auto h-12 w-12 text-gray-400"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
-          <h3 class="mt-4 text-lg font-medium text-gray-900">
-            No se encontraron resultados
-          </h3>
-          <p class="mt-2 text-sm text-gray-600">
+      <section class="search-results" data-testid="search-results">
+        <p class="result-count" data-testid="result-count">
+          0 resultados para "${escapeHtml(query)}"
+        </p>
+        <div class="search-empty" data-testid="no-results">
+          <h3>No se encontraron resultados</h3>
+          <p>
             No encontramos artículos que coincidan con "${escapeHtml(query)}".
             Intenta con otros términos de búsqueda.
           </p>
-          <div class="mt-4">
-            <p class="text-sm text-gray-500">Sugerencias:</p>
-            <ul class="mt-2 text-sm text-gray-600 list-disc list-inside">
+          <div style="margin-top: var(--md-spacing-sm); text-align: left;">
+            <p class="result-count">Sugerencias:</p>
+            <ul style="margin-top: var(--md-spacing-xs); color: var(--md-color-on-surface-variant); padding-left: var(--md-spacing-lg); list-style: disc;">
               <li>Verifica la ortografía</li>
               <li>Usa palabras más generales</li>
               <li>Prueba con menos palabras clave</li>
             </ul>
           </div>
         </div>
-      </div>
+      </section>
     `;
   }
 
   // Render a single result card
   function renderResultCard(result: SearchResult, query: string): string {
-    const typeColors: Record<string, string> = {
-      dramas: 'bg-pink-100 text-pink-800',
-      kpop: 'bg-purple-100 text-purple-800',
-      noticias: 'bg-blue-100 text-blue-800',
-      guias: 'bg-teal-100 text-teal-800',
-      all: 'bg-gray-100 text-gray-800',
-    };
-
     const typeLabels: Record<string, string> = {
       dramas: 'K-Drama',
       kpop: 'K-Pop',
@@ -485,7 +588,6 @@ const siteUrl = Astro.site?.toString().replace(/\/$/, '') || 'https://ondacorean
       all: 'Contenido',
     };
 
-    const typeColor = typeColors[result.contentType] || typeColors.all;
     const typeLabel = typeLabels[result.contentType] || result.contentType;
 
     const formattedDate = result.pubDate.toLocaleDateString('es-419', {
@@ -498,11 +600,10 @@ const siteUrl = Astro.site?.toString().replace(/\/$/, '') || 'https://ondacorean
     const highlightedExcerpt = highlightText(result.excerpt, query);
 
     const heroImageHtml = result.heroImage ? `
-      <div class="hidden sm:block flex-shrink-0">
+      <div class="hidden sm:block search-result-card__media" aria-hidden="true">
         <img
           src="${escapeHtml(result.heroImage)}"
           alt=""
-          class="h-24 w-24 rounded-lg object-cover"
           loading="lazy"
           decoding="async"
         />
@@ -510,39 +611,32 @@ const siteUrl = Astro.site?.toString().replace(/\/$/, '') || 'https://ondacorean
     ` : '';
 
     return `
-      <article class="search-result-card group" data-testid="search-result-card">
-        <a href="${escapeHtml(result.url)}" class="block rounded-lg border border-gray-200 bg-white p-4 transition-all hover:border-pink-300 hover:shadow-md">
-          <div class="flex gap-4">
-            ${heroImageHtml}
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center gap-2 mb-2">
-                <span
-                  class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${typeColor}"
-                  data-testid="result-type"
-                >
-                  ${typeLabel}
-                </span>
-              </div>
-              <h3
-                class="text-lg font-semibold text-gray-900 group-hover:text-pink-600 line-clamp-2"
-                data-testid="result-title"
+      <article class="search-result-card" data-testid="search-result-card">
+        <a href="${escapeHtml(result.url)}" class="search-result-card__link">
+          ${heroImageHtml}
+          <div class="flex-1 min-w-0">
+            <div class="flex flex-wrap items-center gap-2" style="margin-bottom: var(--md-spacing-xs);">
+              <span
+                class="search-result-chip"
+                data-testid="result-type"
+                data-variant="${result.contentType}"
               >
-                ${escapeHtml(result.title)}
-              </h3>
-              <p
-                class="mt-1 text-sm text-gray-600 line-clamp-2"
-                data-testid="result-excerpt"
-              >
-                ${highlightedExcerpt}
-              </p>
-              <time
-                datetime="${result.pubDate.toISOString()}"
-                class="mt-2 block text-xs text-gray-500"
-                data-testid="result-date"
-              >
-                ${formattedDate}
-              </time>
+                ${typeLabel}
+              </span>
             </div>
+            <h3 class="search-result-title" data-testid="result-title">
+              ${escapeHtml(result.title)}
+            </h3>
+            <p class="search-result-excerpt" data-testid="result-excerpt">
+              ${highlightedExcerpt}
+            </p>
+            <time
+              datetime="${result.pubDate.toISOString()}"
+              class="search-result-date"
+              data-testid="result-date"
+            >
+              ${formattedDate}
+            </time>
           </div>
         </a>
       </article>
@@ -554,7 +648,7 @@ const siteUrl = Astro.site?.toString().replace(/\/$/, '') || 'https://ondacorean
     if (!query.trim()) return escapeHtml(text);
     const escaped = escapeHtml(text);
     const regex = new RegExp(`(${escapeRegex(query)})`, 'gi');
-    return escaped.replace(regex, '<mark class="bg-yellow-200 text-yellow-900 rounded px-0.5">$1</mark>');
+    return escaped.replace(regex, '<mark class="search-highlight">$1</mark>');
   }
 
   // Escape HTML entities

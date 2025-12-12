@@ -1,0 +1,48 @@
+---
+/**
+ * OndaCoreana Loading Spinner
+ * Uses the sparkle icon with bounce animation
+ */
+interface Props {
+  size?: number;
+  class?: string;
+}
+
+const { size = 60, class: className = '' } = Astro.props;
+---
+
+<div class:list={['oc-loading', className]} role="status" aria-label="Loading">
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 40 40"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      class="oc-sparkle-spin"
+      fill="var(--oc-color-pink)"
+      d="M20,0 C20,15 35,20 40,20 C35,20 20,25 20,40 C20,25 5,20 0,20 C5,20 20,15 20,0 Z"
+    />
+  </svg>
+  <span class="sr-only">Cargando...</span>
+</div>
+
+<style>
+  .oc-loading {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>

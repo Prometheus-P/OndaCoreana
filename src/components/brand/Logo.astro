@@ -1,0 +1,80 @@
+---
+/**
+ * OndaCoreana Logo Component
+ * Supports multiple variants: horizontal, vertical, icon, clean
+ */
+interface Props {
+  variant?: 'horizontal' | 'vertical' | 'icon' | 'clean';
+  color?: 'dark' | 'light';
+  height?: number;
+  class?: string;
+}
+
+const {
+  variant = 'horizontal',
+  color = 'dark',
+  height = 60,
+  class: className = ''
+} = Astro.props;
+
+const textColor = color === 'dark' ? '#111111' : '#FFFFFF';
+const sparkleColor = '#ec4899';
+---
+
+{variant === 'horizontal' && (
+  <svg
+    class={className}
+    height={height}
+    viewBox="0 0 400 60"
+    xmlns="http://www.w3.org/2000/svg"
+    role="img"
+    aria-label="OndaCoreana"
+  >
+    <text y="45" font-family="'Montserrat', sans-serif" font-weight="900" font-size="40" fill={textColor} letter-spacing="-1">ONDA</text>
+    <text x="135" y="45" font-family="'Montserrat', sans-serif" font-weight="900" font-size="40" fill={textColor} letter-spacing="-1">COREANA</text>
+    <path transform="translate(125, 8) scale(0.6)" d="M20,0 C20,15 35,20 40,20 C35,20 20,25 20,40 C20,25 5,20 0,20 C5,20 20,15 20,0 Z" fill={sparkleColor}/>
+  </svg>
+)}
+
+{variant === 'vertical' && (
+  <svg
+    class={className}
+    height={height}
+    viewBox="0 0 200 120"
+    xmlns="http://www.w3.org/2000/svg"
+    role="img"
+    aria-label="OndaCoreana"
+  >
+    <text x="100" y="50" text-anchor="middle" font-family="'Montserrat', sans-serif" font-weight="900" font-size="45" fill={textColor} letter-spacing="-1">ONDA</text>
+    <text x="100" y="95" text-anchor="middle" font-family="'Montserrat', sans-serif" font-weight="900" font-size="45" fill={textColor} letter-spacing="-1">COREANA</text>
+    <path transform="translate(120, 5) scale(0.7)" d="M20,0 C20,15 35,20 40,20 C35,20 20,25 20,40 C20,25 5,20 0,20 C5,20 20,15 20,0 Z" fill={sparkleColor}/>
+  </svg>
+)}
+
+{variant === 'icon' && (
+  <svg
+    class={className}
+    height={height}
+    viewBox="0 0 100 100"
+    xmlns="http://www.w3.org/2000/svg"
+    role="img"
+    aria-label="OndaCoreana"
+  >
+    <rect width="100" height="100" rx="20" fill={textColor}/>
+    <path transform="translate(30, 30)" d="M20,0 C20,15 35,20 40,20 C35,20 20,25 20,40 C20,25 5,20 0,20 C5,20 20,15 20,0 Z" fill={sparkleColor}/>
+  </svg>
+)}
+
+{variant === 'clean' && (
+  <svg
+    class={className}
+    height={height}
+    viewBox="0 0 400 60"
+    xmlns="http://www.w3.org/2000/svg"
+    role="img"
+    aria-label="OndaCoreana"
+  >
+    <text y="45" font-family="'Montserrat', sans-serif" font-weight="900" font-size="40" fill={textColor} letter-spacing="-1">ONDA</text>
+    <text x="135" y="45" font-family="'Montserrat', sans-serif" font-weight="900" font-size="40" fill={textColor} letter-spacing="-1">COREANA</text>
+  </svg>
+)}

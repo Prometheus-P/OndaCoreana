@@ -10,50 +10,54 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   title="Página no encontrada"
   description="Lo sentimos, la página que buscas no existe o ha sido movida."
 >
-  <main class="min-h-[60vh] flex items-center justify-center px-4">
+  <main class="min-h-[60vh] flex items-center justify-center px-4" style="background: color-mix(in srgb, var(--md-color-surface) 95%, var(--md-color-surface-container)); padding: var(--md-spacing-3xl) var(--md-spacing-md);">
     <div class="text-center max-w-lg">
       <!-- 404 Number -->
       <div class="mb-8">
-        <span class="text-9xl font-bold bg-gradient-to-r from-pink-500 to-purple-600 bg-clip-text text-transparent">
+        <span class="text-9xl font-bold" style="background: linear-gradient(135deg, color-mix(in srgb, var(--md-color-primary) 85%, #000) 0%, color-mix(in srgb, var(--md-color-tertiary) 70%, transparent) 100%); -webkit-background-clip: text; color: transparent;">
           404
         </span>
       </div>
 
       <!-- Error Message -->
-      <h1 class="text-3xl font-bold text-gray-900 mb-4">
+      <h1 class="text-3xl font-bold mb-4" style="color: var(--md-color-on-surface);">
         ¡Oops! Página no encontrada
       </h1>
 
-      <p class="text-gray-600 mb-8">
+      <p class="subtle-text mb-8">
         Lo sentimos, la página que buscas no existe o ha sido movida.
         Puede que el enlace esté roto o la URL sea incorrecta.
       </p>
 
       <!-- Suggestions -->
-      <div class="mb-8 p-4 bg-gray-50 rounded-lg">
-        <p class="text-sm text-gray-500 mb-3">¿Qué te gustaría explorar?</p>
+      <div class="mb-8 surface-card" style="padding: var(--md-spacing-lg); background-color: var(--md-color-surface-container);">
+        <p class="text-sm" style="color: var(--md-color-on-surface-variant); margin-bottom: var(--md-spacing-sm);">¿Qué te gustaría explorar?</p>
         <div class="flex flex-wrap justify-center gap-2">
           <a
             href="/dramas"
-            class="px-4 py-2 bg-pink-100 text-pink-700 rounded-full text-sm hover:bg-pink-200 transition-colors"
+            class="chip"
+            style="--chip-bg: color-mix(in srgb, var(--md-color-primary) 15%, var(--md-color-surface-variant)); --chip-color: var(--md-color-on-primary-container); font-size: var(--md-typo-body-medium-size);"
           >
             🎬 K-Dramas
           </a>
           <a
             href="/kpop"
-            class="px-4 py-2 bg-purple-100 text-purple-700 rounded-full text-sm hover:bg-purple-200 transition-colors"
+            class="chip"
+            style="--chip-bg: color-mix(in srgb, var(--md-color-tertiary) 18%, transparent); --chip-color: var(--md-color-on-tertiary-container); font-size: var(--md-typo-body-medium-size);"
           >
             🎵 K-Pop
           </a>
           <a
             href="/noticias"
-            class="px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm hover:bg-blue-200 transition-colors"
+            class="chip"
+            style="--chip-bg: color-mix(in srgb, var(--md-color-secondary) 15%, var(--md-color-surface-variant)); --chip-color: var(--md-color-on-secondary-container); font-size: var(--md-typo-body-medium-size);"
           >
             📰 Noticias
           </a>
           <a
             href="/guias"
-            class="px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm hover:bg-green-200 transition-colors"
+            class="chip"
+            style="--chip-bg: color-mix(in srgb, var(--md-color-tertiary) 12%, var(--md-color-surface-variant)); --chip-color: var(--md-color-on-surface); font-size: var(--md-typo-body-medium-size);"
           >
             📚 Guías
           </a>
@@ -63,7 +67,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <!-- Back to Home -->
       <a
         href="/"
-        class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-semibold rounded-lg hover:from-pink-600 hover:to-purple-700 transition-all shadow-lg hover:shadow-xl"
+        class="btn btn--primary"
       >
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
@@ -72,7 +76,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       </a>
 
       <!-- Fun Korean phrase -->
-      <p class="mt-8 text-sm text-gray-400">
+      <p class="mt-8 text-sm" style="color: color-mix(in srgb, var(--md-color-on-surface-variant) 60%, transparent);">
         괜찮아요! (¡Está bien!) Todos nos perdemos a veces 💜
       </p>
     </div>

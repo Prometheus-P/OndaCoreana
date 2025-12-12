@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 60">
+  <text y="45" font-family="'Montserrat', sans-serif" font-weight="900" font-size="40" fill="#111111" letter-spacing="-1">ONDA</text>
+  <text x="135" y="45" font-family="'Montserrat', sans-serif" font-weight="900" font-size="40" fill="#111111" letter-spacing="-1">COREANA</text>
+  <path transform="translate(125, 8) scale(0.6)" d="M20,0 C20,15 35,20 40,20 C35,20 20,25 20,40 C20,25 5,20 0,20 C5,20 20,15 20,0 Z" fill="#ec4899"/>
+</svg>

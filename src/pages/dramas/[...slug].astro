@@ -29,47 +29,47 @@ const { Content } = await drama.render();
   contentType="dramas"
 >
   <!-- Drama Info Box -->
-  <aside class="not-prose mb-8 rounded-lg bg-gray-50 p-6">
-    <h2 class="text-lg font-semibold text-gray-900 mb-4">Información del Drama</h2>
-    <dl class="grid grid-cols-2 gap-4 text-sm">
+  <aside class="not-prose mb-8 surface-card" style="background-color: var(--md-color-surface-container); padding: var(--md-spacing-lg);">
+    <h2 class="text-lg font-semibold mb-4" style="color: var(--md-color-on-surface);">Información del Drama</h2>
+    <dl class="grid grid-cols-2 gap-4 text-sm" style="color: var(--md-color-on-surface);">
       <div>
-        <dt class="font-medium text-gray-500">Título Original</dt>
-        <dd class="text-gray-900">{drama.data.dramaTitle}</dd>
+        <dt class="font-medium" style="color: var(--md-color-on-surface-variant);">Título Original</dt>
+        <dd>{drama.data.dramaTitle}</dd>
       </div>
       {drama.data.dramaYear && (
         <div>
-          <dt class="font-medium text-gray-500">Año</dt>
-          <dd class="text-gray-900">{drama.data.dramaYear}</dd>
+          <dt class="font-medium" style="color: var(--md-color-on-surface-variant);">Año</dt>
+          <dd>{drama.data.dramaYear}</dd>
         </div>
       )}
       {drama.data.network && (
         <div>
-          <dt class="font-medium text-gray-500">Cadena</dt>
-          <dd class="text-gray-900">{drama.data.network}</dd>
+          <dt class="font-medium" style="color: var(--md-color-on-surface-variant);">Cadena</dt>
+          <dd>{drama.data.network}</dd>
         </div>
       )}
       {drama.data.episodes && (
         <div>
-          <dt class="font-medium text-gray-500">Episodios</dt>
-          <dd class="text-gray-900">{drama.data.episodes}</dd>
+          <dt class="font-medium" style="color: var(--md-color-on-surface-variant);">Episodios</dt>
+          <dd>{drama.data.episodes}</dd>
         </div>
       )}
       {drama.data.genre && drama.data.genre.length > 0 && (
         <div class="col-span-2">
-          <dt class="font-medium text-gray-500">Géneros</dt>
-          <dd class="text-gray-900">{drama.data.genre.join(', ')}</dd>
+          <dt class="font-medium" style="color: var(--md-color-on-surface-variant);">Géneros</dt>
+          <dd>{drama.data.genre.join(', ')}</dd>
         </div>
       )}
       {drama.data.cast && drama.data.cast.length > 0 && (
         <div class="col-span-2">
-          <dt class="font-medium text-gray-500">Reparto</dt>
-          <dd class="text-gray-900">{drama.data.cast.join(', ')}</dd>
+          <dt class="font-medium" style="color: var(--md-color-on-surface-variant);">Reparto</dt>
+          <dd>{drama.data.cast.join(', ')}</dd>
         </div>
       )}
       {drama.data.whereToWatch && drama.data.whereToWatch.length > 0 && (
         <div class="col-span-2">
-          <dt class="font-medium text-gray-500">Dónde Ver</dt>
-          <dd class="text-gray-900">{drama.data.whereToWatch.join(', ')}</dd>
+          <dt class="font-medium" style="color: var(--md-color-on-surface-variant);">Dónde Ver</dt>
+          <dd>{drama.data.whereToWatch.join(', ')}</dd>
         </div>
       )}
     </dl>

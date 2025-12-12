@@ -1,22 +1,45 @@
 @import "tailwindcss";
 
 /**
- * Material Design 3 Design Tokens
- * Feature: 002-material-design
+ * OndaCoreana Design System
+ * Brand + Material Design 3 Tokens
  *
- * Naming Convention: --md-{category}-{role}-{variant}
+ * Brand Naming: --oc-{category}-{role}
+ * M3 Naming: --md-{category}-{role}-{variant}
  */
+
+/* ============================================
+   BRAND TOKENS - OndaCoreana Identity
+   ============================================ */
+
+:root {
+  /* Brand Colors */
+  --oc-color-pink: #ec4899;           /* K-Pop Pink - Primary accent */
+  --oc-color-black: #111111;          /* Onda Black - Text, backgrounds */
+  --oc-color-white: #ffffff;          /* Pure White - Cards, dark mode text */
+  --oc-color-gray: #f4f5f7;           /* Soft Gray - Background */
+
+  /* Brand Typography */
+  --oc-font-brand: 'Montserrat', system-ui, sans-serif;
+  --oc-font-weight-bold: 700;
+  --oc-font-weight-black: 900;
+
+  /* Brand Animations */
+  --oc-motion-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --oc-motion-reveal: cubic-bezier(0.65, 0, 0.35, 1);
+  --oc-motion-pop: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
 
 /* ============================================
    COLOR TOKENS - Light Mode (Default)
    ============================================ */
 
 :root {
-  /* Primary Palette - Pink (#ec4899) */
+  /* Primary Palette - Pink (Brand: #ec4899) */
   --md-color-primary: #ec4899;
   --md-color-on-primary: #ffffff;
-  --md-color-primary-container: #fce7f3;
-  --md-color-on-primary-container: #831843;
+  --md-color-primary-container: #ffe4f1;
+  --md-color-on-primary-container: #5c0a2c;
 
   /* Secondary Palette - Gray */
   --md-color-secondary: #6b7280;
@@ -54,11 +77,11 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    /* Primary Palette - Pink (Dark) */
-    --md-color-primary: #f9a8d4;
-    --md-color-on-primary: #9d174d;
-    --md-color-primary-container: #be185d;
-    --md-color-on-primary-container: #fce7f3;
+    /* Primary Palette - Pink (Dark, Brand adjusted) */
+    --md-color-primary: #f472b6;
+    --md-color-on-primary: #3c0019;
+    --md-color-primary-container: #831843;
+    --md-color-on-primary-container: #ffe4f1;
 
     /* Secondary Palette - Gray (Dark) */
     --md-color-secondary: #9ca3af;
@@ -290,15 +313,371 @@
 }
 
 /* ============================================
+   BASE ELEMENT STYLES
+   ============================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background-color: var(--md-color-surface);
+  color: var(--md-color-on-surface);
+  font-family: var(--md-typo-font-family);
+  font-size: var(--md-typo-body-large-size);
+  line-height: var(--md-typo-body-large-line-height);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background-color: color-mix(in srgb, var(--md-color-primary) 85%, transparent);
+  color: var(--md-color-on-primary);
+}
+
+a {
+  color: var(--md-color-primary);
+  text-decoration: none;
+  transition: color var(--md-motion-duration-short) var(--md-motion-easing-standard);
+}
+
+a:hover {
+  color: color-mix(in srgb, var(--md-color-primary) 70%, var(--md-color-tertiary));
+}
+
+a:focus-visible {
+  outline: 2px solid var(--md-color-primary);
+  outline-offset: 2px;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+  color: inherit;
+  background-color: transparent;
+}
+
+button {
+  cursor: pointer;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ============================================
+   DESIGN SYSTEM UTILITIES
+   ============================================ */
+
+.section-shell {
+  --section-bg: transparent;
+  --section-color: inherit;
+  --section-gap: var(--md-spacing-xl);
+  padding-block: var(--section-padding-block, clamp(var(--md-spacing-2xl), 6vw, var(--md-spacing-4xl)));
+  padding-inline: var(--section-padding-inline, var(--md-spacing-md));
+  background: var(--section-bg);
+  color: var(--section-color);
+}
+
+.section-shell__inner {
+  margin: 0 auto;
+  max-width: 72rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--section-gap);
+}
+
+.surface-card {
+  background-color: var(--surface-card-bg, var(--md-color-surface-container-low));
+  border-radius: var(--md-shape-lg);
+  border: 1px solid var(--surface-card-border, var(--md-color-outline-variant));
+  box-shadow: var(--surface-card-shadow, var(--md-elevation-1));
+  transition: transform var(--md-motion-duration-short) var(--md-motion-easing-standard), box-shadow var(--md-motion-duration-short) var(--md-motion-easing-standard);
+}
+
+.surface-card--interactive:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--md-elevation-2);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  border-radius: var(--md-shape-full);
+  padding: var(--md-spacing-xs) var(--md-spacing-md);
+  font-size: var(--md-typo-label-medium-size);
+  font-weight: var(--md-typo-label-medium-weight);
+  line-height: 1;
+  gap: var(--md-spacing-xs);
+  background-color: var(--chip-bg, var(--md-color-surface-variant));
+  color: var(--chip-color, var(--md-color-on-surface-variant));
+}
+
+.input-field {
+  width: 100%;
+  border-radius: var(--md-shape-full);
+  border: 1px solid color-mix(in srgb, var(--md-color-outline) 90%, transparent);
+  background-color: color-mix(in srgb, var(--md-color-surface) 90%, transparent);
+  color: var(--md-color-on-surface);
+  transition: border-color var(--md-motion-duration-short) var(--md-motion-easing-standard), box-shadow var(--md-motion-duration-short) var(--md-motion-easing-standard), background-color var(--md-motion-duration-short) var(--md-motion-easing-standard);
+}
+
+.input-field::placeholder {
+  color: color-mix(in srgb, var(--md-color-on-surface-variant) 80%, transparent);
+}
+
+.input-field:focus,
+.input-field:focus-visible {
+  border-color: var(--md-color-primary);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--md-color-primary) 18%, transparent);
+  outline: none;
+  background-color: var(--md-color-surface-container-low);
+}
+
+.icon-button {
+  border-radius: var(--md-shape-md);
+  padding: var(--md-spacing-xs);
+  color: var(--md-color-on-surface-variant);
+  transition: color var(--md-motion-duration-short) var(--md-motion-easing-standard), background-color var(--md-motion-duration-short) var(--md-motion-easing-standard);
+}
+
+.icon-button:hover {
+  color: var(--md-color-primary);
+  background-color: color-mix(in srgb, var(--md-color-primary) 12%, transparent);
+}
+
+.icon-button:focus-visible {
+  outline: 2px solid var(--md-color-primary);
+  outline-offset: 2px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--md-spacing-xs);
+  border-radius: var(--md-shape-full);
+  padding: var(--md-spacing-sm) var(--md-spacing-lg);
+  font-size: var(--md-typo-body-medium-size);
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition: all var(--md-motion-duration-short) var(--md-motion-easing-standard);
+  min-height: 44px;
+}
+
+.btn--primary {
+  background-color: var(--md-color-primary);
+  color: var(--md-color-on-primary);
+  box-shadow: var(--md-elevation-2);
+}
+
+.btn--primary:hover {
+  background-color: color-mix(in srgb, var(--md-color-primary) 85%, black);
+}
+
+.btn--outline {
+  background-color: transparent;
+  color: var(--md-color-on-surface);
+  border-color: var(--md-color-outline);
+}
+
+.btn--outline:hover {
+  background-color: color-mix(in srgb, var(--md-color-primary) 12%, transparent);
+  border-color: var(--md-color-primary);
+}
+
+.btn--ghost {
+  background-color: color-mix(in srgb, var(--md-color-primary) 15%, transparent);
+  color: var(--md-color-on-primary-container);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--md-color-primary);
+  outline-offset: 2px;
+}
+
+.headline {
+  font-family: var(--md-typo-font-family);
+  font-weight: var(--md-typo-headline-medium-weight);
+  color: inherit;
+}
+
+.subtle-text {
+  color: var(--md-color-on-surface-variant);
+}
+
+/* ============================================
    COMPONENT STYLES
    ============================================ */
 
 /* Navigation Links */
 .nav-link {
   color: var(--md-color-on-surface-variant);
+  font-weight: 600;
   transition: color var(--md-motion-duration-short) var(--md-motion-easing-standard);
 }
 
 .nav-link:hover {
   color: var(--md-color-primary);
+}
+
+.nav-link:focus-visible {
+  outline: 2px solid var(--md-color-primary);
+  outline-offset: 2px;
+  border-radius: var(--md-shape-sm);
+}
+
+/* ============================================
+   BRAND ANIMATIONS - OndaCoreana
+   ============================================ */
+
+/* Hero Text Reveal - Slide up with overshoot */
+@keyframes oc-slide-up {
+  from { transform: translateY(110%); }
+  to { transform: translateY(0); }
+}
+
+/* Sparkle Pop - Scale with rotation */
+@keyframes oc-pop-in {
+  from { transform: scale(0) rotate(-45deg); }
+  to { transform: scale(1) rotate(0deg); }
+}
+
+/* Sparkle Spin - Loading animation */
+@keyframes oc-spin-bounce {
+  0% { transform: rotate(0deg) scale(0.8); }
+  50% { transform: rotate(180deg) scale(1.2); }
+  100% { transform: rotate(360deg) scale(0.8); }
+}
+
+/* Card Hologram Shine - Sweep effect */
+@keyframes oc-shine {
+  from { left: -100%; }
+  to { left: 150%; }
+}
+
+/* Button Pulse - Rhythm effect */
+@keyframes oc-pulse-pink {
+  0% {
+    box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.7);
+    transform: scale(1);
+  }
+  70% {
+    box-shadow: 0 0 0 20px rgba(236, 72, 153, 0);
+    transform: scale(1.05);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(236, 72, 153, 0);
+    transform: scale(1);
+  }
+}
+
+/* Marquee Scroll - Infinite horizontal scroll */
+@keyframes oc-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* ============================================
+   BRAND UTILITY CLASSES
+   ============================================ */
+
+/* Text Reveal Animation */
+.oc-reveal {
+  animation: oc-slide-up 1s var(--oc-motion-reveal) forwards;
+}
+
+.oc-reveal-delay {
+  animation: oc-slide-up 1s var(--oc-motion-reveal) forwards;
+  animation-delay: 0.2s;
+}
+
+/* Sparkle Animations */
+.oc-sparkle-pop {
+  animation: oc-pop-in 0.6s var(--oc-motion-pop) forwards;
+  animation-delay: 0.8s;
+}
+
+.oc-sparkle-spin {
+  animation: oc-spin-bounce 2s var(--oc-motion-bounce) infinite;
+}
+
+/* Card Shine Effect */
+.oc-card-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.oc-card-shine::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transform: skewX(-25deg);
+  pointer-events: none;
+}
+
+.oc-card-shine:hover::after {
+  animation: oc-shine 0.75s forwards;
+}
+
+/* Pulse Button */
+.oc-btn-pulse:hover {
+  animation: oc-pulse-pink 1.5s infinite;
+}
+
+/* Marquee */
+.oc-marquee {
+  display: inline-flex;
+  animation: oc-marquee 10s linear infinite;
+}
+
+/* Brand Colors as Classes */
+.oc-bg-pink { background-color: var(--oc-color-pink); }
+.oc-bg-black { background-color: var(--oc-color-black); }
+.oc-bg-white { background-color: var(--oc-color-white); }
+.oc-bg-gray { background-color: var(--oc-color-gray); }
+
+.oc-text-pink { color: var(--oc-color-pink); }
+.oc-text-black { color: var(--oc-color-black); }
+.oc-text-white { color: var(--oc-color-white); }
+
+/* Brand Typography */
+.oc-font-brand {
+  font-family: var(--oc-font-brand);
+  font-weight: var(--oc-font-weight-black);
+  letter-spacing: -1px;
+}
+
+/* Respect Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .oc-reveal,
+  .oc-reveal-delay,
+  .oc-sparkle-pop,
+  .oc-sparkle-spin,
+  .oc-btn-pulse:hover,
+  .oc-marquee {
+    animation: none;
+  }
+
+  .oc-card-shine:hover::after {
+    animation: none;
+  }
 }

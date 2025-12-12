@@ -29,33 +29,33 @@ const { Content } = await artist.render();
   contentType="kpop"
 >
   <!-- Artist Info Box -->
-  <aside class="not-prose mb-8 rounded-lg bg-purple-50 p-6">
-    <h2 class="text-lg font-semibold text-gray-900 mb-4">Información del Artista</h2>
-    <dl class="grid grid-cols-2 gap-4 text-sm">
+  <aside class="not-prose mb-8 surface-card" style="background-color: var(--md-color-surface-container); padding: var(--md-spacing-lg);">
+    <h2 class="text-lg font-semibold mb-4" style="color: var(--md-color-on-surface);">Información del Artista</h2>
+    <dl class="grid grid-cols-2 gap-4 text-sm" style="color: var(--md-color-on-surface);">
       <div>
-        <dt class="font-medium text-gray-500">Nombre</dt>
-        <dd class="text-gray-900">{artist.data.artistName}</dd>
+        <dt class="font-medium" style="color: var(--md-color-on-surface-variant);">Nombre</dt>
+        <dd>{artist.data.artistName}</dd>
       </div>
       <div>
-        <dt class="font-medium text-gray-500">Tipo</dt>
-        <dd class="text-gray-900 capitalize">{artist.data.artistType}</dd>
+        <dt class="font-medium" style="color: var(--md-color-on-surface-variant);">Tipo</dt>
+        <dd class="capitalize">{artist.data.artistType}</dd>
       </div>
       {artist.data.agency && (
         <div>
-          <dt class="font-medium text-gray-500">Agencia</dt>
-          <dd class="text-gray-900">{artist.data.agency}</dd>
+          <dt class="font-medium" style="color: var(--md-color-on-surface-variant);">Agencia</dt>
+          <dd>{artist.data.agency}</dd>
         </div>
       )}
       {artist.data.debutYear && (
         <div>
-          <dt class="font-medium text-gray-500">Año de Debut</dt>
-          <dd class="text-gray-900">{artist.data.debutYear}</dd>
+          <dt class="font-medium" style="color: var(--md-color-on-surface-variant);">Año de Debut</dt>
+          <dd>{artist.data.debutYear}</dd>
         </div>
       )}
       {artist.data.members && artist.data.members.length > 0 && (
         <div class="col-span-2">
-          <dt class="font-medium text-gray-500">Miembros</dt>
-          <dd class="text-gray-900">{artist.data.members.join(', ')}</dd>
+          <dt class="font-medium" style="color: var(--md-color-on-surface-variant);">Miembros</dt>
+          <dd>{artist.data.members.join(', ')}</dd>
         </div>
       )}
     </dl>

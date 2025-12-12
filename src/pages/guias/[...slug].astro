@@ -33,19 +33,19 @@ const { Content } = await guia.render();
 >
   <!-- Guide Meta Info -->
   {(guia.data.difficulty || guia.data.readingTime) && (
-    <aside class="not-prose mb-8 flex flex-wrap gap-4 text-sm">
+    <aside class="not-prose mb-8 flex flex-wrap gap-4 text-sm" style="color: var(--md-color-on-surface);">
       {guia.data.difficulty && (
         <div class="flex items-center gap-2">
-          <span class="font-medium text-gray-500">Nivel:</span>
-          <span class="rounded-full bg-teal-100 px-3 py-1 text-teal-800 capitalize">
+          <span class="font-medium" style="color: var(--md-color-on-surface-variant);">Nivel:</span>
+          <span class="chip capitalize" style="--chip-bg: color-mix(in srgb, var(--md-color-tertiary) 15%, transparent); --chip-color: var(--md-color-on-tertiary-container);">
             {guia.data.difficulty}
           </span>
         </div>
       )}
       {guia.data.readingTime && (
         <div class="flex items-center gap-2">
-          <span class="font-medium text-gray-500">Tiempo de lectura:</span>
-          <span class="text-gray-900">{guia.data.readingTime} minutos</span>
+          <span class="font-medium" style="color: var(--md-color-on-surface-variant);">Tiempo de lectura:</span>
+          <span>{guia.data.readingTime} minutos</span>
         </div>
       )}
     </aside>

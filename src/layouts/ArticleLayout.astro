@@ -105,8 +105,16 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString('es-419', {
       </h1>
       <span data-pagefind-meta="description" class="hidden">{description}</span>
       <span data-pagefind-meta="pubDate" class="hidden">{pubDate.toISOString()}</span>
+      {updatedDate && <span data-pagefind-meta="updatedDate" class="hidden">{updatedDate.toISOString()}</span>}
+      <span data-pagefind-meta="author" class="hidden">{author}</span>
       {contentType && <span data-pagefind-meta="contentType" data-pagefind-filter="contentType" class="hidden">{contentType}</span>}
-      {heroImage && <span data-pagefind-meta="heroImage" class="hidden">{heroImage}</span>}
+      {heroImage && (
+        <>
+          <span data-pagefind-meta="heroImage" class="hidden">{heroImage}</span>
+          <span data-pagefind-meta="heroImageAlt" class="hidden">{heroImageAlt}</span>
+        </>
+      )}
+      {tags.length > 0 && <span data-pagefind-meta="tags" class="hidden">{tags.join(', ')}</span>}
 
       <div class="flex flex-wrap items-center text-sm" style="margin-top: var(--md-sys-spacing-md); gap: var(--md-sys-spacing-md); color: var(--md-sys-color-on-surface-variant);">
         <span>Por {author}</span>

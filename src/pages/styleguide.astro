@@ -1,0 +1,575 @@
+---
+/**
+ * OndaCoreana Brand Styleguide
+ * Design system documentation page
+ */
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { Logo, Sparkle, Loading, Marquee } from '../components/brand';
+---
+
+<BaseLayout
+  title="Brand Styleguide | OndaCoreana"
+  description="OndaCoreana Design System - Brand Identity Guidelines"
+>
+  <main class="styleguide">
+    <header class="styleguide-header">
+      <h1 class="oc-font-brand">OndaCoreana Design System</h1>
+      <p class="subtitle">Brand Identity Guidelines v1.0</p>
+    </header>
+
+    <!-- 1. Logo Variations -->
+    <section class="section">
+      <h2 class="section-title">01. Logo Variations</h2>
+      <div class="grid">
+        <div class="card">
+          <span class="card-label">Primary (Web Header)</span>
+          <div class="logo-wrap">
+            <Logo variant="horizontal" height={60} />
+          </div>
+          <p class="usage">헤더, 네비게이션</p>
+        </div>
+
+        <div class="card">
+          <span class="card-label">Stacked (Social)</span>
+          <div class="logo-wrap">
+            <Logo variant="vertical" height={100} />
+          </div>
+          <p class="usage">소셜 미디어, 머천다이즈</p>
+        </div>
+
+        <div class="card">
+          <span class="card-label">App Icon (Favicon)</span>
+          <div class="logo-wrap">
+            <Logo variant="icon" height={80} />
+          </div>
+          <p class="usage">파비콘, 앱 아이콘</p>
+        </div>
+
+        <div class="card dark">
+          <span class="card-label">Dark Mode</span>
+          <div class="logo-wrap">
+            <Logo variant="horizontal" color="light" height={60} />
+          </div>
+          <p class="usage">다크 배경, 비디오 오버레이</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Sparkle Icon -->
+    <section class="section">
+      <h2 class="section-title">02. Sparkle Icon</h2>
+      <div class="grid">
+        <div class="card">
+          <span class="card-label">Default</span>
+          <Sparkle size={60} />
+          <p class="usage">기본 스파클</p>
+        </div>
+
+        <div class="card">
+          <span class="card-label">Spin Animation</span>
+          <Sparkle size={60} animate="spin" />
+          <p class="usage">로딩 상태</p>
+        </div>
+
+        <div class="card">
+          <span class="card-label">Pop Animation</span>
+          <div class="pop-demo">
+            <Sparkle size={60} animate="pop" class="pop-sparkle" />
+          </div>
+          <p class="usage">등장 효과</p>
+          <button class="btn-mini" onclick="this.previousElementSibling.previousElementSibling.innerHTML = this.previousElementSibling.previousElementSibling.innerHTML">
+            Replay
+          </button>
+        </div>
+
+        <div class="card dark">
+          <span class="card-label">On Dark</span>
+          <Sparkle size={60} color="#ec4899" />
+          <p class="usage">다크 배경</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Color System -->
+    <section class="section">
+      <h2 class="section-title">03. Color System</h2>
+      <div class="color-grid">
+        <div class="color-card">
+          <div class="color-swatch oc-bg-pink"></div>
+          <div class="color-info">
+            <span class="color-name">K-Pop Pink</span>
+            <code class="color-hex">#ec4899</code>
+            <code class="color-var">--oc-color-pink</code>
+            <span class="color-use">Primary Accent, Sparkle, Buttons</span>
+          </div>
+        </div>
+
+        <div class="color-card">
+          <div class="color-swatch oc-bg-black"></div>
+          <div class="color-info">
+            <span class="color-name">Onda Black</span>
+            <code class="color-hex">#111111</code>
+            <code class="color-var">--oc-color-black</code>
+            <span class="color-use">Main Text, Backgrounds, Footer</span>
+          </div>
+        </div>
+
+        <div class="color-card">
+          <div class="color-swatch oc-bg-white" style="border: 1px solid #eee;"></div>
+          <div class="color-info">
+            <span class="color-name">Pure White</span>
+            <code class="color-hex">#FFFFFF</code>
+            <code class="color-var">--oc-color-white</code>
+            <span class="color-use">Card Background, Dark Mode Text</span>
+          </div>
+        </div>
+
+        <div class="color-card">
+          <div class="color-swatch oc-bg-gray"></div>
+          <div class="color-info">
+            <span class="color-name">Soft Gray</span>
+            <code class="color-hex">#F4F5F7</code>
+            <code class="color-var">--oc-color-gray</code>
+            <span class="color-use">Web Background, Sections</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Animations -->
+    <section class="section">
+      <h2 class="section-title">04. Animations</h2>
+
+      <!-- Hero Reveal -->
+      <div class="animation-demo">
+        <h3>Hero Text Reveal</h3>
+        <div class="hero-container" id="hero-demo">
+          <div class="reveal-text-box">
+            <span class="reveal-text oc-reveal">FEEL THE</span>
+          </div>
+          <br />
+          <div class="reveal-text-box">
+            <span class="reveal-text oc-reveal-delay">NEW WAVE</span>
+          </div>
+          <Sparkle size={50} animate="pop" class="hero-sparkle" />
+        </div>
+        <button class="btn-mini" onclick="replayHero()">Replay</button>
+      </div>
+
+      <!-- Card Shine -->
+      <div class="animation-demo">
+        <h3>Hologram Card Effect</h3>
+        <div class="card-grid-demo">
+          <div class="k-card oc-card-shine">
+            <span>NEWS CARD</span>
+          </div>
+          <div class="k-card oc-card-shine oc-bg-pink">
+            <span>ARTIST CARD</span>
+          </div>
+          <div class="k-card oc-card-shine">
+            <span>EVENT CARD</span>
+          </div>
+        </div>
+        <p class="hint">* 마우스를 올려보세요</p>
+      </div>
+
+      <!-- Pulse Button -->
+      <div class="animation-demo">
+        <h3>Rhythm Pulse Button</h3>
+        <button class="btn-rhythm oc-btn-pulse">Join the Wave</button>
+        <p class="hint">* 마우스를 올리면 비트가 느껴집니다</p>
+      </div>
+    </section>
+
+    <!-- 5. Marquee -->
+    <section class="section full-width">
+      <h2 class="section-title">05. Infinite Marquee</h2>
+      <Marquee speed={12} />
+    </section>
+
+    <!-- 6. Loading States -->
+    <section class="section">
+      <h2 class="section-title">06. Loading States</h2>
+      <div class="grid">
+        <div class="card">
+          <span class="card-label">Small (40px)</span>
+          <Loading size={40} />
+        </div>
+        <div class="card">
+          <span class="card-label">Medium (60px)</span>
+          <Loading size={60} />
+        </div>
+        <div class="card">
+          <span class="card-label">Large (80px)</span>
+          <Loading size={80} />
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. Typography -->
+    <section class="section">
+      <h2 class="section-title">07. Brand Typography</h2>
+      <div class="typography-demo">
+        <p class="oc-font-brand" style="font-size: 3rem;">ONDACOREANA</p>
+        <p style="font-family: var(--oc-font-brand); font-weight: 700; font-size: 1.5rem;">
+          Font: Montserrat Black (900)
+        </p>
+        <p style="font-family: var(--oc-font-brand); font-weight: 500;">
+          Secondary: Montserrat Medium (500)
+        </p>
+      </div>
+    </section>
+
+    <!-- 8. Usage Examples -->
+    <section class="section">
+      <h2 class="section-title">08. Component Usage</h2>
+      <div class="code-examples">
+        <div class="code-block">
+          <h4>Logo Component</h4>
+          <pre><code>&lt;Logo variant="horizontal" height={'{60}'} /&gt;
+&lt;Logo variant="vertical" color="light" /&gt;
+&lt;Logo variant="icon" /&gt;</code></pre>
+        </div>
+
+        <div class="code-block">
+          <h4>Sparkle Component</h4>
+          <pre><code>&lt;Sparkle size={'{40}'} /&gt;
+&lt;Sparkle animate="spin" /&gt;
+&lt;Sparkle animate="pop" color="#ec4899" /&gt;</code></pre>
+        </div>
+
+        <div class="code-block">
+          <h4>CSS Classes</h4>
+          <pre><code>.oc-bg-pink    /* Background */
+.oc-text-pink  /* Text color */
+.oc-font-brand /* Montserrat Black */
+.oc-card-shine /* Hologram hover */
+.oc-btn-pulse  /* Button pulse */</code></pre>
+        </div>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .styleguide {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--md-spacing-xl);
+  }
+
+  .styleguide-header {
+    text-align: center;
+    margin-bottom: var(--md-spacing-3xl);
+  }
+
+  .styleguide-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: var(--md-spacing-sm);
+  }
+
+  .subtitle {
+    color: var(--md-color-on-surface-variant);
+  }
+
+  .section {
+    margin-bottom: var(--md-spacing-3xl);
+  }
+
+  .section.full-width {
+    margin-left: calc(-50vw + 50%);
+    margin-right: calc(-50vw + 50%);
+    width: 100vw;
+  }
+
+  .section-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    border-bottom: 2px solid var(--md-color-outline);
+    padding-bottom: var(--md-spacing-sm);
+    margin-bottom: var(--md-spacing-lg);
+    color: var(--md-color-on-surface);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--md-spacing-lg);
+  }
+
+  .card {
+    background: var(--md-color-surface-container-low);
+    border-radius: var(--md-shape-lg);
+    padding: var(--md-spacing-xl);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--md-spacing-md);
+    box-shadow: var(--md-elevation-2);
+    position: relative;
+    transition: transform var(--md-motion-duration-medium) var(--md-motion-easing-standard);
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+  }
+
+  .card.dark {
+    background: var(--oc-color-black);
+    color: var(--oc-color-white);
+  }
+
+  .card-label {
+    position: absolute;
+    top: var(--md-spacing-sm);
+    left: var(--md-spacing-md);
+    font-size: 0.75rem;
+    color: var(--md-color-on-surface-variant);
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .card.dark .card-label {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .logo-wrap {
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .usage {
+    font-size: 0.8rem;
+    color: var(--md-color-on-surface-variant);
+    margin: 0;
+  }
+
+  .card.dark .usage {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  /* Color Grid */
+  .color-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--md-spacing-md);
+  }
+
+  .color-card {
+    background: var(--md-color-surface-container-low);
+    border-radius: var(--md-shape-md);
+    overflow: hidden;
+    box-shadow: var(--md-elevation-1);
+  }
+
+  .color-swatch {
+    height: 100px;
+    width: 100%;
+  }
+
+  .color-info {
+    padding: var(--md-spacing-md);
+    display: flex;
+    flex-direction: column;
+    gap: var(--md-spacing-xs);
+  }
+
+  .color-name {
+    font-weight: 700;
+  }
+
+  .color-hex {
+    font-family: var(--md-typo-font-family-mono);
+    font-size: 0.85rem;
+    color: var(--md-color-on-surface-variant);
+  }
+
+  .color-var {
+    font-family: var(--md-typo-font-family-mono);
+    font-size: 0.75rem;
+    color: var(--md-color-primary);
+  }
+
+  .color-use {
+    font-size: 0.75rem;
+    color: var(--md-color-on-surface-variant);
+    margin-top: var(--md-spacing-xs);
+  }
+
+  /* Animation Demos */
+  .animation-demo {
+    background: var(--md-color-surface-container);
+    border-radius: var(--md-shape-lg);
+    padding: var(--md-spacing-xl);
+    margin-bottom: var(--md-spacing-lg);
+  }
+
+  .animation-demo h3 {
+    margin-top: 0;
+    margin-bottom: var(--md-spacing-lg);
+    font-size: 1rem;
+    color: var(--md-color-on-surface-variant);
+  }
+
+  .hero-container {
+    text-align: center;
+    overflow: hidden;
+    padding: var(--md-spacing-lg) 0;
+  }
+
+  .reveal-text-box {
+    overflow: hidden;
+    display: inline-block;
+  }
+
+  .reveal-text {
+    font-family: var(--oc-font-brand);
+    font-weight: var(--oc-font-weight-black);
+    font-size: 3rem;
+    line-height: 1;
+    display: block;
+  }
+
+  .hero-sparkle {
+    margin-left: var(--md-spacing-sm);
+    vertical-align: top;
+  }
+
+  .card-grid-demo {
+    display: flex;
+    gap: var(--md-spacing-md);
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .k-card {
+    width: 180px;
+    height: 240px;
+    background: var(--oc-color-black);
+    border-radius: var(--md-shape-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: transform var(--md-motion-duration-medium) var(--md-motion-easing-standard);
+  }
+
+  .k-card:hover {
+    transform: translateY(-8px);
+  }
+
+  .btn-rhythm {
+    background: var(--oc-color-black);
+    color: white;
+    padding: var(--md-spacing-md) var(--md-spacing-xl);
+    font-size: 1.1rem;
+    font-weight: 900;
+    font-family: var(--oc-font-brand);
+    border: none;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: var(--md-elevation-3);
+  }
+
+  .hint {
+    font-size: 0.8rem;
+    color: var(--md-color-on-surface-variant);
+    margin-top: var(--md-spacing-md);
+    text-align: center;
+  }
+
+  .btn-mini {
+    background: var(--md-color-surface-container-high);
+    border: none;
+    padding: var(--md-spacing-sm) var(--md-spacing-md);
+    border-radius: var(--md-shape-sm);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background var(--md-motion-duration-short);
+  }
+
+  .btn-mini:hover {
+    background: var(--md-color-outline);
+  }
+
+  /* Typography Demo */
+  .typography-demo {
+    background: var(--md-color-surface-container);
+    padding: var(--md-spacing-xl);
+    border-radius: var(--md-shape-lg);
+    text-align: center;
+  }
+
+  /* Code Examples */
+  .code-examples {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--md-spacing-lg);
+  }
+
+  .code-block {
+    background: var(--oc-color-black);
+    border-radius: var(--md-shape-md);
+    overflow: hidden;
+  }
+
+  .code-block h4 {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    margin: 0;
+    padding: var(--md-spacing-sm) var(--md-spacing-md);
+    font-size: 0.85rem;
+  }
+
+  .code-block pre {
+    margin: 0;
+    padding: var(--md-spacing-md);
+  }
+
+  .code-block code {
+    color: #f8f8f2;
+    font-family: var(--md-typo-font-family-mono);
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .styleguide {
+      padding: var(--md-spacing-md);
+    }
+
+    .reveal-text {
+      font-size: 2rem;
+    }
+
+    .k-card {
+      width: 140px;
+      height: 180px;
+    }
+  }
+</style>
+
+<script>
+  function replayHero() {
+    const container = document.getElementById('hero-demo');
+    if (container) {
+      const html = container.innerHTML;
+      container.innerHTML = '';
+      setTimeout(() => {
+        container.innerHTML = html;
+      }, 50);
+    }
+  }
+
+  // Make function available globally
+  (window as any).replayHero = replayHero;
+</script>

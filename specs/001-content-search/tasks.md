@@ -1,270 +1,150 @@
 # Tasks: Content Search
 
 **Input**: Design documents from `/specs/001-content-search/`
-**Prerequisites**: plan.md (required), spec.md (required), data-model.md, contracts/search-api.md, research.md, quickstart.md
+**Prerequisites**: plan.md, spec.md, research.md, data-model.md, contracts/, quickstart.md
 
-**Tests**: E2E tests using Playwright are REQUIRED per constitution (TDD mandate).
+**Tests**: Each user story includes a Playwright E2E spec to honor the TDD workflow described in the spec (tests fail before implementation).
 
-**Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
+**Organization**: Tasks are grouped by user story to keep increments independently testable.
 
-## Format: `[ID] [P?] [Story] Description`
+## Phase 1: Setup (Shared Infrastructure)
 
-- **[P]**: Can run in parallel (different files, no dependencies)
-- **[Story]**: Which user story this task belongs to (e.g., US1, US2, US3, US4)
-- Include exact file paths in descriptions
+**Purpose**: Install and configure the tooling required for Pagefind search and offline caching.
 
-## Path Conventions
-
-- **Single project**: `src/`, `tests/` at repository root
-- Paths follow existing Astro structure per plan.md
-
----
-
-## Phase 1: Setup
-
-**Purpose**: Install dependencies and configure Pagefind integration
-
-- [x] T001 Install Pagefind dependencies: `pnpm add -D astro-pagefind pagefind`
-- [x] T002 Add Pagefind integration to astro.config.mjs (must be LAST integration)
-- [x] T003 [P] Create search components directory at src/components/search/
-- [x] T004 [P] Create E2E test directory at tests/e2e/ if not exists
+- [ ] T001 Update `package.json` to add `astro-pagefind`, `pagefind`, and `workbox-window` devDependencies for search and service worker support.
+- [ ] T002 Configure `astro.config.mjs` to register the `astro-pagefind` integration (last in the list) and expose `/buscar` route options needed for SEO.
+- [ ] T003 Create `src/scripts/register-sw.ts` bootstrap that registers `/service-worker.js` when the search UI mounts (import placeholder into `src/layouts/BaseLayout.astro` but keep registration disabled until SW exists).
 
 ---
 
 ## Phase 2: Foundational (Blocking Prerequisites)
 
-**Purpose**: Content indexing infrastructure that ALL user stories depend on
+**Purpose**: Ensure published content is indexable, search assets can be cached, and the `/buscar` page skeleton exists before implementing user stories.
 
-**CRITICAL**: No user story work can begin until this phase is complete
+- [ ] T004 Annotate `src/layouts/ArticleLayout.astro` with `data-pagefind-body` plus metadata (`data-pagefind-meta="title|description|contentType|pubDate|heroImage"`) so Pagefind indexes all collections.
+- [ ] T005 Add `data-pagefind-ignore` wrappers to navigation/footer fragments inside `src/layouts/BaseLayout.astro` to keep chrome from polluting the index.
+- [ ] T006 Scaffold `src/pages/buscar.astro` with `BaseLayout`, query parameter extraction, and placeholder slots for results, filters, and SEO meta tags.
+- [ ] T007 Create root-level `service-worker.ts` that caches Pagefind assets (`/pagefind/*`) and recent article HTML, building to `public/service-worker.js`.
+- [ ] T008 Wire `src/layouts/BaseLayout.astro` to import the SW bootstrap from Phase 1 and gate registration so it activates only on client navigation (fulfills offline search prerequisite).
 
-- [x] T005 Add data-pagefind-body attribute to ArticleLayout.astro for content indexing
-- [x] T006 Add data-pagefind-meta attributes for title, description, contentType, pubDate in ArticleLayout.astro
-- [x] T007 [P] Add data-pagefind-ignore to navigation, footer, and sidebar elements in BaseLayout.astro
-- [x] T008 [P] Create ContentType enum type in src/types/search.ts
-- [x] T009 [P] Create SearchResult interface in src/types/search.ts
-- [x] T010 [P] Create SearchResultSet interface in src/types/search.ts
-- [x] T011 Build site and verify Pagefind index is generated in dist/pagefind/ (verify no draft content indexed per FR-007)
-
-**Checkpoint**: Foundation ready - user story implementation can now begin
+**Checkpoint**: Pagefind is integrated, the site builds with an index, and `/buscar` renders a stubbed page ready for user stories.
 
 ---
 
-## Phase 3: User Story 1 - Basic Content Search (Priority: P1)
+## Phase 3: User Story 1 – Basic Content Search (Priority: P1) 🎯 MVP
 
-**Goal**: Visitors can search for content and see results on a dedicated page
+**Goal**: Visitors can submit a query from any page, land on `/buscar`, and see cross-collection results with title, excerpt (~160 chars), type, and date plus helpful empty/error states.
 
-**Independent Test**: Enter a search query and verify matching results appear from all collections
+**Independent Test**: Run `pnpm test:e2e tests/e2e/search-basic.spec.ts` to ensure a query such as “BTS” returns matching dramas/kpop/noticias/guias, shows counts, and surfaces friendly no-results messaging.
 
-### Tests for User Story 1 (TDD - Write First, Must Fail)
+### Tests (Write First)
 
-- [x] T012 [P] [US1] Create E2E test file at tests/e2e/search-basic.spec.ts
-- [x] T013 [US1] Write test: search form submission navigates to /buscar with query param
-- [x] T014 [US1] Write test: search results page displays matching articles with title, type, excerpt, date
-- [x] T015 [US1] Write test: "no results" message appears for queries with no matches
-- [x] T016 [US1] Run tests and verify they FAIL (Red phase)
+- [ ] T009 [P] [US1] Author failing Playwright spec `tests/e2e/search-basic.spec.ts` covering query submission, mixed-collection results, empty state, and draft exclusion.
 
-### Implementation for User Story 1
+### Implementation
 
-- [x] T017 [P] [US1] Create SearchResultCard.astro component in src/components/search/SearchResultCard.astro
-- [x] T018 [P] [US1] Create SearchResults.astro component in src/components/search/SearchResults.astro
-- [x] T019 [US1] Create SearchInput.astro component (basic version, submit only) in src/components/search/SearchInput.astro
-- [x] T020 [US1] Create /buscar page at src/pages/buscar.astro with search results display
-- [x] T021 [US1] Add SearchInput component to BaseLayout.astro header
-- [x] T022 [US1] Implement Pagefind initialization and basic search execution in buscar.astro
-- [x] T023 [US1] Add empty state UI with "No se encontraron resultados" message
-- [x] T024 [US1] Add query validation (min 2 chars) with guidance message
-- [x] T025 [US1] Run E2E tests and verify they PASS (Green phase)
+- [ ] T010 [P] [US1] Build `src/components/search/SearchResultCard.astro` to render title, excerpt (truncate to 160 chars), type chip, date, hero image, and link.
+- [ ] T011 [P] [US1] Implement `src/components/search/SearchResults.astro` to read `q` from the router, invoke Pagefind search, paginate (10 initial + “load more”), and emit total counts.
+- [ ] T012 [P] [US1] Implement `src/components/search/SearchStatus.astro` for shared loading, empty, and index-error states (includes retry CTA text from spec).
+- [ ] T013 [P] [US1] Create `src/components/search/SearchInput.astro` containing the header input, guidance for <2 characters, and query normalization/truncation logic.
+- [ ] T014 [US1] Update `src/layouts/BaseLayout.astro` to inject `SearchInput` into the nav so the search field is accessible on every page and routes to `/buscar`.
+- [ ] T015 [US1] Flesh out `src/pages/buscar.astro` to assemble `SearchResults`, `SearchStatus`, and `SearchResultCard`, display query + count, and ensure draft content is excluded.
+- [ ] T016 [US1] Add Tailwind utility styles or scoped `src/styles/search.css` rules referenced by the new components (cards grid, badges, responsive spacing).
 
-**Checkpoint**: User Story 1 complete - basic search is functional and testable independently
+**Checkpoint**: Manual search and Playwright US1 spec both pass; `/buscar?q=term` share links render identical results.
 
 ---
 
-## Phase 4: User Story 2 - Real-Time Search Suggestions (Priority: P2)
+## Phase 4: User Story 2 – Real-Time Search Suggestions (Priority: P2)
 
-**Goal**: Search results update instantly as user types without form submission
+**Goal**: Typing ≥2 characters in the header input surfaces instant suggestions (sub-300 ms) without requiring submit; clicking a suggestion navigates to the article.
 
-**Independent Test**: Type characters in search field and observe results update without page reload
+**Independent Test**: Run `pnpm test:e2e tests/e2e/search-realtime.spec.ts` to validate live suggestion updates and navigation.
 
-### Tests for User Story 2 (TDD - Write First, Must Fail)
+### Tests (Write First)
 
-- [x] T026 [P] [US2] Create E2E test file at tests/e2e/search-realtime.spec.ts
-- [x] T027 [US2] Write test: typing 2+ characters triggers search within 300ms
-- [x] T028 [US2] Write test: results update as user continues typing (debounced)
-- [x] T029 [US2] Write test: clicking a result in dropdown navigates to article
-- [x] T030 [US2] Run tests and verify they FAIL (Red phase)
+- [ ] T017 [P] [US2] Create Playwright spec `tests/e2e/search-realtime.spec.ts` that types partial terms, asserts suggestion latency, and verifies clicking suggestions opens detail pages.
 
-### Implementation for User Story 2
+### Implementation
 
-- [x] T031 [US2] Add debounce utility function in src/utils/debounce.ts
-- [x] T032 [US2] Extend SearchInput.astro with showInlineResults prop and dropdown UI
-- [x] T033 [US2] Add client-side JavaScript for real-time search execution in SearchInput.astro
-- [x] T034 [US2] Implement 300ms debounce on input events
-- [x] T035 [US2] Add loading state indicator during search
-- [x] T036 [US2] Run E2E tests and verify they PASS (Green phase)
+- [ ] T018 [P] [US2] Extend `src/components/search/SearchInput.astro` with debounced Pagefind lookups, drop-down suggestion list, and keyboard navigation (Arrow/Enter/Escape).
+- [ ] T019 [US2] Introduce `src/components/search/search-store.ts` (or similar) to share live query state between the header input and `/buscar` results without full page reloads.
+- [ ] T020 [US2] Update `src/components/search/SearchResults.astro` to subscribe to the shared store so results repaint instantly as the query updates in real time.
+- [ ] T021 [US2] Add accessibility hooks (ARIA roles, focus trapping) and ensure the suggestion list closes on blur or escape within `SearchInput.astro`.
 
-**Checkpoint**: User Story 2 complete - real-time search works independently
+**Checkpoint**: Suggestions appear instantly, are accessible, and Playwright US2 spec passes.
 
 ---
 
-## Phase 5: User Story 3 - Filter by Content Type (Priority: P3)
+## Phase 5: User Story 3 – Filter by Content Type (Priority: P3)
 
-**Goal**: Users can filter search results by content type (dramas, kpop, noticias, guias)
+**Goal**: Visitors can narrow search results to Dramas, K-Pop, Noticias, or Guías using filter tabs; filters sync with the URL (`filter=` param) and persist on reload/share.
 
-**Independent Test**: Perform search, select filter, verify only that content type appears
+**Independent Test**: Run `pnpm test:e2e tests/e2e/search-filters.spec.ts` to confirm filters limit results, “Todos” resets, and no-results messaging references the active filter.
 
-### Tests for User Story 3 (TDD - Write First, Must Fail)
+### Tests (Write First)
 
-- [x] T037 [P] [US3] Create E2E test file at tests/e2e/search-filters.spec.ts
-- [x] T038 [US3] Write test: selecting "K-Dramas" filter shows only drama results
-- [x] T039 [US3] Write test: selecting "Todos" shows all content types again
-- [x] T040 [US3] Write test: filter with no matching results shows appropriate message
-- [x] T041 [US3] Run tests and verify they FAIL (Red phase)
+- [ ] T022 [P] [US3] Add Playwright spec `tests/e2e/search-filters.spec.ts` covering filter toggling, persistence via URL params, and zero-results per filter messaging.
 
-### Implementation for User Story 3
+### Implementation
 
-- [x] T042 [US3] Create SearchFilters.astro component in src/components/search/SearchFilters.astro
-- [x] T043 [US3] Add filter tabs UI with Todos, K-Dramas, K-Pop, Noticias, Guías options
-- [x] T044 [US3] Integrate SearchFilters into buscar.astro page
-- [x] T045 [US3] Update search execution to apply contentType filter via Pagefind filters option
-- [x] T046 [US3] Add result count badges to each filter tab
-- [x] T047 [US3] Update URL with type parameter when filter changes
-- [x] T048 [US3] Run E2E tests and verify they PASS (Green phase)
+- [ ] T023 [P] [US3] Implement `src/components/search/SearchFilters.astro` with Tailwind-styled pill tabs for Todos/Dramas/K-Pop/Noticias/Guías and emit filter change events.
+- [ ] T024 [US3] Update `src/components/search/SearchResults.astro` to apply Pagefind filters, display filter chips on each card, and update counts per filter.
+- [ ] T025 [US3] Enhance `src/pages/buscar.astro` to sync `filter` query params with the filter component (including default “all”) and ensure shareable URLs reproduce the filtered view.
 
-**Checkpoint**: User Story 3 complete - filtering works independently
+**Checkpoint**: Filter UX is stable, shareable, and Playwright US3 spec passes.
 
 ---
 
-## Phase 6: User Story 4 - SEO-Friendly Search Results Page (Priority: P4)
+## Phase 6: User Story 4 – SEO-Friendly Search Results Page (Priority: P4)
 
-**Goal**: Search results pages are discoverable by search engines with proper meta tags
+**Goal**: `/buscar` renders with dynamic meta tags (title/description/canonical/OG/Twitter) that include the query, works when loaded via bookmark/share, and exposes structured data.
 
-**Independent Test**: Access /buscar?q=BTS directly and verify page renders with correct meta tags
+**Independent Test**: Run `pnpm test:e2e tests/e2e/search-seo.spec.ts` to verify meta tags, canonical URLs, JSON-LD, and share-link parity.
 
-### Tests for User Story 4 (TDD - Write First, Must Fail)
+### Tests (Write First)
 
-- [x] T049 [P] [US4] Create E2E test file at tests/e2e/search-seo.spec.ts
-- [x] T050 [US4] Write test: direct URL access /buscar?q=BTS renders with pre-populated results
-- [x] T051 [US4] Write test: page has correct title, description, canonical meta tags
-- [x] T052 [US4] Write test: shared URL shows same results for different users
-- [x] T053 [US4] Run tests and verify they FAIL (Red phase)
+- [ ] T026 [P] [US4] Create Playwright spec `tests/e2e/search-seo.spec.ts` asserting SEO tags adapt per query, canonical URLs include encoded `q`, and direct navigation pre-populates results.
 
-### Implementation for User Story 4
+### Implementation
 
-- [x] T054 [US4] Add dynamic meta tags to buscar.astro based on query parameter
-- [x] T055 [US4] Add canonical URL meta tag with query parameter
-- [x] T056 [US4] Add Open Graph tags (og:title, og:description, og:type)
-- [x] T057 [US4] Add noindex directive for empty search queries
-- [x] T058 [US4] Ensure URL parameters are read on page load for SSR/hydration
-- [x] T059 [US4] Run E2E tests and verify they PASS (Green phase)
+- [ ] T027 [US4] Update `src/pages/buscar.astro` (and/or `src/components/seo/SEOHead.astro`) to compute dynamic `<title>`, `<meta name="description">`, OG/Twitter tags, and canonical URL reflecting `q` + `filter`.
+- [ ] T028 [US4] Inject structured data via `src/components/seo/JsonLd.astro` describing the `SearchAction` schema and include share buttons referencing `window.location.href`.
+- [ ] T029 [US4] Ensure `SearchResults.astro` hydrates with initial query values passed from Astro so server-rendered HTML matches the first load (avoids CLS/SEO penalties).
 
-**Checkpoint**: All user stories complete - full search functionality ready
+**Checkpoint**: `/buscar?q=term` is indexable, meta tags validated, and Playwright US4 spec passes.
 
 ---
 
 ## Phase 7: Polish & Cross-Cutting Concerns
 
-**Purpose**: Improvements that affect multiple user stories
+**Purpose**: Finalize offline behavior, documentation, and quality checks across all stories.
 
-- [x] T060 [P] Add pagination with "load more" button (10 results initially, +10 per click)
-- [x] T061 [P] Add query truncation at 100 characters with user notification
-- [x] T062 [P] Style search components with Tailwind CSS following site design
-- [x] T063 Run Lighthouse audit on /buscar page and verify Performance score 90+
-- [x] T064 Verify search assets are lazy-loaded (no impact on non-search pages)
-- [x] T065 Run full E2E test suite: `pnpm test:e2e tests/e2e/search-*.spec.ts` - 54 tests passing
-- [x] T066 Manual verification per quickstart.md checklist
+- [ ] T030 [P] Update `service-worker.ts` to cache Pagefind chunks, `SearchResultCard` assets, and previously visited article HTML; display “Contenido no disponible sin conexión” when cache miss occurs offline.
+- [ ] T031 [P] Document realtime search usage, offline expectations, and troubleshooting in `specs/001-content-search/quickstart.md` and `README.md` search sections.
+- [ ] T032 Run `pnpm test && pnpm test:e2e tests/e2e/search-*.spec.ts && pnpm build` to ensure all stories and SEO/build validations pass before release.
 
 ---
 
 ## Dependencies & Execution Order
 
-### Phase Dependencies
-
-- **Setup (Phase 1)**: No dependencies - can start immediately
-- **Foundational (Phase 2)**: Depends on Setup completion - BLOCKS all user stories
-- **User Stories (Phase 3-6)**: All depend on Foundational phase completion
-  - US1 (P1): Can start after Phase 2
-  - US2 (P2): Can start after Phase 2 (parallel with US1 if desired)
-  - US3 (P3): Can start after Phase 2 (parallel with US1/US2 if desired)
-  - US4 (P4): Can start after Phase 2 (parallel with others if desired)
-- **Polish (Phase 7)**: Depends on all user stories being complete
-
-### User Story Dependencies
-
-All user stories can technically proceed in parallel after Phase 2, but recommended order:
-- **US1 (P1)**: Start first - establishes core components used by others
-- **US2 (P2)**: After US1 - extends SearchInput component
-- **US3 (P3)**: After US1 - extends buscar.astro page
-- **US4 (P4)**: After US1 - extends buscar.astro meta tags
-
-### Within Each User Story
-
-- Tests MUST be written and FAIL before implementation (TDD Red phase)
-- Implementation MUST make tests pass (TDD Green phase)
-- All tests marked [P] within a phase can run in parallel
-
-### Parallel Opportunities
-
-- All test file creation tasks marked [P] can run in parallel
-- Type definition tasks (T008, T009, T010) can run in parallel
-- Component creation tasks within same phase marked [P] can run in parallel
+1. **Phase 1 → Phase 2**: Setup must complete before foundational work because Pagefind deps/config are required to build the index.
+2. **Phase 2 → User Stories**: Foundational annotations, SW scaffolding, and `/buscar` skeleton must exist before any user story (P1–P4) starts.
+3. **User Story Order**: Implement sequentially by priority (US1 → US2 → US3 → US4). Stories can run in parallel only after Phase 2, provided shared files aren’t touched simultaneously.
+4. **Polish Phase**: Runs after desired stories finish; focuses on offline caching hardening, docs, and regression runs.
 
 ---
 
-## Parallel Example: User Story 1
+## Parallel Execution Opportunities
 
-```bash
-# Create test file (can parallelize with type definitions):
-Task T012: Create E2E test file at tests/e2e/search-basic.spec.ts
-
-# Write tests sequentially (same file):
-Task T013-T015: Write individual test cases
-
-# After tests fail, create components in parallel:
-Task T017: Create SearchResultCard.astro
-Task T018: Create SearchResults.astro
-# Then sequentially:
-Task T019-T024: Integration tasks (depend on components)
-```
+- Tasks marked `[P]` operate on distinct files and can be parallelized (e.g., T010/T011/T012 during US1, or the various test specs per story).
+- Different user stories can be implemented in parallel after Phase 2 if coordination on shared files (`SearchResults.astro`, `/buscar.astro`) is managed via branching.
 
 ---
 
 ## Implementation Strategy
 
-### MVP First (User Story 1 Only)
-
-1. Complete Phase 1: Setup
-2. Complete Phase 2: Foundational (CRITICAL)
-3. Complete Phase 3: User Story 1
-4. **STOP and VALIDATE**: Test US1 independently
-5. Deploy/demo if ready - basic search is functional
-
-### Incremental Delivery
-
-1. Setup + Foundational → Foundation ready
-2. Add US1 → Test independently → Deploy (MVP!)
-3. Add US2 → Test independently → Deploy (real-time search)
-4. Add US3 → Test independently → Deploy (filtering)
-5. Add US4 → Test independently → Deploy (SEO)
-6. Polish → Final validation → Release
-
-### Parallel Team Strategy
-
-With multiple developers:
-1. All complete Setup + Foundational together
-2. Once Foundational is done:
-   - Developer A: US1 (tests + implementation)
-   - Developer B: US3 (can start tests while A works on US1)
-3. After US1 complete:
-   - Developer A: US2 (extends SearchInput)
-   - Developer B: US4 (extends buscar.astro)
-
----
-
-## Notes
-
-- [P] tasks = different files, no dependencies
-- [Story] label maps task to specific user story for traceability
-- Each user story is independently completable and testable
-- TDD is MANDATORY: Write tests FIRST, verify they FAIL, then implement
-- Commit after each task or logical group
-- Stop at any checkpoint to validate story independently
+1. **MVP Scope**: Deliver Phase 1 → Phase 3 (US1). This unlocks baseline search and satisfies the primary user value; stop here for initial release if needed.
+2. **Incremental Enhancements**: Layer US2 (real-time), US3 (filters), and US4 (SEO polish) sequentially, validating via their Playwright specs.
+3. **Quality Gate**: After each story, rerun its spec plus regression `pnpm test` before moving on.
+4. **Offline & Docs**: Complete the Polish phase last so offline caching logic and documentation capture the final feature set.

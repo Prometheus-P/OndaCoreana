@@ -21,7 +21,7 @@ const resultMessage = totalCount === 1
 <div class="search-results" data-testid="search-results">
   {/* Result count header */}
   <div class="mb-6">
-    <p class="text-sm text-gray-600" data-testid="result-count">
+    <p class="result-count" data-testid="result-count">
       {resultMessage}
     </p>
   </div>
@@ -34,16 +34,8 @@ const resultMessage = totalCount === 1
       ))}
     </div>
   ) : (
-    <div
-      class="rounded-lg border border-gray-200 bg-gray-50 p-8 text-center"
-      data-testid="no-results"
-    >
-      <svg
-        class="mx-auto h-12 w-12 text-gray-400"
-        fill="none"
-        viewBox="0 0 24 24"
-        stroke="currentColor"
-      >
+    <div class="search-empty" data-testid="no-results">
+      <svg class="mx-auto h-12 w-12" style="color: var(--md-color-on-surface-variant);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path
           stroke-linecap="round"
           stroke-linejoin="round"
@@ -51,16 +43,16 @@ const resultMessage = totalCount === 1
           d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
         />
       </svg>
-      <h3 class="mt-4 text-lg font-medium text-gray-900">
+      <h3 style="margin-top: var(--md-spacing-sm); font-size: var(--md-typo-title-medium-size); color: var(--md-color-on-surface);">
         No se encontraron resultados
       </h3>
-      <p class="mt-2 text-sm text-gray-600">
+      <p style="margin-top: var(--md-spacing-xs); color: var(--md-color-on-surface-variant);">
         No encontramos artículos que coincidan con "{query}".
         Intenta con otros términos de búsqueda.
       </p>
-      <div class="mt-4">
-        <p class="text-sm text-gray-500">Sugerencias:</p>
-        <ul class="mt-2 text-sm text-gray-600 list-disc list-inside">
+      <div style="margin-top: var(--md-spacing-sm); text-align: left;">
+        <p class="result-count">Sugerencias:</p>
+        <ul style="margin-top: var(--md-spacing-xs); color: var(--md-color-on-surface-variant); padding-left: var(--md-spacing-lg); list-style: disc;">
           <li>Verifica la ortografía</li>
           <li>Usa palabras más generales</li>
           <li>Prueba con menos palabras clave</li>
@@ -74,9 +66,10 @@ const resultMessage = totalCount === 1
     <div class="mt-8 text-center">
       <button
         type="button"
-        class="inline-flex items-center rounded-lg bg-pink-600 px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2 disabled:opacity-50"
+        class="btn btn--primary"
         data-testid="load-more-button"
         disabled={isLoading}
+        style="min-width: 230px;"
       >
         {isLoading ? (
           <>
@@ -105,3 +98,17 @@ const resultMessage = totalCount === 1
     </div>
   )}
 </div>
+
+<style>
+  .result-count {
+    font-size: var(--md-typo-body-medium-size);
+    color: var(--md-color-on-surface-variant);
+  }
+
+  .search-empty {
+    border-radius: var(--md-shape-xl);
+    border: 1px dashed color-mix(in srgb, var(--md-color-outline) 80%, transparent);
+    padding: var(--md-spacing-2xl);
+    background-color: color-mix(in srgb, var(--md-color-surface-variant) 30%, transparent);
+  }
+</style>

@@ -1,0 +1,63 @@
+---
+/**
+ * OndaCoreana Marquee Banner
+ * Infinite scrolling text banner for promotional content
+ */
+interface Props {
+  items?: string[];
+  speed?: number;
+  class?: string;
+}
+
+const {
+  items = ['ONDA COREANA', 'K-POP CULTURE', 'SEOUL VIBE', 'LATIN SOUL'],
+  speed = 10,
+  class: className = ''
+} = Astro.props;
+
+// Duplicate items for seamless loop
+const displayItems = [...items, ...items];
+---
+
+<div class:list={['oc-marquee-wrapper', className]}>
+  <div class="oc-marquee-track" style={`animation-duration: ${speed}s`}>
+    {displayItems.map((item, i) => (
+      <span class="oc-marquee-item">
+        {item.split(' ').map((word, j) => (
+          j === 0
+            ? <span class="oc-text-white">{word} </span>
+            : <span class="oc-text-black">{word} </span>
+        ))}
+      </span>
+    ))}
+  </div>
+</div>
+
+<style>
+  .oc-marquee-wrapper {
+    width: 100%;
+    background-color: var(--oc-color-pink);
+    padding: 1rem 0;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .oc-marquee-track {
+    display: inline-flex;
+    animation: oc-marquee 10s linear infinite;
+  }
+
+  .oc-marquee-item {
+    display: inline-block;
+    font-family: var(--oc-font-brand);
+    font-weight: var(--oc-font-weight-black);
+    font-size: 1.5rem;
+    margin-right: 3rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .oc-marquee-track {
+      animation: none;
+    }
+  }
+</style>
