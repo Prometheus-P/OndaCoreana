@@ -5,6 +5,8 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import pagefind from 'astro-pagefind';
 
+const SEARCH_ROUTE = '/buscar';
+
 // https://astro.build/config
 export default defineConfig({
   site: 'https://ondacoreana.com',
@@ -23,6 +25,10 @@ export default defineConfig({
     plugins: [tailwindcss()],
   },
 
+  redirects: {
+    '/search': SEARCH_ROUTE,
+  },
+
   integrations: [
     mdx(),
     sitemap({
@@ -34,7 +40,10 @@ export default defineConfig({
         },
       },
     }),
-    pagefind(), // Must be LAST integration
+    pagefind({
+      forceLanguage: 'es',
+      ui: false,
+    }), // Must be LAST integration
   ],
 
   build: {
