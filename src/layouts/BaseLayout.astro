@@ -22,6 +22,8 @@ const props = Astro.props;
 
 // GA4 Measurement ID from environment variable
 const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
+// Google AdSense Publisher ID from environment variable
+const adsensePublisherId = import.meta.env.PUBLIC_ADSENSE_PUBLISHER_ID;
 
 const primaryNav = [
   { href: '/dramas', label: 'K-Dramas' },
@@ -73,6 +75,16 @@ const enableSearchSw = import.meta.env.PUBLIC_ENABLE_SEARCH_SW === 'true';
           gtag('config', gaMeasurementId);
         </script>
       </>
+    )}
+
+    {/* Google AdSense */}
+    {adsensePublisherId && (
+      <script
+        is:inline
+        async
+        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsensePublisherId}`}
+        crossorigin="anonymous"
+      ></script>
     )}
   </head>
   <body class="min-h-screen antialiased">

@@ -10,56 +10,57 @@ const dramas = allDramas.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDat
   title="K-Dramas - Reseñas, Guías y Recomendaciones"
   description="Descubre los mejores K-Dramas con nuestras reseñas detalladas, guías de visualización y recomendaciones personalizadas. Todo en español."
 >
-  <section class="bg-gradient-to-r from-pink-500 to-rose-500 text-white">
-    <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-      <h1 class="text-3xl font-bold sm:text-4xl">K-Dramas</h1>
-      <p class="mt-2 text-lg text-pink-100">
-        Reseñas, guías y recomendaciones de los mejores dramas coreanos
+  <section class="section-shell" style="--section-bg: linear-gradient(120deg, color-mix(in srgb, var(--md-color-primary) 80%, #0f0f0f) 0%, color-mix(in srgb, var(--md-color-tertiary) 60%, transparent) 100%); --section-color: var(--md-color-on-primary);">
+    <div class="section-shell__inner">
+      <h1 class="text-4xl font-bold" style="color: inherit;">K-Dramas</h1>
+      <p style="color: color-mix(in srgb, var(--md-color-on-primary) 80%, transparent); max-width: 40rem;">
+        Reseñas, guías y recomendaciones de los dramas coreanos que marcan tendencia.
       </p>
     </div>
   </section>
 
-  <section class="py-12">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+  <section class="section-shell" style="--section-bg: var(--md-color-surface-container);">
+    <div class="section-shell__inner">
       {dramas.length > 0 ? (
         <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {dramas.map((drama) => (
-            <article class="group overflow-hidden rounded-lg bg-white shadow-md hover:shadow-lg transition-shadow">
+            <article class="surface-card surface-card--interactive flex flex-col" style="overflow: hidden;">
               {drama.data.heroImage && (
                 <img
                   src={drama.data.heroImage}
                   alt={drama.data.heroImageAlt || drama.data.title}
-                  class="h-64 w-full object-cover"
+                  class="w-full object-cover"
+                  style="height: 14rem;"
                   loading="lazy"
                 />
               )}
-              <div class="p-4">
-                <div class="flex flex-wrap gap-2 mb-2">
+              <div style="padding: var(--md-spacing-md); display: flex; flex-direction: column; gap: var(--md-spacing-sm);">
+                <div class="flex flex-wrap gap-2">
                   {drama.data.genre?.slice(0, 2).map((g) => (
-                    <span class="text-xs bg-pink-100 text-pink-800 px-2 py-1 rounded-full">
+                    <span class="chip" style="--chip-bg: color-mix(in srgb, var(--md-color-primary) 12%, var(--md-color-surface-variant)); --chip-color: var(--md-color-on-surface);">
                       {g}
                     </span>
                   ))}
                 </div>
-                <h2 class="font-semibold text-gray-900 group-hover:text-pink-600">
+                <h2 class="font-semibold" style="color: var(--md-color-on-surface); font-size: var(--md-typo-title-medium-size);">
                   <a href={`/dramas/${drama.slug}`}>
                     {drama.data.title}
                   </a>
                 </h2>
-                <p class="mt-1 text-sm text-gray-600 line-clamp-2">
+                <p class="subtle-text" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
                   {drama.data.description}
                 </p>
                 {drama.data.network && (
-                  <p class="mt-2 text-xs text-gray-500">{drama.data.network}</p>
+                  <p style="font-size: var(--md-typo-label-medium-size); color: color-mix(in srgb, var(--md-color-on-surface-variant) 80%, transparent);">
+                    {drama.data.network}
+                  </p>
                 )}
               </div>
             </article>
           ))}
         </div>
       ) : (
-        <div class="text-center py-12">
-          <p class="text-gray-600">Próximamente: reseñas de los mejores K-Dramas</p>
-        </div>
+        <p class="text-center subtle-text">Próximamente: reseñas de los mejores K-Dramas</p>
       )}
     </div>
   </section>

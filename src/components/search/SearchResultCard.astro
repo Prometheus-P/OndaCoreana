@@ -9,11 +9,15 @@ interface Props {
 
 const { result, query } = Astro.props;
 
+function escapeRegex(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 // Highlight query terms in excerpt
 function highlightExcerpt(excerpt: string, query: string): string {
   if (!query.trim()) return excerpt;
-  const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
-  return excerpt.replace(regex, '<mark class="bg-yellow-200 text-yellow-900 rounded px-0.5">$1</mark>');
+  const regex = new RegExp(`(${escapeRegex(query)})`, 'gi');
+  return excerpt.replace(regex, '<mark class="search-highlight">$1</mark>');
 }
 
 // Format date in Spanish locale
@@ -23,21 +27,27 @@ const formattedDate = result.pubDate.toLocaleDateString('es-419', {
   day: 'numeric',
 });
 
-// Get content type badge color
-const typeColors: Record<string, string> = {
-  dramas: 'bg-pink-100 text-pink-800',
-  kpop: 'bg-purple-100 text-purple-800',
-  noticias: 'bg-blue-100 text-blue-800',
-  guias: 'bg-teal-100 text-teal-800',
-  all: 'bg-gray-100 text-gray-800',
+// Badge styles per content type
+const typeStyles: Record<string, { bg: string; color: string }> = {
+  dramas: { bg: 'var(--md-color-primary-container)', color: 'var(--md-color-on-primary-container)' },
+  kpop: { bg: 'var(--md-color-tertiary-container)', color: 'var(--md-color-on-tertiary-container)' },
+  noticias: { bg: 'var(--md-color-secondary-container)', color: 'var(--md-color-on-secondary-container)' },
+  guias: { bg: 'color-mix(in srgb, var(--md-color-tertiary) 15%, var(--md-color-surface-variant))', color: 'var(--md-color-on-surface)' },
+  all: { bg: 'var(--md-color-surface-variant)', color: 'var(--md-color-on-surface-variant)' },
 };
 
-const typeColor = typeColors[result.contentType] || typeColors.all;
+const badgeColors = typeStyles[result.contentType] || typeStyles.all;
 const typeLabel = contentTypeLabels[result.contentType] || result.contentType;
 ---
 
 <article class="search-result-card group" data-testid="search-result-card">
-  <a href={result.url} class="block" style="border-radius: var(--md-sys-shape-corner-medium); border: 1px solid var(--md-sys-color-outline-variant); background-color: var(--md-sys-color-surface); padding: var(--md-sys-spacing-md); transition: all var(--md-sys-motion-duration-short4) var(--md-sys-motion-easing-standard);" onmouseover="this.style.borderColor='var(--md-sys-color-primary)'; this.style.boxShadow='var(--md-sys-elevation-level2)';" onmouseout="this.style.borderColor='var(--md-sys-color-outline-variant)'; this.style.boxShadow='none';">
+  <a
+    href={result.url}
+    class="block"
+    style="border-radius: var(--md-shape-lg); border: 1px solid var(--md-color-outline-variant); background-color: var(--md-color-surface-container-low); padding: var(--md-sys-spacing-md); transition: all var(--md-motion-duration-short) var(--md-motion-easing-standard);"
+    onmouseover="this.style.borderColor='var(--md-color-primary)'; this.style.boxShadow='var(--md-elevation-2)'; this.style.transform='translateY(-2px)';"
+    onmouseout="this.style.borderColor='var(--md-color-outline-variant)'; this.style.boxShadow='none'; this.style.transform='none';"
+  >
     <div class="flex" style="gap: var(--md-sys-spacing-md);">
       {result.heroImage && (
         <div class="hidden sm:block flex-shrink-0">
@@ -55,8 +65,8 @@ const typeLabel = contentTypeLabels[result.contentType] || result.contentType;
       <div class="flex-1 min-w-0">
         <div class="flex items-center" style="gap: var(--md-sys-spacing-sm); margin-bottom: var(--md-sys-spacing-sm);">
           <span
-            class={`inline-flex items-center text-xs font-medium ${typeColor}`}
-            style="border-radius: var(--md-sys-shape-corner-full); padding: var(--md-sys-spacing-xs) calc(var(--md-sys-spacing-sm) + var(--md-sys-spacing-xs));"
+            class="chip"
+            style={`--chip-bg: ${badgeColors.bg}; --chip-color: ${badgeColors.color}; text-transform: capitalize;`}
             data-testid="result-type"
           >
             {typeLabel}
@@ -90,3 +100,12 @@ const typeLabel = contentTypeLabels[result.contentType] || result.contentType;
     </div>
   </a>
 </article>
+
+<style>
+  .search-highlight {
+    background-color: color-mix(in srgb, var(--md-color-primary) 25%, transparent);
+    color: var(--md-color-on-surface);
+    border-radius: var(--md-shape-sm);
+    padding: 0 var(--md-spacing-xxs, 0.125rem);
+  }
+</style>

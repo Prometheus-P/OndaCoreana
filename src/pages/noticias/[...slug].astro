@@ -34,7 +34,7 @@ const { Content } = await noticia.render();
   <Content />
 
   {noticia.data.source && (
-    <p class="mt-8 text-sm text-gray-500 italic">
+    <p class="mt-8 text-sm italic" style="color: var(--md-color-on-surface-variant);">
       Fuente: {noticia.data.source}
     </p>
   )}

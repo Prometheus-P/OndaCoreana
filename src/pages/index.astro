@@ -27,154 +27,212 @@ const recentNoticias = allNoticias
   description="Tu fuente definitiva de información sobre K-Dramas, K-Pop y cultura coreana en español. Noticias, guías, reseñas y más para la comunidad latina."
 >
   <!-- Hero Section -->
-  <section class="bg-gradient-to-br from-pink-500 to-purple-600 text-white">
-    <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
-      <div class="text-center">
-        <h1 class="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-          Tu portal de cultura coreana en español
-        </h1>
-        <p class="mx-auto mt-6 max-w-2xl text-lg text-pink-100">
-          Descubre los mejores K-Dramas, mantente al día con el K-Pop, y sumérgete en la cultura coreana con guías completas y noticias actualizadas.
-        </p>
-        <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <a
-            href="/dramas"
-            class="w-full rounded-lg bg-white px-8 py-3 text-base font-semibold text-pink-600 shadow-lg hover:bg-pink-50 transition-colors sm:w-auto"
-          >
-            Explorar K-Dramas
-          </a>
-          <a
-            href="/kpop"
-            class="w-full rounded-lg border-2 border-white px-8 py-3 text-base font-semibold text-white hover:bg-white/10 transition-colors sm:w-auto"
-          >
-            Descubrir K-Pop
-          </a>
-        </div>
+  <section
+    class="section-shell"
+    style="--section-bg: linear-gradient(135deg, color-mix(in srgb, var(--md-color-primary) 80%, #111111) 0%, color-mix(in srgb, var(--md-color-tertiary) 70%, transparent) 60%); --section-color: var(--md-color-on-primary);"
+  >
+    <div class="section-shell__inner items-center text-center">
+      <p class="chip" style="--chip-bg: color-mix(in srgb, var(--md-color-primary) 35%, transparent); --chip-color: var(--md-color-on-primary); margin: 0 auto;">
+        Cultura K en español
+      </p>
+      <h1 class="text-4xl font-bold sm:text-5xl lg:text-6xl" style="margin-top: var(--md-spacing-md); color: inherit;">
+        Tu portal de cultura coreana
+      </h1>
+      <p style="max-width: 42rem; margin: var(--md-spacing-md) auto 0; color: color-mix(in srgb, var(--md-color-on-primary) 80%, transparent);">
+        Descubre los mejores K-Dramas, mantente al día con el K-Pop y sumérgete en la cultura coreana con guías, reseñas y noticias pensadas para la comunidad latina.
+      </p>
+      <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+        <a href="/dramas" class="btn btn--primary">
+          Explorar K-Dramas
+        </a>
+        <a
+          href="/kpop"
+          class="btn btn--outline"
+          style="border-color: rgba(255, 255, 255, 0.6); color: var(--md-color-on-primary);"
+        >
+          Descubrir K-Pop
+        </a>
       </div>
     </div>
   </section>
 
   <!-- Últimas Noticias -->
-  <section class="bg-white py-16">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between">
-        <h2 class="text-2xl font-bold text-gray-900 sm:text-3xl">Últimas Noticias</h2>
-        <a href="/noticias" class="text-pink-600 hover:text-pink-700 font-medium">
+  <section class="section-shell" style="--section-bg: var(--md-color-surface);">
+    <div class="section-shell__inner">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <p class="chip" style="--chip-bg: color-mix(in srgb, var(--md-color-primary) 16%, transparent); --chip-color: var(--md-color-on-primary-container);">
+            Noticias
+          </p>
+          <h2 class="text-3xl font-semibold" style="color: var(--md-color-on-surface); margin-top: var(--md-spacing-sm);">
+            Últimas novedades
+          </h2>
+        </div>
+        <a href="/noticias" class="btn btn--ghost">
           Ver todas →
         </a>
       </div>
 
       {recentNoticias.length > 0 ? (
-        <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {recentNoticias.map((noticia) => (
-            <article class="group rounded-lg border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow">
+            <article class="surface-card surface-card--interactive flex flex-col" style="padding: var(--md-spacing-md); overflow: hidden; background-color: var(--md-color-surface-container-low);">
               {noticia.data.heroImage && (
-                <img
-                  src={noticia.data.heroImage}
-                  alt={noticia.data.heroImageAlt || noticia.data.title}
-                  class="mb-4 h-48 w-full rounded-lg object-cover"
-                  loading="lazy"
-                />
+                <div class="mb-4">
+                  <img
+                    src={noticia.data.heroImage}
+                    alt={noticia.data.heroImageAlt || noticia.data.title}
+                    class="w-full object-cover"
+                    style="border-radius: var(--md-shape-lg); height: 12rem;"
+                    loading="lazy"
+                  />
+                </div>
               )}
-              <span class="inline-block rounded-full bg-pink-100 px-3 py-1 text-xs font-medium text-pink-800">
-                {noticia.data.category}
-              </span>
-              <h3 class="mt-3 text-lg font-semibold text-gray-900 group-hover:text-pink-600">
-                <a href={`/noticias/${noticia.slug}`}>
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="chip" style="--chip-bg: color-mix(in srgb, var(--md-color-primary) 15%, transparent); --chip-color: var(--md-color-on-primary-container);">
+                  {noticia.data.category}
+                </span>
+                {noticia.data.breaking && (
+                  <span class="chip" style="--chip-bg: var(--md-color-error); --chip-color: var(--md-color-on-error);">
+                    Urgente
+                  </span>
+                )}
+              </div>
+              <h3 class="headline" style="margin-top: var(--md-spacing-sm); font-size: var(--md-typo-title-large-size);">
+                <a href={`/noticias/${noticia.slug}`} style="color: var(--md-color-on-surface);">
                   {noticia.data.title}
                 </a>
               </h3>
-              <p class="mt-2 text-sm text-gray-600 line-clamp-2">
+              <p class="subtle-text" style="margin-top: var(--md-spacing-xs);">
                 {noticia.data.description}
               </p>
-              <time class="mt-3 block text-xs text-gray-500" datetime={noticia.data.pubDate.toISOString()}>
+              <time
+                datetime={noticia.data.pubDate.toISOString()}
+                style="margin-top: var(--md-spacing-sm); font-size: var(--md-typo-label-medium-size); color: color-mix(in srgb, var(--md-color-on-surface-variant) 80%, transparent);"
+              >
                 {noticia.data.pubDate.toLocaleDateString('es-419', { year: 'numeric', month: 'long', day: 'numeric' })}
               </time>
             </article>
           ))}
         </div>
       ) : (
-        <p class="mt-8 text-center text-gray-600">Próximamente: noticias sobre K-Dramas y K-Pop</p>
+        <p class="text-center subtle-text">Próximamente: noticias sobre K-Dramas y K-Pop</p>
       )}
     </div>
   </section>
 
   <!-- K-Dramas Destacados -->
-  <section class="bg-gray-50 py-16">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between">
-        <h2 class="text-2xl font-bold text-gray-900 sm:text-3xl">K-Dramas Destacados</h2>
-        <a href="/dramas" class="text-pink-600 hover:text-pink-700 font-medium">
+  <section class="section-shell" style="--section-bg: var(--md-color-surface-container);">
+    <div class="section-shell__inner">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <p class="chip" style="--chip-bg: color-mix(in srgb, var(--md-color-primary) 12%, var(--md-color-surface-container)); --chip-color: var(--md-color-on-surface);">
+            Reseñas
+          </p>
+          <h2 class="text-3xl font-semibold" style="color: var(--md-color-on-surface); margin-top: var(--md-spacing-sm);">
+            K-Dramas destacados
+          </h2>
+        </div>
+        <a href="/dramas" class="btn btn--ghost">
           Ver todos →
         </a>
       </div>
 
       {recentDramas.length > 0 ? (
-        <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {recentDramas.map((drama) => (
-            <article class="group overflow-hidden rounded-lg bg-white shadow-sm hover:shadow-md transition-shadow">
+            <article class="surface-card surface-card--interactive flex flex-col" style="overflow: hidden;">
               {drama.data.heroImage && (
                 <img
                   src={drama.data.heroImage}
                   alt={drama.data.heroImageAlt || drama.data.title}
-                  class="h-64 w-full object-cover"
+                  class="w-full object-cover"
+                  style="height: 16rem;"
                   loading="lazy"
                 />
               )}
-              <div class="p-4">
-                <h3 class="font-semibold text-gray-900 group-hover:text-pink-600">
+              <div style="padding: var(--md-spacing-md); display: flex; flex-direction: column; gap: var(--md-spacing-sm);">
+                <div class="flex flex-wrap gap-2">
+                  {drama.data.genre?.slice(0, 2).map((g) => (
+                    <span class="chip" style="--chip-bg: color-mix(in srgb, var(--md-color-primary) 10%, var(--md-color-surface-variant)); --chip-color: var(--md-color-on-surface);">
+                      {g}
+                    </span>
+                  ))}
+                </div>
+                <h3 class="font-semibold" style="color: var(--md-color-on-surface); font-size: var(--md-typo-title-medium-size);">
                   <a href={`/dramas/${drama.slug}`}>
                     {drama.data.title}
                   </a>
                 </h3>
+                <p class="subtle-text" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                  {drama.data.description}
+                </p>
                 {drama.data.network && (
-                  <p class="mt-1 text-sm text-gray-600">{drama.data.network}</p>
+                  <p style="font-size: var(--md-typo-label-medium-size); color: color-mix(in srgb, var(--md-color-on-surface-variant) 80%, transparent);">
+                    {drama.data.network}
+                  </p>
                 )}
               </div>
             </article>
           ))}
         </div>
       ) : (
-        <p class="mt-8 text-center text-gray-600">Próximamente: reseñas de los mejores K-Dramas</p>
+        <p class="text-center subtle-text">Próximamente: reseñas de los mejores K-Dramas</p>
       )}
     </div>
   </section>
 
   <!-- K-Pop -->
-  <section class="bg-white py-16">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between">
-        <h2 class="text-2xl font-bold text-gray-900 sm:text-3xl">K-Pop</h2>
-        <a href="/kpop" class="text-pink-600 hover:text-pink-700 font-medium">
+  <section class="section-shell" style="--section-bg: var(--md-color-surface);">
+    <div class="section-shell__inner">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <p class="chip" style="--chip-bg: color-mix(in srgb, var(--md-color-tertiary) 18%, transparent); --chip-color: var(--md-color-on-tertiary-container);">
+            K-Pop
+          </p>
+          <h2 class="text-3xl font-semibold" style="color: var(--md-color-on-surface); margin-top: var(--md-spacing-sm);">
+            Escucha la nueva ola
+          </h2>
+        </div>
+        <a href="/kpop" class="btn btn--ghost">
           Ver más →
         </a>
       </div>
 
       {recentKpop.length > 0 ? (
-        <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {recentKpop.map((artist) => (
-            <article class="group text-center">
-              {artist.data.heroImage && (
-                <img
-                  src={artist.data.heroImage}
-                  alt={artist.data.heroImageAlt || artist.data.title}
-                  class="mx-auto h-48 w-48 rounded-full object-cover shadow-lg"
-                  loading="lazy"
-                />
-              )}
-              <h3 class="mt-4 font-semibold text-gray-900 group-hover:text-pink-600">
+            <article class="surface-card surface-card--interactive text-center" style="padding: var(--md-spacing-lg);">
+              <div class="mx-auto h-40 w-40 rounded-full oc-card-shine" style="overflow: hidden; box-shadow: var(--md-elevation-2);">
+                {artist.data.heroImage ? (
+                  <img
+                    src={artist.data.heroImage}
+                    alt={artist.data.heroImageAlt || artist.data.artistName}
+                    class="h-full w-full object-cover"
+                    loading="lazy"
+                  />
+                ) : (
+                  <div class="flex h-full w-full items-center justify-center" style="background: color-mix(in srgb, var(--md-color-tertiary) 25%, transparent); color: var(--md-color-on-tertiary-container); font-size: 2rem; font-weight: 700;">
+                    {artist.data.artistName.charAt(0)}
+                  </div>
+                )}
+              </div>
+              <h3 class="mt-4 text-lg font-semibold" style="color: var(--md-color-on-surface);">
                 <a href={`/kpop/${artist.slug}`}>
                   {artist.data.artistName}
                 </a>
               </h3>
               {artist.data.agency && (
-                <p class="text-sm text-gray-600">{artist.data.agency}</p>
+                <p class="subtle-text">{artist.data.agency}</p>
               )}
+              <span class="chip" style="--chip-bg: color-mix(in srgb, var(--md-color-tertiary) 12%, transparent); --chip-color: var(--md-color-on-tertiary-container); margin-top: var(--md-spacing-sm); display: inline-flex; justify-content: center;">
+                {artist.data.artistType}
+              </span>
             </article>
           ))}
         </div>
       ) : (
-        <p class="mt-8 text-center text-gray-600">Próximamente: perfiles de artistas K-Pop</p>
+        <p class="text-center subtle-text">Próximamente: perfiles de artistas K-Pop</p>
       )}
     </div>
   </section>

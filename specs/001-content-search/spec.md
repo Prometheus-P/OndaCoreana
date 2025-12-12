@@ -78,7 +78,8 @@ Search results pages with query parameters are discoverable by search engines, a
 - What happens when a user searches for content that exists but is marked as draft?
 - How does search behave when the search index is empty or unavailable?
 - Searches with fewer than 2 non-whitespace characters show a prompt to enter more characters; no search is executed.
-- When the search index fails to load, the system displays "Error al cargar los resultados de búsqueda" with a suggestion to try again later.
+- When the search index fails to load, the interface shows “No se pudieron cargar los resultados” inline, disables the search UI, and offers an “Intentar de nuevo” action that retries loading.
+- Offline searches use the cached search index/content bundle provided by the service worker; if unavailable, show “Contenido no disponible sin conexión”.
 
 ## Requirements *(mandatory)*
 
@@ -100,6 +101,7 @@ Search results pages with query parameters are discoverable by search engines, a
 - **FR-014**: System MUST display 10 results initially and load 10 additional results when user scrolls or clicks "load more".
 - **FR-015**: System MUST truncate search queries exceeding 100 characters and notify the user that the query was shortened.
 - **FR-016**: System MUST require minimum 2 non-whitespace characters before executing a search and display guidance if fewer provided.
+- **FR-017**: System MUST show an inline error with a retry action if the search index fails to load and disable search interactions until retry succeeds.
 
 ### Key Entities
 
@@ -128,6 +130,8 @@ Search results pages with query parameters are discoverable by search engines, a
 - Q: How many search results to display initially and per load? → A: 10 results initially, load 10 more on scroll
 - Q: How should the system handle very long search queries? → A: Truncate at 100 characters with user notification
 - Q: How should empty/whitespace-only queries be handled? → A: Require minimum 2 non-whitespace characters to search
+- Q: What happens if the client-side search index fails to load? → A: Show inline error “No se pudieron cargar los resultados” with “Intentar de nuevo” action and keep search disabled until retry succeeds
+- Q: How should search behave offline for previously visited content? → A: Cache the search index/assets via service worker so past content remains searchable offline
 
 ## Assumptions
 

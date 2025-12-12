@@ -1,5 +1,12 @@
 import { defineConfig, devices } from '@playwright/test';
 
+const previewPort = Number(process.env.PLAYWRIGHT_PORT ?? '4321');
+const previewHost = process.env.PLAYWRIGHT_HOST ?? '127.0.0.1';
+const previewURL = `http://${previewHost}:${previewPort}`;
+const previewCommand =
+  process.env.PLAYWRIGHT_WEBSERVER_COMMAND ??
+  `pnpm preview --port ${previewPort} --host ${previewHost}`;
+
 export default defineConfig({
   testDir: './tests/e2e',
   fullyParallel: true,
@@ -8,7 +15,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: 'html',
   use: {
-    baseURL: 'http://localhost:5173',
+    baseURL: previewURL,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },
@@ -23,8 +30,8 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: 'pnpm start:e2e',
-    url: 'http://127.0.0.1:5173',
+    command: previewCommand,
+    url: previewURL,
     reuseExistingServer: !process.env.CI,
     timeout: 120000, // Increased timeout for CI
     stdout: 'pipe',

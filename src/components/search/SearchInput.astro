@@ -16,7 +16,7 @@ const {
 // Size classes for different variants
 const sizeClasses = {
   sm: 'h-8 text-sm px-3',
-  md: 'h-10 text-base px-4',
+  md: 'h-11 text-base px-4',
   lg: 'h-12 text-lg px-5',
 };
 
@@ -43,7 +43,7 @@ const instanceId = Math.random().toString(36).substring(2, 9);
         value={initialValue}
         minlength="2"
         maxlength="100"
-        class={`w-full rounded-lg border border-gray-300 bg-white pr-10 text-gray-900 placeholder-gray-500 transition-colors focus:border-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-500/20 ${inputSize}`}
+        class={`input-field pr-12 ${inputSize}`}
         data-testid="search-input"
         autocomplete="off"
         aria-label="Buscar contenido"
@@ -54,7 +54,7 @@ const instanceId = Math.random().toString(36).substring(2, 9);
       />
       <button
         type="submit"
-        class="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1.5 text-gray-400 transition-colors hover:text-pink-600 focus:outline-none focus:ring-2 focus:ring-pink-500"
+        class="icon-button absolute right-2 top-1/2 -translate-y-1/2"
         aria-label="Buscar"
         data-testid="search-submit"
       >
@@ -80,14 +80,15 @@ const instanceId = Math.random().toString(36).substring(2, 9);
   {showInlineResults && (
     <div
       id={`search-dropdown-${instanceId}`}
-      class="search-dropdown absolute left-0 right-0 top-full z-50 mt-1 hidden max-h-96 overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg"
+      class="search-dropdown absolute left-0 right-0 top-full z-50 mt-1 hidden max-h-96 overflow-y-auto rounded-2xl"
+      style="border: 1px solid var(--md-color-outline-variant); background-color: var(--md-color-surface-container); box-shadow: var(--md-elevation-3);"
       data-testid="search-dropdown"
       role="listbox"
       aria-label="Resultados de búsqueda"
     >
       {/* Loading state */}
-      <div class="search-loading hidden p-4 text-center" data-testid="search-loading-inline">
-        <svg class="mx-auto h-5 w-5 animate-spin text-pink-600" viewBox="0 0 24 24">
+      <div class="search-loading hidden p-4 text-center" data-testid="search-loading-inline" style="color: var(--md-color-primary);">
+        <svg class="mx-auto h-5 w-5 animate-spin" viewBox="0 0 24 24">
           <circle
             class="opacity-25"
             cx="12"
@@ -103,7 +104,7 @@ const instanceId = Math.random().toString(36).substring(2, 9);
             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
           />
         </svg>
-        <p class="mt-2 text-sm text-gray-500">Buscando...</p>
+        <p style="margin-top: var(--md-spacing-xs); font-size: var(--md-typo-body-medium-size); color: var(--md-color-on-surface-variant);">Buscando...</p>
       </div>
 
       {/* Results container */}
@@ -113,14 +114,15 @@ const instanceId = Math.random().toString(36).substring(2, 9);
 
       {/* No results state */}
       <div class="search-no-results hidden p-4 text-center" data-testid="search-no-results-inline">
-        <p class="text-sm text-gray-500">No se encontraron resultados</p>
+        <p class="text-sm subtle-text">No se encontraron resultados</p>
       </div>
 
       {/* View all results link */}
-      <div class="search-view-all hidden border-t border-gray-100 p-2" data-testid="search-view-all-container">
+      <div class="search-view-all hidden border-t" data-testid="search-view-all-container" style="border-color: var(--md-color-outline-variant);">
         <a
           href="/buscar"
-          class="block rounded-md px-3 py-2 text-center text-sm font-medium text-pink-600 hover:bg-pink-50 transition-colors"
+          class="block rounded-b-2xl px-3 py-2 text-center text-sm font-medium"
+          style="color: var(--md-color-primary);"
           data-testid="view-all-results"
         >
           Ver todos los resultados
@@ -169,13 +171,13 @@ const instanceId = Math.random().toString(36).substring(2, 9);
     all: 'Contenido',
   };
 
-  // Content type colors
-  const typeColors: Record<string, string> = {
-    dramas: 'bg-pink-100 text-pink-800',
-    kpop: 'bg-purple-100 text-purple-800',
-    noticias: 'bg-blue-100 text-blue-800',
-    guias: 'bg-teal-100 text-teal-800',
-    all: 'bg-gray-100 text-gray-800',
+  // Content type styles
+  const typeStyles: Record<string, { bg: string; color: string }> = {
+    dramas: { bg: 'var(--md-color-primary-container)', color: 'var(--md-color-on-primary-container)' },
+    kpop: { bg: 'var(--md-color-tertiary-container)', color: 'var(--md-color-on-tertiary-container)' },
+    noticias: { bg: 'var(--md-color-secondary-container)', color: 'var(--md-color-on-secondary-container)' },
+    guias: { bg: 'color-mix(in srgb, var(--md-color-tertiary) 15%, var(--md-color-surface-variant))', color: 'var(--md-color-on-surface)' },
+    all: { bg: 'var(--md-color-surface-variant)', color: 'var(--md-color-on-surface-variant)' },
   };
 
   // Pagefind instance (shared across all search inputs)
@@ -282,22 +284,22 @@ const instanceId = Math.random().toString(36).substring(2, 9);
     // Render a dropdown result item
     function renderDropdownResult(result: SearchResult): string {
       const typeLabel = typeLabels[result.contentType] || typeLabels.all;
-      const typeColor = typeColors[result.contentType] || typeColors.all;
+      const typeColor = typeStyles[result.contentType] || typeStyles.all;
 
       return `
         <a
           href="${escapeHtml(result.url)}"
-          class="dropdown-result block px-4 py-3 hover:bg-gray-50 transition-colors border-b border-gray-100 last:border-b-0"
+          class="dropdown-result"
           data-testid="dropdown-result"
           role="option"
         >
           <div class="flex items-start gap-2">
-            <span class="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${typeColor} shrink-0 mt-0.5">
+            <span class="chip shrink-0 mt-0.5" style="--chip-bg: ${typeColor.bg}; --chip-color: ${typeColor.color};">
               ${typeLabel}
             </span>
             <div class="min-w-0">
-              <p class="text-sm font-medium text-gray-900 line-clamp-1">${escapeHtml(result.title)}</p>
-              <p class="text-xs text-gray-500 line-clamp-1 mt-0.5">${escapeHtml(result.excerpt)}</p>
+              <p class="dropdown-result__title">${escapeHtml(result.title)}</p>
+              <p class="dropdown-result__excerpt">${escapeHtml(result.excerpt)}</p>
             </div>
           </div>
         </a>
@@ -415,3 +417,41 @@ const instanceId = Math.random().toString(36).substring(2, 9);
     initAllSearchWrappers();
   }
 </script>
+
+<style>
+  .dropdown-result {
+    display: block;
+    padding: var(--md-spacing-sm) var(--md-spacing-lg);
+    border-bottom: 1px solid color-mix(in srgb, var(--md-color-outline-variant) 70%, transparent);
+    transition: background-color var(--md-motion-duration-short) var(--md-motion-easing-standard);
+  }
+
+  .dropdown-result:last-of-type {
+    border-bottom: none;
+  }
+
+  .dropdown-result:hover {
+    background-color: color-mix(in srgb, var(--md-color-primary) 12%, transparent);
+  }
+
+  .dropdown-result__title {
+    font-size: var(--md-typo-body-medium-size);
+    font-weight: 600;
+    color: var(--md-color-on-surface);
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .dropdown-result__excerpt {
+    font-size: var(--md-typo-label-medium-size);
+    color: var(--md-color-on-surface-variant);
+    margin-top: var(--md-spacing-xxs, 0.25rem);
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

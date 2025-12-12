@@ -31,17 +31,13 @@ function getFilterUrl(filterType: ContentType): string {
     {filters.map((filter) => (
       <a
         href={getFilterUrl(filter.type)}
-        class:list={[
-          'filter-tab px-4 py-2 rounded-full text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-pink-500 focus:ring-offset-2',
-          activeFilter === filter.type
-            ? 'bg-pink-600 text-white'
-            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-        ]}
+        class="filter-tab chip"
         data-testid={filter.testId}
         data-filter-type={filter.type}
         role="tab"
         aria-selected={activeFilter === filter.type ? 'true' : 'false'}
         aria-controls="search-results"
+        data-active={activeFilter === filter.type ? 'true' : 'false'}
       >
         {filter.label}
         <span class="filter-count ml-1 hidden" data-filter-count={filter.type}></span>
@@ -49,6 +45,35 @@ function getFilterUrl(filterType: ContentType): string {
     ))}
   </div>
 </div>
+
+<style>
+  .filter-tab {
+    border: 1px solid color-mix(in srgb, var(--md-color-outline) 60%, transparent);
+    transition: background-color var(--md-motion-duration-short) var(--md-motion-easing-standard), color var(--md-motion-duration-short) var(--md-motion-easing-standard), border-color var(--md-motion-duration-short) var(--md-motion-easing-standard), box-shadow var(--md-motion-duration-short) var(--md-motion-easing-standard);
+  }
+
+  .filter-tab[data-active="true"] {
+    background-color: var(--md-color-primary);
+    color: var(--md-color-on-primary);
+    border-color: transparent;
+    box-shadow: var(--md-elevation-1);
+  }
+
+  .filter-tab[data-active="false"] {
+    background-color: var(--md-color-surface-variant);
+    color: var(--md-color-on-surface-variant);
+  }
+
+  .filter-tab[data-active="false"]:hover {
+    background-color: color-mix(in srgb, var(--md-color-primary) 14%, var(--md-color-surface-variant));
+    border-color: var(--md-color-primary);
+  }
+
+  .filter-tab:focus-visible {
+    outline: 2px solid var(--md-color-primary);
+    outline-offset: 2px;
+  }
+</style>
 
 <script>
   // Handle filter clicks with JavaScript for SPA-like behavior
