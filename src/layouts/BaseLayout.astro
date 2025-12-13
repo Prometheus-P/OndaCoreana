@@ -18,9 +18,15 @@ interface Props {
   author?: string;
   canonical?: string;
   noindex?: boolean;
+  showSearch?: boolean;
 }
 
 const props = Astro.props;
+const { showSearch = true } = props;
+
+// Prevent duplicate search UIs on pages that embed their own search experience
+const hideSearchForRoute = Astro.url.pathname === '/buscar';
+const shouldRenderSearch = showSearch && !hideSearchForRoute;
 
 // GA4 Measurement ID from environment variable
 const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
@@ -126,13 +132,16 @@ const enableSearchSw = import.meta.env.PUBLIC_ENABLE_SEARCH_SW === 'true';
       style="border-color: color-mix(in srgb, var(--md-color-outline-variant) 70%, transparent); background: color-mix(in srgb, var(--md-color-surface) 88%, transparent); backdrop-filter: blur(18px);"
       data-pagefind-ignore="all"
     >
-      <nav class="mx-auto flex max-w-7xl items-center justify-between" style="padding: var(--md-spacing-md) var(--md-spacing-md); gap: var(--md-spacing-md);">
-        <a href="/" class="flex items-center gap-3" aria-label="Inicio OndaCoreana">
+      <nav
+        class="mx-auto flex max-w-7xl flex-wrap items-center gap-4"
+        style="padding: var(--md-spacing-md) var(--md-spacing-md);"
+      >
+        <a href="/" class="order-1 flex items-center gap-3" aria-label="Inicio OndaCoreana">
           <Logo variant="horizontal" height={36} class="hidden sm:block" />
           <Logo variant="icon" height={40} class="sm:hidden" />
         </a>
 
-        <ul class="hidden items-center md:flex" style="gap: var(--md-spacing-lg);">
+        <ul class="order-4 hidden items-center md:order-2 md:flex" style="gap: var(--md-spacing-lg);">
           {primaryNav.map((item) => (
             <li>
               <a href={item.href} class="nav-link">
@@ -142,11 +151,13 @@ const enableSearchSw = import.meta.env.PUBLIC_ENABLE_SEARCH_SW === 'true';
           ))}
         </ul>
 
-        <div class="flex items-center gap-3">
-          <!-- Desktop search - hidden at md to prevent overflow, shown at lg+ -->
-          <div class="hidden w-64 lg:block">
-            <SearchInput placeholder="Buscar..." size="sm" />
-          </div>
+        <div class="order-3 ml-auto flex items-center gap-3">
+          {/* Desktop search - hidden at md to prevent overflow, shown at lg+ */}
+          {shouldRenderSearch && (
+            <div class="hidden w-64 lg:block">
+              <SearchInput placeholder="Buscar..." size="sm" />
+            </div>
+          )}
 
           <div class="hidden lg:block">
             <ThemeToggle />
@@ -155,7 +166,7 @@ const enableSearchSw = import.meta.env.PUBLIC_ENABLE_SEARCH_SW === 'true';
           <div class="flex items-center gap-2 lg:hidden">
             <ThemeToggle size="sm" />
 
-            <!-- Mobile menu button -->
+            {/* Mobile menu button */}
             <button
               type="button"
               class="rounded-md p-2"
@@ -174,10 +185,12 @@ const enableSearchSw = import.meta.env.PUBLIC_ENABLE_SEARCH_SW === 'true';
 
       <!-- Mobile menu -->
       <div class="hidden border-t lg:hidden" id="mobile-menu" style="border-color: color-mix(in srgb, var(--md-color-outline-variant) 70%, transparent); background-color: var(--md-color-surface);">
-        <!-- Mobile search -->
-        <div class="px-4 pb-4">
-          <SearchInput placeholder="Buscar..." size="md" />
-        </div>
+        {/* Mobile search */}
+        {shouldRenderSearch && (
+          <div class="px-4 pb-4">
+            <SearchInput placeholder="Buscar..." size="md" />
+          </div>
+        )}
         <div class="flex items-center justify-between px-4 pb-4">
           <p class="text-sm font-medium" style="color: var(--md-color-on-surface-variant);">Tema</p>
           <ThemeToggle size="sm" />

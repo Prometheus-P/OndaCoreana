@@ -26,7 +26,7 @@ const inputSize = sizeClasses[size];
 const instanceId = Math.random().toString(36).substring(2, 9);
 ---
 
-<div class="search-wrapper relative" data-search-wrapper data-instance-id={instanceId}>
+<div class="search-wrapper relative" data-search-wrapper data-instance-id={instanceId} data-testid="site-search">
   <form
     action="/buscar"
     method="GET"
@@ -44,7 +44,7 @@ const instanceId = Math.random().toString(36).substring(2, 9);
         minlength="2"
         maxlength="100"
         class={`input-field pr-12 ${inputSize}`}
-        data-testid="search-input"
+        data-testid="site-search-input"
         autocomplete="off"
         aria-label="Buscar contenido"
         aria-expanded="false"

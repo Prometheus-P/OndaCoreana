@@ -83,6 +83,13 @@ const categoryInfo = categoryConfig[category] || categoryConfig.culture;
         },
       ]}
     />
+
+    <meta data-pagefind-meta="title" content={title} />
+    <meta data-pagefind-meta="description" content={descriptionEs} />
+    <meta data-pagefind-meta="contentType" data-pagefind-filter="contentType" content="features" />
+    <meta data-pagefind-meta="pubDate" content={publishDate.toISOString()} />
+    {heroImage && <meta data-pagefind-meta="heroImage" content={heroImage} />}
+    {tags.length > 0 && <meta data-pagefind-meta="tags" content={tags.join(', ')} />}
   </Fragment>
 
   <article class="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8" data-pagefind-body>
@@ -121,11 +128,6 @@ const categoryInfo = categoryConfig[category] || categoryConfig.culture;
       </h1>
 
       <p class="mt-4 text-lg text-[color:var(--oc-muted)]">{descriptionEs}</p>
-
-      <span data-pagefind-meta="description" class="hidden">{descriptionEs}</span>
-      <span data-pagefind-meta="contentType" data-pagefind-filter="contentType" class="hidden">features</span>
-      <span data-pagefind-meta="pubDate" class="hidden">{publishDate.toISOString()}</span>
-      {heroImage && <span data-pagefind-meta="heroImage" class="hidden">{heroImage}</span>}
 
       <div class="mt-4 flex flex-wrap items-center gap-4 text-sm text-[color:var(--oc-muted)]">
         <span>Por {author}</span>

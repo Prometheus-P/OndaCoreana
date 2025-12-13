@@ -6,25 +6,17 @@ import { test, expect } from '@playwright/test';
  */
 
 test.describe('US2: Real-Time Search Suggestions', () => {
-  // Helper to get the correct search wrapper based on viewport
-  async function getSearchWrapper(page: any, isMobile: boolean) {
-    if (isMobile) {
-      // On mobile, open the menu first
-      const menuButton = page.locator('#mobile-menu-button');
-      await menuButton.click();
-      await expect(page.locator('#mobile-menu')).toBeVisible();
-      return page.locator('#mobile-menu [data-search-wrapper]');
-    } else {
-      return page.locator('nav [data-search-wrapper]');
-    }
+  // Helper to get the search wrapper
+  async function getSearchWrapper(page: any) {
+    return page.locator('[data-search-wrapper]').first();
   }
 
   // T027: Typing 2+ characters triggers search within 300ms
-  test('typing 2+ characters triggers inline search results', async ({ page, isMobile }) => {
+  test('typing 2+ characters triggers inline search results', async ({ page }) => {
     await page.goto('/');
 
-    const wrapper = await getSearchWrapper(page, isMobile);
-    const searchInput = wrapper.locator('[data-testid="search-input"]');
+    const wrapper = await getSearchWrapper(page);
+    const searchInput = wrapper.locator('[data-testid="site-search-input"]');
     const dropdown = wrapper.locator('[data-testid="search-dropdown"]');
 
     await expect(searchInput).toBeVisible();
@@ -41,11 +33,11 @@ test.describe('US2: Real-Time Search Suggestions', () => {
   });
 
   // T028: Results update as user continues typing (debounced)
-  test('results update as user continues typing with debounce', async ({ page, isMobile }) => {
+  test('results update as user continues typing with debounce', async ({ page }) => {
     await page.goto('/');
 
-    const wrapper = await getSearchWrapper(page, isMobile);
-    const searchInput = wrapper.locator('[data-testid="search-input"]');
+    const wrapper = await getSearchWrapper(page);
+    const searchInput = wrapper.locator('[data-testid="site-search-input"]');
     const dropdown = wrapper.locator('[data-testid="search-dropdown"]');
 
     await expect(searchInput).toBeVisible();
@@ -75,11 +67,11 @@ test.describe('US2: Real-Time Search Suggestions', () => {
   });
 
   // T029: Clicking a result in dropdown navigates to article
-  test('clicking a result in dropdown navigates to article', async ({ page, isMobile }) => {
+  test('clicking a result in dropdown navigates to article', async ({ page }) => {
     await page.goto('/');
 
-    const wrapper = await getSearchWrapper(page, isMobile);
-    const searchInput = wrapper.locator('[data-testid="search-input"]');
+    const wrapper = await getSearchWrapper(page);
+    const searchInput = wrapper.locator('[data-testid="site-search-input"]');
     const dropdown = wrapper.locator('[data-testid="search-dropdown"]');
 
     await expect(searchInput).toBeVisible();
@@ -106,11 +98,11 @@ test.describe('US2: Real-Time Search Suggestions', () => {
   });
 
   // Additional test: Dropdown hides when clicking outside
-  test('dropdown hides when clicking outside', async ({ page, isMobile }) => {
+  test('dropdown hides when clicking outside', async ({ page }) => {
     await page.goto('/');
 
-    const wrapper = await getSearchWrapper(page, isMobile);
-    const searchInput = wrapper.locator('[data-testid="search-input"]');
+    const wrapper = await getSearchWrapper(page);
+    const searchInput = wrapper.locator('[data-testid="site-search-input"]');
     const dropdown = wrapper.locator('[data-testid="search-dropdown"]');
 
     await expect(searchInput).toBeVisible();
@@ -128,11 +120,11 @@ test.describe('US2: Real-Time Search Suggestions', () => {
   });
 
   // Additional test: Loading indicator shows during search
-  test('loading indicator shows during search', async ({ page, isMobile }) => {
+  test('loading indicator shows during search', async ({ page }) => {
     await page.goto('/');
 
-    const wrapper = await getSearchWrapper(page, isMobile);
-    const searchInput = wrapper.locator('[data-testid="search-input"]');
+    const wrapper = await getSearchWrapper(page);
+    const searchInput = wrapper.locator('[data-testid="site-search-input"]');
     const dropdown = wrapper.locator('[data-testid="search-dropdown"]');
 
     await expect(searchInput).toBeVisible();
@@ -146,11 +138,11 @@ test.describe('US2: Real-Time Search Suggestions', () => {
   });
 
   // Additional test: "View all results" link navigates to full search page
-  test('view all results link navigates to search page', async ({ page, isMobile }) => {
+  test('view all results link navigates to search page', async ({ page }) => {
     await page.goto('/');
 
-    const wrapper = await getSearchWrapper(page, isMobile);
-    const searchInput = wrapper.locator('[data-testid="search-input"]');
+    const wrapper = await getSearchWrapper(page);
+    const searchInput = wrapper.locator('[data-testid="site-search-input"]');
     const dropdown = wrapper.locator('[data-testid="search-dropdown"]');
 
     await expect(searchInput).toBeVisible();

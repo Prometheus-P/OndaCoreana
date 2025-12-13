@@ -7,22 +7,10 @@ import { test, expect } from '@playwright/test';
 
 test.describe('US1: Basic Content Search', () => {
   // T013: Search form submission navigates to /buscar with query param
-  test('search form submission navigates to /buscar with query param', async ({ page, isMobile }) => {
+  test('search form submission navigates to /buscar with query param', async ({ page }) => {
     await page.goto('/');
 
-    let searchInput;
-    if (isMobile) {
-      // On mobile, need to open the menu first
-      const menuButton = page.locator('#mobile-menu-button');
-      await menuButton.click();
-      await expect(page.locator('#mobile-menu')).toBeVisible();
-      // Use the mobile menu search input
-      searchInput = page.locator('#mobile-menu [data-testid="search-input"]');
-    } else {
-      // Desktop: use nav search input
-      searchInput = page.locator('nav [data-testid="search-input"]');
-    }
-
+    const searchInput = page.locator('[data-testid="site-search-input"]');
     await expect(searchInput).toBeVisible();
 
     // Enter search query
@@ -81,25 +69,12 @@ test.describe('US1: Basic Content Search', () => {
   });
 
   // Additional test: Search input exists in header on all pages
-  test('search input is accessible from homepage header', async ({ page, isMobile }) => {
+  test('search input is accessible from homepage header', async ({ page }) => {
     await page.goto('/');
 
-    if (isMobile) {
-      // On mobile, need to open the menu first
-      const menuButton = page.locator('#mobile-menu-button');
-      await menuButton.click();
-      await expect(page.locator('#mobile-menu')).toBeVisible();
-
-      // Check mobile search input
-      const searchInput = page.locator('#mobile-menu [data-testid="search-input"]');
-      await expect(searchInput).toBeVisible();
-      await expect(searchInput).toHaveAttribute('placeholder', /buscar/i);
-    } else {
-      // Desktop: search is visible in nav (not in mobile menu)
-      const searchInput = page.locator('nav [data-testid="search-input"]');
-      await expect(searchInput).toBeVisible();
-      await expect(searchInput).toHaveAttribute('placeholder', /buscar/i);
-    }
+    const searchInput = page.locator('[data-testid="site-search-input"]');
+    await expect(searchInput).toBeVisible();
+    await expect(searchInput).toHaveAttribute('placeholder', /buscar/i);
   });
 
   // Additional test: Query is displayed on results page

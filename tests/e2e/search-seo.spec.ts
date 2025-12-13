@@ -20,7 +20,7 @@ test.describe('US4: SEO-Friendly Search Results Page', () => {
 
     // Search input on the buscar page should be pre-populated with the query
     // Use the main search input specific to the buscar page (the lg size one)
-    const searchInput = page.locator('#main-content [data-testid="search-input"]');
+    const searchInput = page.locator('#main-content [data-testid="site-search-input"]');
     await expect(searchInput).toHaveValue('BTS');
   });
 

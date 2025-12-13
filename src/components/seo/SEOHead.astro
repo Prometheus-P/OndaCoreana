@@ -26,7 +26,8 @@ const {
 } = Astro.props;
 
 const siteUrl = Astro.site?.toString().replace(/\/$/, '') || 'https://ondacoreana.com';
-const currentUrl = canonical || new URL(Astro.url.pathname, siteUrl).toString();
+const pathWithQuery = `${Astro.url.pathname}${Astro.url.search}`;
+const currentUrl = canonical || new URL(pathWithQuery, siteUrl).toString();
 const imageUrl = image.startsWith('http') ? image : `${siteUrl}${image}`;
 const fullTitle = title.includes('OndaCoreana') ? title : `${title} | OndaCoreana`;
 ---
