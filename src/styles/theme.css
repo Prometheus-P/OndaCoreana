@@ -1,0 +1,97 @@
+:root {
+  color-scheme: light;
+  /* Brand design tokens */
+  --oc-bg: #f8fafc;
+  --oc-surface: #ffffff;
+  --oc-text: #0f172a;
+  --oc-muted: #475569;
+  --oc-primary: #ec4899;
+  --oc-accent: #8b5cf6;
+  --oc-border: #e2e8f0;
+
+  --oc-surface-raised: color-mix(in srgb, var(--oc-surface) 92%, var(--oc-bg));
+  --oc-muted-subtle: color-mix(in srgb, var(--oc-muted) 65%, var(--oc-text));
+  --oc-primary-soft: color-mix(in srgb, var(--oc-primary) 16%, var(--oc-surface));
+  --oc-accent-soft: color-mix(in srgb, var(--oc-accent) 18%, var(--oc-surface));
+}
+
+html.dark {
+  color-scheme: dark;
+  --oc-bg: #0b1220;
+  --oc-surface: #111827;
+  --oc-text: #e2e8f0;
+  --oc-muted: #cbd5e1;
+  --oc-primary: #f472b6;
+  --oc-accent: #a78bfa;
+  --oc-border: #1f2937;
+
+  --oc-surface-raised: color-mix(in srgb, var(--oc-surface) 88%, #050a14);
+  --oc-muted-subtle: color-mix(in srgb, var(--oc-muted) 55%, var(--oc-text));
+  --oc-primary-soft: color-mix(in srgb, var(--oc-primary) 20%, var(--oc-surface));
+  --oc-accent-soft: color-mix(in srgb, var(--oc-accent) 20%, var(--oc-surface));
+}
+
+/* Legacy token bridge so existing styles keep working */
+:root {
+  --md-color-primary: var(--oc-primary);
+  --md-color-on-primary: #0b1220;
+  --md-color-primary-container: var(--oc-primary-soft);
+  --md-color-on-primary-container: var(--oc-text);
+
+  --md-color-secondary: color-mix(in srgb, var(--oc-muted) 55%, var(--oc-border));
+  --md-color-on-secondary: var(--oc-text);
+  --md-color-secondary-container: color-mix(in srgb, var(--oc-muted) 12%, var(--oc-surface));
+  --md-color-on-secondary-container: var(--oc-text);
+
+  --md-color-tertiary: var(--oc-accent);
+  --md-color-on-tertiary: #0b1220;
+  --md-color-tertiary-container: var(--oc-accent-soft);
+  --md-color-on-tertiary-container: var(--oc-text);
+
+  --md-color-error: #ef4444;
+  --md-color-on-error: #ffffff;
+  --md-color-error-container: #fee2e2;
+  --md-color-on-error-container: #7f1d1d;
+
+  --md-color-surface: var(--oc-bg);
+  --md-color-on-surface: var(--oc-text);
+  --md-color-surface-variant: var(--oc-surface);
+  --md-color-on-surface-variant: var(--oc-muted);
+  --md-color-outline: var(--oc-border);
+  --md-color-outline-variant: color-mix(in srgb, var(--oc-border) 60%, transparent);
+  --md-color-surface-container: var(--oc-surface-raised);
+  --md-color-surface-container-high: color-mix(in srgb, var(--oc-surface) 90%, var(--oc-bg));
+  --md-color-surface-container-low: var(--oc-surface);
+}
+
+html.dark {
+  --md-color-primary: var(--oc-primary);
+  --md-color-on-primary: #0b1220;
+  --md-color-primary-container: var(--oc-primary-soft);
+  --md-color-on-primary-container: var(--oc-text);
+
+  --md-color-secondary: color-mix(in srgb, var(--oc-muted) 55%, var(--oc-surface));
+  --md-color-on-secondary: var(--oc-text);
+  --md-color-secondary-container: color-mix(in srgb, var(--oc-muted) 16%, var(--oc-surface));
+  --md-color-on-secondary-container: var(--oc-text);
+
+  --md-color-tertiary: var(--oc-accent);
+  --md-color-on-tertiary: #0b1220;
+  --md-color-tertiary-container: var(--oc-accent-soft);
+  --md-color-on-tertiary-container: var(--oc-text);
+
+  --md-color-error: #fca5a5;
+  --md-color-on-error: #7f1d1d;
+  --md-color-error-container: #991b1b;
+  --md-color-on-error-container: #fecaca;
+
+  --md-color-surface: var(--oc-bg);
+  --md-color-on-surface: var(--oc-text);
+  --md-color-surface-variant: var(--oc-surface);
+  --md-color-on-surface-variant: var(--oc-muted-subtle);
+  --md-color-outline: var(--oc-border);
+  --md-color-outline-variant: color-mix(in srgb, var(--oc-border) 70%, transparent);
+  --md-color-surface-container: var(--oc-surface-raised);
+  --md-color-surface-container-high: color-mix(in srgb, var(--oc-surface) 92%, var(--oc-bg));
+  --md-color-surface-container-low: var(--oc-surface);
+}

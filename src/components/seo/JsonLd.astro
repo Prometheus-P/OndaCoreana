@@ -78,7 +78,7 @@ function generateSchema(s: SchemaType): object {
         '@type': 'Article',
         headline: s.headline,
         description: s.description,
-        image: s.image?.startsWith('http') ? s.image : `${siteUrl}${s.image || '/og-default.jpg'}`,
+        image: s.image?.startsWith('http') ? s.image : `${siteUrl}${s.image || '/brand/og-default.svg'}`,
         datePublished: s.datePublished.toISOString(),
         dateModified: (s.dateModified || s.datePublished).toISOString(),
         author: {

@@ -37,17 +37,17 @@ const sortedTags = Array.from(tagCounts.entries())
 >
   <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
     <header class="mb-8">
-      <nav class="mb-4 text-sm text-gray-600" aria-label="Breadcrumb">
+      <nav class="mb-4 text-sm text-[color:var(--oc-muted)]" aria-label="Breadcrumb">
         <ol class="flex items-center gap-2">
-          <li><a href="/" class="hover:text-pink-600">Inicio</a></li>
+          <li><a href="/" class="hover:text-[color:var(--oc-primary)]">Inicio</a></li>
           <li>/</li>
-          <li class="text-gray-900">Tags</li>
+          <li class="text-[color:var(--oc-text)]">Tags</li>
         </ol>
       </nav>
-      <h1 class="text-3xl font-bold text-gray-900 sm:text-4xl">
+      <h1 class="text-3xl font-bold text-[color:var(--oc-text)] sm:text-4xl">
         Todas las Etiquetas
       </h1>
-      <p class="mt-2 text-gray-600">
+      <p class="mt-2 text-[color:var(--oc-muted)]">
         {sortedTags.length} {sortedTags.length === 1 ? 'etiqueta' : 'etiquetas'} en total
       </p>
     </header>
@@ -59,10 +59,13 @@ const sortedTags = Array.from(tagCounts.entries())
           return (
             <a
               href={`/tags/${tag}`}
-              class="group inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:border-pink-300 hover:bg-pink-50 hover:text-pink-700 transition-colors"
+              class="group inline-flex items-center gap-2 rounded-full border border-[color:var(--oc-border)] bg-[color:var(--oc-surface)] px-4 py-2 text-sm font-medium text-[color:var(--oc-text)] transition-colors hover:border-[color:var(--oc-primary)] hover:bg-[color:var(--oc-primary-soft)] hover:text-[color:var(--oc-primary)]"
             >
               <span>#{displayTag}</span>
-              <span class="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600 group-hover:bg-pink-100 group-hover:text-pink-700">
+              <span
+                class="rounded-full px-2 py-0.5 text-xs"
+                style="background: var(--oc-surface-raised); color: var(--oc-muted); border: 1px solid var(--oc-border);"
+              >
                 {count}
               </span>
             </a>
@@ -70,11 +73,11 @@ const sortedTags = Array.from(tagCounts.entries())
         })}
       </div>
     ) : (
-      <p class="text-gray-600">No hay etiquetas disponibles todavía.</p>
+      <p class="text-[color:var(--oc-muted)]">No hay etiquetas disponibles todavía.</p>
     )}
 
-    <div class="mt-12 border-t border-gray-200 pt-8">
-      <a href="/" class="text-pink-600 hover:text-pink-700 font-medium">
+    <div class="mt-12 border-t border-[color:var(--oc-border)] pt-8">
+      <a href="/" class="font-medium text-[color:var(--oc-primary)] hover:text-[color:var(--oc-accent)]">
         ← Volver al inicio
       </a>
     </div>

@@ -25,12 +25,15 @@ const formAction = `https://buttondown.email/api/emails/embed-subscribe/${button
 ---
 
 {variant === 'card' ? (
-  <div class={`rounded-xl bg-gradient-to-r from-purple-600 to-pink-500 p-8 ${className}`}>
+  <div
+    class={`rounded-xl p-8 ${className}`}
+    style="background: linear-gradient(135deg, var(--oc-accent), var(--oc-primary)); border: 1px solid color-mix(in srgb, var(--oc-border) 40%, transparent);"
+  >
     <div class="text-center">
-      <h2 class="text-2xl font-bold text-white sm:text-3xl">
+      <h2 class="text-2xl font-bold text-[color:var(--oc-surface)] sm:text-3xl">
         ¿No quieres perderte nada?
       </h2>
-      <p class="mx-auto mt-4 max-w-xl text-lg text-pink-100">
+      <p class="mx-auto mt-4 max-w-xl text-lg" style="color: color-mix(in srgb, var(--oc-surface) 80%, transparent);">
         Suscríbete a nuestro boletín y recibe las últimas noticias de K-Dramas y K-Pop directamente en tu bandeja de entrada.
       </p>
       <form
@@ -45,13 +48,13 @@ const formAction = `https://buttondown.email/api/emails/embed-subscribe/${button
           name="email"
           id="bd-email"
           placeholder="Tu correo electrónico"
-          class="flex-1 rounded-lg border-0 px-4 py-3 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-white"
+          class="flex-1 rounded-lg border-0 px-4 py-3 text-[color:var(--oc-text)] placeholder:text-[color:var(--oc-muted)] focus:ring-2 focus:ring-[color:var(--oc-surface)]"
           required
           aria-label="Correo electrónico"
         />
         <button
           type="submit"
-          class="rounded-lg bg-white px-6 py-3 font-semibold text-pink-600 hover:bg-pink-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          class="rounded-lg bg-[color:var(--oc-surface)] px-6 py-3 font-semibold text-[color:var(--oc-primary)] transition-colors hover:bg-[color:var(--oc-primary-soft)] disabled:cursor-not-allowed disabled:opacity-50"
           data-submit-btn
         >
           <span data-btn-text>Suscribirse</span>
@@ -59,7 +62,7 @@ const formAction = `https://buttondown.email/api/emails/embed-subscribe/${button
         </button>
       </form>
       <p
-        class="mx-auto mt-4 max-w-md text-center text-white hidden"
+        class="mx-auto mt-4 hidden max-w-md text-center text-[color:var(--oc-surface)]"
         role="status"
         aria-live="polite"
         data-success-message
@@ -67,14 +70,15 @@ const formAction = `https://buttondown.email/api/emails/embed-subscribe/${button
         ¡Gracias! Revisa tu correo para confirmar la suscripción.
       </p>
       <p
-        class="mx-auto mt-4 max-w-md text-center text-red-200 hidden"
+        class="mx-auto mt-4 hidden max-w-md text-center"
+        style="color: color-mix(in srgb, #fecdd3 85%, transparent);"
         role="alert"
         aria-live="polite"
         data-error-message
       >
         Hubo un error. Por favor intenta de nuevo.
       </p>
-      <p class="mt-4 text-xs text-pink-200">
+      <p class="mt-4 text-xs" style="color: color-mix(in srgb, var(--oc-surface) 75%, transparent);">
         Respetamos tu privacidad. Sin spam, solo contenido de calidad.
       </p>
     </div>
@@ -91,13 +95,13 @@ const formAction = `https://buttondown.email/api/emails/embed-subscribe/${button
       type="email"
       name="email"
       placeholder="Tu correo electrónico"
-      class="flex-1 rounded-lg border border-gray-300 px-4 py-3 text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-pink-500 focus:border-pink-500"
+      class="flex-1 rounded-lg border border-[color:var(--oc-border)] px-4 py-3 text-[color:var(--oc-text)] placeholder:text-[color:var(--oc-muted)] focus:border-[color:var(--oc-primary)] focus:outline-none focus:ring-2 focus:ring-[color:var(--oc-primary)]"
       required
       aria-label="Correo electrónico"
     />
     <button
       type="submit"
-      class="rounded-lg bg-pink-600 px-6 py-3 font-semibold text-white hover:bg-pink-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      class="rounded-lg bg-[color:var(--oc-primary)] px-6 py-3 font-semibold text-[color:var(--oc-surface)] transition-colors hover:bg-[color:color-mix(in srgb,var(--oc-primary) 88%, black)] disabled:cursor-not-allowed disabled:opacity-50"
       data-submit-btn
     >
       <span data-btn-text>Suscribirse</span>

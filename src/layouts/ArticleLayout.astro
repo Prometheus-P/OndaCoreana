@@ -142,7 +142,7 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString('es-419', {
           {tags.map((tag) => (
             <a
               href={`/tags/${tag.toLowerCase()}`}
-              class="inline-flex items-center text-sm font-medium hover:opacity-80 transition-opacity"
+              class="inline-flex items-center text-sm font-medium transition-colors hover:text-[color:var(--oc-primary)] hover:bg-[color:var(--oc-primary-soft)]"
               style="border-radius: var(--md-sys-shape-corner-full); background-color: var(--md-sys-color-primary-container); color: var(--md-sys-color-on-primary-container); padding: var(--md-sys-spacing-xs) var(--md-sys-spacing-md);"
             >
               #{tag}
@@ -179,8 +179,8 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString('es-419', {
           {tags.map((tag) => (
             <a
               href={`/tags/${tag.toLowerCase()}`}
-              class="inline-flex items-center text-sm font-medium hover:bg-pink-100 hover:text-pink-700"
-              style="border-radius: var(--md-sys-shape-corner-full); background-color: var(--md-sys-color-surface-variant); color: var(--md-sys-color-on-surface-variant); padding: var(--md-sys-spacing-sm) var(--md-sys-spacing-md); transition: all 0.2s ease;"
+              class="inline-flex items-center text-sm font-medium transition-colors hover:bg-[color:var(--oc-primary-soft)] hover:text-[color:var(--oc-primary)]"
+              style="border-radius: var(--md-sys-shape-corner-full); background-color: var(--md-sys-color-surface-variant); color: var(--md-sys-color-on-surface-variant); padding: var(--md-sys-spacing-sm) var(--md-sys-spacing-md);"
             >
               #{tag}
             </a>

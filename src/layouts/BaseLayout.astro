@@ -1,8 +1,10 @@
 ---
 import '../styles/global.css';
+import '../styles/theme.css';
 import SEOHead from '../components/seo/SEOHead.astro';
 import JsonLd from '../components/seo/JsonLd.astro';
 import SearchInput from '../components/search/SearchInput.astro';
+import ThemeToggle from '../components/ui/ThemeToggle.astro';
 import { Logo } from '../components/brand';
 
 interface Props {
@@ -45,9 +47,32 @@ const enableSearchSw = import.meta.env.PUBLIC_ENABLE_SEARCH_SW === 'true';
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href="/brand/favicon.svg" />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <meta name="generator" content={Astro.generator} />
+
+    <script is:inline>
+      const storageKey = 'ondacoreana-theme';
+      const root = document.documentElement;
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+      const storedTheme = localStorage.getItem(storageKey);
+      const initialTheme = storedTheme === 'light' || storedTheme === 'dark'
+        ? storedTheme
+        : prefersDark.matches
+          ? 'dark'
+          : 'light';
+
+      root.classList.toggle('dark', initialTheme === 'dark');
+      root.dataset.theme = initialTheme;
+
+      prefersDark.addEventListener('change', (event) => {
+        if (!localStorage.getItem(storageKey)) {
+          const nextTheme = event.matches ? 'dark' : 'light';
+          root.classList.toggle('dark', nextTheme === 'dark');
+          root.dataset.theme = nextTheme;
+        }
+      });
+    </script>
 
     <SEOHead {...props} />
 
@@ -87,7 +112,7 @@ const enableSearchSw = import.meta.env.PUBLIC_ENABLE_SEARCH_SW === 'true';
       ></script>
     )}
   </head>
-  <body class="min-h-screen antialiased">
+  <body class="min-h-screen bg-[color:var(--oc-bg)] text-[color:var(--oc-text)] antialiased transition-colors">
     <a
       href="#main-content"
       class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50"
@@ -117,24 +142,34 @@ const enableSearchSw = import.meta.env.PUBLIC_ENABLE_SEARCH_SW === 'true';
           ))}
         </ul>
 
-        <!-- Desktop search -->
-        <div class="hidden md:block w-64">
-          <SearchInput placeholder="Buscar..." size="sm" />
-        </div>
+        <div class="flex items-center gap-3">
+          <!-- Desktop search -->
+          <div class="hidden w-64 md:block">
+            <SearchInput placeholder="Buscar..." size="sm" />
+          </div>
 
-        <!-- Mobile menu button -->
-        <button
-          type="button"
-          class="md:hidden rounded-md p-2"
-          style="color: var(--md-color-on-surface); border: 1px solid color-mix(in srgb, var(--md-color-outline) 70%, transparent);"
-          aria-label="Abrir menú"
-          aria-expanded="false"
-          id="mobile-menu-button"
-        >
-          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        </button>
+          <div class="hidden md:block">
+            <ThemeToggle />
+          </div>
+
+          <div class="flex items-center gap-2 md:hidden">
+            <ThemeToggle size="sm" />
+
+            <!-- Mobile menu button -->
+            <button
+              type="button"
+              class="rounded-md p-2"
+              style="color: var(--md-color-on-surface); border: 1px solid color-mix(in srgb, var(--md-color-outline) 70%, transparent);"
+              aria-label="Abrir menú"
+              aria-expanded="false"
+              id="mobile-menu-button"
+            >
+              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+          </div>
+        </div>
       </nav>
 
       <!-- Mobile menu -->
@@ -142,6 +177,10 @@ const enableSearchSw = import.meta.env.PUBLIC_ENABLE_SEARCH_SW === 'true';
         <!-- Mobile search -->
         <div class="px-4 pb-4">
           <SearchInput placeholder="Buscar..." size="md" />
+        </div>
+        <div class="flex items-center justify-between px-4 pb-4">
+          <p class="text-sm font-medium" style="color: var(--md-color-on-surface-variant);">Tema</p>
+          <ThemeToggle size="sm" />
         </div>
         <ul class="space-y-1 px-4 pb-4">
           {primaryNav.map((item) => (
