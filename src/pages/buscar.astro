@@ -555,7 +555,7 @@ const shouldNoIndex = normalizedQuery.length === 0;
   // Render no results state
   function renderNoResults(query: string): string {
     return `
-      <section class="search-results" data-testid="search-results">
+      <section class="search-results">
         <p class="result-count" data-testid="result-count">
           0 resultados para "${escapeHtml(query)}"
         </p>
