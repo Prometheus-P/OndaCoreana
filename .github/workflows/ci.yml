@@ -64,6 +64,10 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+        
+      # [추가됨] E2E 테스트를 위한 빌드 단계 추가
+      - name: Build for E2E
+        run: pnpm build
 
       - name: Install Playwright browsers
         run: pnpm playwright install --with-deps
