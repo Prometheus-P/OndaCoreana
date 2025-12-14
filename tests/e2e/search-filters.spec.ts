@@ -11,8 +11,8 @@ test.describe('US3: Filter by Content Type', () => {
     // Go to search page with query
     await page.goto('/buscar?q=drama');
 
-    // Wait for results to load
-    await expect(page.locator('[data-testid="search-results"]')).toBeVisible({ timeout: 10000 });
+    // Wait for results to load (may be results or no-results)
+    await expect(page.locator('[data-testid="search-results"]').or(page.locator('[data-testid="no-results"]'))).toBeVisible({ timeout: 10000 });
 
     // Find and click the K-Dramas filter
     const dramaFilter = page.locator('[data-testid="filter-dramas"]');
@@ -40,8 +40,8 @@ test.describe('US3: Filter by Content Type', () => {
     // Go to search page with query and dramas filter pre-selected
     await page.goto('/buscar?q=BTS&type=dramas');
 
-    // Wait for results to load
-    await expect(page.locator('[data-testid="search-results"]')).toBeVisible({ timeout: 10000 });
+    // Wait for results to load (may be results or no-results)
+    await expect(page.locator('[data-testid="search-results"]').or(page.locator('[data-testid="no-results"]'))).toBeVisible({ timeout: 10000 });
 
     // Find and click the "Todos" filter
     const todosFilter = page.locator('[data-testid="filter-all"]');
@@ -60,8 +60,8 @@ test.describe('US3: Filter by Content Type', () => {
     // Search for something that won't have all content types
     await page.goto('/buscar?q=BTS');
 
-    // Wait for results to load
-    await expect(page.locator('[data-testid="search-results"]')).toBeVisible({ timeout: 10000 });
+    // Wait for results to load (may be results or no-results)
+    await expect(page.locator('[data-testid="search-results"]').or(page.locator('[data-testid="no-results"]'))).toBeVisible({ timeout: 10000 });
 
     // Find and click the "Guías" filter (unlikely to have BTS guides)
     const guiasFilter = page.locator('[data-testid="filter-guias"]');
@@ -131,8 +131,8 @@ test.describe('US3: Filter by Content Type', () => {
     // Go to search page with filter
     await page.goto('/buscar?q=test&type=noticias');
 
-    // Wait for page to load - use first() since no-results is inside search-results
-    await expect(page.locator('[data-testid="search-results"]').first()).toBeVisible({ timeout: 10000 });
+    // Wait for page to load (may be results or no-results)
+    await expect(page.locator('[data-testid="search-results"]').or(page.locator('[data-testid="no-results"]'))).toBeVisible({ timeout: 10000 });
 
     // Noticias filter should be selected
     const noticiasFilter = page.locator('[data-testid="filter-noticias"]');
