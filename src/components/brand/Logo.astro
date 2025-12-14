@@ -5,7 +5,7 @@
  */
 interface Props {
   variant?: 'horizontal' | 'vertical' | 'icon' | 'clean';
-  color?: 'dark' | 'light';
+  color?: 'dark' | 'light' | 'current';
   height?: number;
   class?: string;
 }
@@ -17,8 +17,14 @@ const {
   class: className = ''
 } = Astro.props;
 
-const textColor = color === 'dark' ? '#111111' : '#FFFFFF';
-const sparkleColor = '#ec4899';
+const palette = {
+  dark: 'var(--oc-text)',
+  light: 'var(--oc-surface)',
+  current: 'currentColor',
+} as const;
+
+const textColor = palette[color] ?? palette.dark;
+const sparkleColor = 'var(--oc-primary)';
 ---
 
 {variant === 'horizontal' && (

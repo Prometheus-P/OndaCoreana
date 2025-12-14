@@ -42,12 +42,12 @@ const formattedDate = publishDate.toLocaleDateString('es-419', {
 });
 
 // Category labels and colors
-const categoryConfig: Record<string, { label: string; color: string }> = {
-  music: { label: 'Música', color: 'bg-purple-100 text-purple-800' },
-  series: { label: 'Series', color: 'bg-pink-100 text-pink-800' },
-  event: { label: 'Evento', color: 'bg-blue-100 text-blue-800' },
-  gastronomy: { label: 'Gastronomía', color: 'bg-orange-100 text-orange-800' },
-  culture: { label: 'Cultura', color: 'bg-teal-100 text-teal-800' },
+const categoryConfig: Record<string, { label: string; bg: string; text: string }> = {
+  music: { label: 'Música', bg: 'var(--oc-accent-soft)', text: 'var(--oc-text)' },
+  series: { label: 'Series', bg: 'var(--oc-primary-soft)', text: 'var(--oc-text)' },
+  event: { label: 'Evento', bg: 'color-mix(in srgb, var(--oc-accent) 12%, var(--oc-surface))', text: 'var(--oc-text)' },
+  gastronomy: { label: 'Gastronomía', bg: 'color-mix(in srgb, var(--oc-primary) 10%, var(--oc-surface))', text: 'var(--oc-text)' },
+  culture: { label: 'Cultura', bg: 'var(--oc-accent-soft)', text: 'var(--oc-text)' },
 };
 
 const categoryInfo = categoryConfig[category] || categoryConfig.culture;
@@ -88,40 +88,46 @@ const categoryInfo = categoryConfig[category] || categoryConfig.culture;
   <article class="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8" data-pagefind-body>
     <!-- Breadcrumbs -->
     <nav aria-label="Breadcrumb" class="mb-6">
-      <ol class="flex flex-wrap items-center gap-2 text-sm text-gray-600">
-        <li><a href="/" class="hover:text-pink-600">Inicio</a></li>
+      <ol class="flex flex-wrap items-center gap-2 text-sm text-[color:var(--oc-muted)]">
+        <li><a href="/" class="hover:text-[color:var(--oc-primary)]">Inicio</a></li>
         <li>/</li>
-        <li><a href="/features" class="hover:text-pink-600">Features</a></li>
+        <li><a href="/features" class="hover:text-[color:var(--oc-primary)]">Features</a></li>
         <li>/</li>
-        <li class="text-gray-400" aria-current="page">{title}</li>
+        <li class="text-[color:var(--oc-muted-subtle)]" aria-current="page">{title}</li>
       </ol>
     </nav>
 
     <!-- Header -->
     <header class="mb-8">
-      <div class="flex flex-wrap items-center gap-2 mb-4">
-        <span class={`inline-block rounded-full px-3 py-1 text-xs font-medium ${categoryInfo.color}`}>
+      <div class="mb-4 flex flex-wrap items-center gap-2">
+        <span
+          class="inline-block rounded-full px-3 py-1 text-xs font-medium"
+          style={`background: ${categoryInfo.bg}; color: ${categoryInfo.text}; border: 1px solid var(--oc-border);`}
+        >
           {categoryInfo.label}
         </span>
         {countries.map((country) => (
-          <span class="inline-block rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-700">
+          <span
+            class="inline-block rounded-full px-3 py-1 text-xs font-medium"
+            style="background: var(--oc-surface-raised); color: var(--oc-muted); border: 1px solid var(--oc-border);"
+          >
             {country}
           </span>
         ))}
       </div>
 
-      <h1 class="text-3xl font-bold text-gray-900 sm:text-4xl lg:text-5xl" data-pagefind-meta="title">
+      <h1 class="text-3xl font-bold text-[color:var(--oc-text)] sm:text-4xl lg:text-5xl" data-pagefind-meta="title">
         {title}
       </h1>
 
-      <p class="mt-4 text-lg text-gray-600">{descriptionEs}</p>
+      <p class="mt-4 text-lg text-[color:var(--oc-muted)]">{descriptionEs}</p>
 
       <span data-pagefind-meta="description" class="hidden">{descriptionEs}</span>
       <span data-pagefind-meta="contentType" data-pagefind-filter="contentType" class="hidden">features</span>
       <span data-pagefind-meta="pubDate" class="hidden">{publishDate.toISOString()}</span>
       {heroImage && <span data-pagefind-meta="heroImage" class="hidden">{heroImage}</span>}
 
-      <div class="flex flex-wrap items-center gap-4 mt-4 text-sm text-gray-600">
+      <div class="mt-4 flex flex-wrap items-center gap-4 text-sm text-[color:var(--oc-muted)]">
         <span>Por {author}</span>
         <span>•</span>
         <time datetime={publishDate.toISOString()}>{formattedDate}</time>
@@ -138,11 +144,17 @@ const categoryInfo = categoryConfig[category] || categoryConfig.culture;
 
       <!-- LatAm Hooks -->
       {latamHook.length > 0 && (
-        <div class="mt-6 rounded-lg bg-gradient-to-r from-pink-50 to-purple-50 p-4">
-          <h2 class="text-sm font-semibold text-gray-700 mb-2">Destacado para LatAm:</h2>
+        <div
+          class="mt-6 rounded-lg p-4"
+          style="background: linear-gradient(90deg, var(--oc-primary-soft), var(--oc-accent-soft)); border: 1px solid var(--oc-border);"
+        >
+          <h2 class="mb-2 text-sm font-semibold text-[color:var(--oc-text)]">Destacado para LatAm:</h2>
           <div class="flex flex-wrap gap-2">
             {latamHook.map((hook) => (
-              <span class="inline-block rounded-full bg-white px-3 py-1 text-sm text-pink-700 shadow-sm">
+              <span
+                class="inline-block rounded-full px-3 py-1 text-sm"
+                style="background: var(--oc-surface); color: var(--oc-primary); border: 1px solid var(--oc-border);"
+              >
                 {hook}
               </span>
             ))}
@@ -167,30 +179,31 @@ const categoryInfo = categoryConfig[category] || categoryConfig.culture;
     {blocks.length > 0 && (
       <div class="mb-8 space-y-6">
         {blocks.map((block) => (
-          <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-sm">
+          <div class="rounded-lg border border-[color:var(--oc-border)] bg-[color:var(--oc-surface)] p-6 shadow-sm">
             {block.heading && (
-              <h2 class="text-lg font-semibold text-gray-900 mb-2">{block.heading}</h2>
+              <h2 class="mb-2 text-lg font-semibold text-[color:var(--oc-text)]">{block.heading}</h2>
             )}
-            <p class="text-gray-700">{block.body}</p>
+            <p class="text-[color:var(--oc-muted)]">{block.body}</p>
           </div>
         ))}
       </div>
     )}
 
     <!-- MDX Content -->
-    <div class="prose prose-lg prose-pink mx-auto max-w-none">
+    <div class="prose prose-lg prose-pink mx-auto max-w-none text-[color:var(--oc-text)] prose-headings:text-[color:var(--oc-text)] prose-p:text-[color:var(--oc-muted)] prose-strong:text-[color:var(--oc-text)] prose-a:text-[color:var(--oc-primary)] hover:prose-a:text-[color:var(--oc-accent)]">
       <Content />
     </div>
 
     <!-- Tags -->
     {tags.length > 0 && (
-      <footer class="mt-12 border-t border-gray-200 pt-8">
-        <h2 class="text-lg font-semibold text-gray-900 mb-4">Etiquetas</h2>
+      <footer class="mt-12 border-t border-[color:var(--oc-border)] pt-8">
+        <h2 class="mb-4 text-lg font-semibold text-[color:var(--oc-text)]">Etiquetas</h2>
         <div class="flex flex-wrap gap-2">
           {tags.map((tag) => (
             <a
               href={`/tags/${tag.toLowerCase()}`}
-              class="inline-block rounded-full bg-gray-100 px-4 py-2 text-sm text-gray-700 hover:bg-pink-100 hover:text-pink-700 transition-colors"
+              class="inline-block rounded-full px-4 py-2 text-sm transition-colors"
+              style="background: var(--oc-surface-raised); color: var(--oc-text); border: 1px solid var(--oc-border);"
             >
               #{tag}
             </a>

@@ -1,0 +1,86 @@
+---
+interface Props {
+  size?: 'sm' | 'md';
+  class?: string;
+}
+
+const { size = 'md', class: className = '' } = Astro.props;
+const sizeClasses = size === 'sm' ? 'px-2.5 py-1.5 text-xs' : 'px-3 py-2 text-sm';
+---
+
+<button
+  type="button"
+  class={`inline-flex items-center gap-2 rounded-full border border-[color:var(--oc-border)] bg-[color:var(--oc-surface)] font-medium text-[color:var(--oc-text)] shadow-sm transition-colors hover:border-[color:var(--oc-primary)] hover:text-[color:var(--oc-primary)] focus:outline-none focus:ring-2 focus:ring-[color:var(--oc-primary)] focus:ring-offset-0 ${sizeClasses} ${className}`}
+  data-theme-toggle
+  aria-pressed="false"
+  aria-label="Cambiar tema"
+>
+  <span class="inline-flex h-4 w-4 items-center justify-center" aria-hidden="true">
+    <svg data-icon="sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-4 w-4">
+      <path
+        fill="currentColor"
+        d="M12 4.75a.75.75 0 0 1-.75-.75V2a.75.75 0 0 1 1.5 0v2a.75.75 0 0 1-.75.75Zm0 15.5a.75.75 0 0 1 .75.75v2a.75.75 0 0 1-1.5 0v-2a.75.75 0 0 1 .75-.75ZM5.47 6.53a.75.75 0 0 1-1.06-1.06l1.42-1.42a.75.75 0 1 1 1.06 1.06ZM18.1 19.1a.75.75 0 0 1 1.06 1.06l-1.42 1.42a.75.75 0 1 1-1.06-1.06ZM4.75 12a.75.75 0 0 1-.75.75H2a.75.75 0 0 1 0-1.5h2a.75.75 0 0 1 .75.75Zm17.5 0a.75.75 0 0 1-.75.75h-2a.75.75 0 0 1 0-1.5h2a.75.75 0 0 1 .75.75Zm-3.12-6.97a.75.75 0 0 1 0-1.06l1.42-1.42a.75.75 0 0 1 1.06 1.06l-1.42 1.42a.75.75 0 0 1-1.06 0ZM6.9 19.1a.75.75 0 0 1 0 1.06L5.48 21.6a.75.75 0 1 1-1.06-1.06l1.42-1.42a.75.75 0 0 1 1.06 0Zm5.1-12.6a5.5 5.5 0 1 1-5.5 5.5a5.5 5.5 0 0 1 5.5-5.5Zm0 1.5a4 4 0 1 0 4 4a4 4 0 0 0-4-4Z"
+      />
+    </svg>
+    <svg data-icon="moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="hidden h-4 w-4">
+      <path
+        fill="currentColor"
+        d="M20.75 14.21a.75.75 0 0 1 1.02.95a9 9 0 1 1-11.9-11.9a.75.75 0 0 1 .95 1.02a7.5 7.5 0 0 0 9.93 9.93Z"
+      />
+    </svg>
+  </span>
+  <span data-theme-label class="hidden lg:inline">Modo claro</span>
+</button>
+
+<script>
+  const storageKey = 'ondacoreana-theme';
+  const root = document.documentElement;
+  const globalState = window as typeof window & { __ocThemeToggleInitialized?: boolean };
+  const toggles = Array.from(document.querySelectorAll('[data-theme-toggle]'));
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)');
+
+  const getStoredTheme = () => localStorage.getItem(storageKey);
+  const getSystemTheme = () => (prefersDark.matches ? 'dark' : 'light');
+  const getCurrentTheme = () => getStoredTheme() || (root.classList.contains('dark') ? 'dark' : getSystemTheme());
+
+  const applyTheme = (theme: string, persist = false) => {
+    root.classList.toggle('dark', theme === 'dark');
+    root.dataset.theme = theme;
+
+    if (persist) {
+      localStorage.setItem(storageKey, theme);
+    }
+
+    toggles.forEach((toggle) => {
+      const label = toggle.querySelector('[data-theme-label]');
+      const sunIcon = toggle.querySelector('[data-icon="sun"]');
+      const moonIcon = toggle.querySelector('[data-icon="moon"]');
+
+      toggle.setAttribute('aria-pressed', theme === 'dark' ? 'true' : 'false');
+      if (label) {
+        label.textContent = theme === 'dark' ? 'Modo oscuro' : 'Modo claro';
+      }
+      sunIcon?.classList.toggle('hidden', theme === 'dark');
+      moonIcon?.classList.toggle('hidden', theme === 'light');
+    });
+  };
+
+  if (!globalState.__ocThemeToggleInitialized) {
+    toggles.forEach((toggle) => {
+      toggle.addEventListener('click', () => {
+        const nextTheme = root.classList.contains('dark') ? 'light' : 'dark';
+        applyTheme(nextTheme, true);
+      });
+    });
+
+    prefersDark.addEventListener('change', (event) => {
+      if (!getStoredTheme()) {
+        applyTheme(event.matches ? 'dark' : 'light');
+      }
+    });
+
+    globalState.__ocThemeToggleInitialized = true;
+  }
+
+  applyTheme(getCurrentTheme());
+</script>
