@@ -143,16 +143,16 @@ const enableSearchSw = import.meta.env.PUBLIC_ENABLE_SEARCH_SW === 'true';
         </ul>
 
         <div class="flex items-center gap-3">
-          <!-- Desktop search -->
-          <div class="hidden w-64 md:block">
+          <!-- Desktop search - hidden at md to prevent overflow, shown at lg+ -->
+          <div class="hidden w-64 lg:block">
             <SearchInput placeholder="Buscar..." size="sm" />
           </div>
 
-          <div class="hidden md:block">
+          <div class="hidden lg:block">
             <ThemeToggle />
           </div>
 
-          <div class="flex items-center gap-2 md:hidden">
+          <div class="flex items-center gap-2 lg:hidden">
             <ThemeToggle size="sm" />
 
             <!-- Mobile menu button -->
@@ -173,7 +173,7 @@ const enableSearchSw = import.meta.env.PUBLIC_ENABLE_SEARCH_SW === 'true';
       </nav>
 
       <!-- Mobile menu -->
-      <div class="hidden border-t md:hidden" id="mobile-menu" style="border-color: color-mix(in srgb, var(--md-color-outline-variant) 70%, transparent); background-color: var(--md-color-surface);">
+      <div class="hidden border-t lg:hidden" id="mobile-menu" style="border-color: color-mix(in srgb, var(--md-color-outline-variant) 70%, transparent); background-color: var(--md-color-surface);">
         <!-- Mobile search -->
         <div class="px-4 pb-4">
           <SearchInput placeholder="Buscar..." size="md" />
