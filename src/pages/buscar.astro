@@ -369,7 +369,7 @@ const shouldNoIndex = normalizedQuery.length === 0;
   async function initSearch() {
     const container = document.getElementById('search-results-container');
     // Use the search input specifically on the buscar page (in main-content)
-    const searchInput = document.querySelector('#main-content [data-testid="search-input"]') as HTMLInputElement;
+    const searchInput = document.querySelector('#main-content [data-testid="site-search-input"]') as HTMLInputElement;
     const truncationWarning = document.getElementById('truncation-warning');
 
     if (!container) return;

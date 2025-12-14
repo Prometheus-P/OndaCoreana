@@ -218,7 +218,7 @@ const instanceId = Math.random().toString(36).substring(2, 9);
   // Initialize each search wrapper
   function initSearchWrapper(wrapper: HTMLElement) {
     const instanceId = wrapper.dataset.instanceId;
-    const input = wrapper.querySelector('[data-testid="search-input"]') as HTMLInputElement;
+    const input = wrapper.querySelector('[data-testid="site-search-input"]') as HTMLInputElement;
     const form = wrapper.querySelector('[data-testid="search-form"]') as HTMLFormElement;
     const dropdown = wrapper.querySelector('[data-testid="search-dropdown"]') as HTMLElement;
 
