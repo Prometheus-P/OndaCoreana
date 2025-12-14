@@ -5,7 +5,7 @@ const previewHost = process.env.PLAYWRIGHT_HOST ?? '127.0.0.1';
 const previewURL = `http://${previewHost}:${previewPort}`;
 const previewCommand =
   process.env.PLAYWRIGHT_WEBSERVER_COMMAND ??
-  `pnpm preview --port ${previewPort} --host ${previewHost}`;
+  `pnpm preview:e2e --port ${previewPort} --host ${previewHost}`;
 
 export default defineConfig({
   testDir: './tests/e2e',
