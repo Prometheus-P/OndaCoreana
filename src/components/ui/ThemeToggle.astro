@@ -13,6 +13,7 @@ const sizeClasses = size === 'sm' ? 'px-2.5 py-1.5 text-xs' : 'px-3 py-2 text-sm
   class={`inline-flex items-center gap-2 rounded-full border border-[color:var(--oc-border)] bg-[color:var(--oc-surface)] font-medium text-[color:var(--oc-text)] shadow-sm transition-colors hover:border-[color:var(--oc-primary)] hover:text-[color:var(--oc-primary)] focus:outline-none focus:ring-2 focus:ring-[color:var(--oc-primary)] focus:ring-offset-0 ${sizeClasses} ${className}`}
   data-theme-toggle
   aria-pressed="false"
+  aria-label="Cambiar tema"
 >
   <span class="inline-flex h-4 w-4 items-center justify-center" aria-hidden="true">
     <svg data-icon="sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="h-4 w-4">
@@ -28,7 +29,7 @@ const sizeClasses = size === 'sm' ? 'px-2.5 py-1.5 text-xs' : 'px-3 py-2 text-sm
       />
     </svg>
   </span>
-  <span data-theme-label>Modo claro</span>
+  <span data-theme-label class="hidden lg:inline">Modo claro</span>
 </button>
 
 <script>
