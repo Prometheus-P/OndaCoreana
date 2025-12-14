@@ -42,7 +42,7 @@ const sizeClasses = size === 'sm' ? 'px-2.5 py-1.5 text-xs' : 'px-3 py-2 text-sm
   const getSystemTheme = () => (prefersDark.matches ? 'dark' : 'light');
   const getCurrentTheme = () => getStoredTheme() || (root.classList.contains('dark') ? 'dark' : getSystemTheme());
 
-  const applyTheme = (theme, persist = false) => {
+  const applyTheme = (theme: string, persist = false) => {
     root.classList.toggle('dark', theme === 'dark');
     root.dataset.theme = theme;
 
