@@ -70,32 +70,32 @@ const redirectPath = Astro.props.redirect ?? '/admin/features';
   }
 </style>
 
-<script>
-  const code = '{accessCode}';
-  const redirect = '{redirectPath}';
+<script define:vars={{ accessCode, redirectPath }}>
+  const code = accessCode;
+  const redirect = redirectPath;
   const SESSION_KEY = 'oc-admin-session';
   const ATTEMPTS_KEY = 'oc-admin-attempts';
   const LOCKOUT_KEY = 'oc-admin-lockout';
   const MAX_ATTEMPTS = 5;
   const LOCKOUT_DURATION = 5 * 60 * 1000; // 5 minutes in ms
 
-  const form = document.getElementById('admin-gate-form') as HTMLFormElement;
+  const form = document.getElementById('admin-gate-form');
   const slot = document.getElementById('admin-slot');
   const error = document.getElementById('gate-error');
   const logout = document.getElementById('logout-btn');
-  const submitBtn = form?.querySelector('button[type="submit"]') as HTMLButtonElement;
+  const submitBtn = form?.querySelector('button[type="submit"]');
 
   // Rate limiting helpers
-  const getAttempts = (): number => {
+  const getAttempts = () => {
     const val = window.localStorage.getItem(ATTEMPTS_KEY);
     return val ? parseInt(val, 10) : 0;
   };
 
-  const setAttempts = (count: number) => {
+  const setAttempts = (count) => {
     window.localStorage.setItem(ATTEMPTS_KEY, count.toString());
   };
 
-  const getLockoutTime = (): number => {
+  const getLockoutTime = () => {
     const val = window.localStorage.getItem(LOCKOUT_KEY);
     return val ? parseInt(val, 10) : 0;
   };
@@ -109,7 +109,7 @@ const redirectPath = Astro.props.redirect ?? '/admin/features';
     window.localStorage.removeItem(ATTEMPTS_KEY);
   };
 
-  const isLockedOut = (): boolean => {
+  const isLockedOut = () => {
     const lockoutTime = getLockoutTime();
     if (!lockoutTime) return false;
     if (Date.now() < lockoutTime) return true;
@@ -117,7 +117,7 @@ const redirectPath = Astro.props.redirect ?? '/admin/features';
     return false;
   };
 
-  const getRemainingLockoutSeconds = (): number => {
+  const getRemainingLockoutSeconds = () => {
     const lockoutTime = getLockoutTime();
     return Math.ceil((lockoutTime - Date.now()) / 1000);
   };
