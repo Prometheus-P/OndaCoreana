@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-// Test admin code - must match PUBLIC_ADMIN_ACCESS_CODE in start:e2e script
+// Test admin code - must match PUBLIC_ADMIN_ACCESS_CODE in CI and start:e2e script
 const TEST_ADMIN_CODE = 'test-admin-2024';
 const SESSION_KEY = 'oc-admin-session';
 const ATTEMPTS_KEY = 'oc-admin-attempts';
