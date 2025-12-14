@@ -37,7 +37,7 @@ test.describe('Admin Features', () => {
       await expect(page.locator('#admin-gate-form')).toBeVisible();
       await expect(page.locator('input[name="code"]')).toBeVisible();
       await expect(page.locator('button[type="submit"]')).toContainText('Desbloquear');
-      await expect(page.locator('#admin-slot')).toHaveAttribute('hidden', '');
+      await expect(page.locator('#admin-slot')).toHaveAttribute('hidden');
     });
 
     test('shows error on invalid code', async ({ page }) => {
@@ -90,7 +90,7 @@ test.describe('Admin Features', () => {
       await unlockViaForm(page);
 
       await expect(page.locator('#admin-slot')).not.toHaveAttribute('hidden');
-      await expect(page.locator('#admin-gate-form')).toHaveAttribute('hidden', '');
+      await expect(page.locator('#admin-gate-form')).toHaveAttribute('hidden');
       await expect(page.locator('#logout-btn')).toBeVisible();
     });
 
@@ -103,7 +103,7 @@ test.describe('Admin Features', () => {
       await page.click('#logout-btn');
 
       await expect(page.locator('#admin-gate-form')).not.toHaveAttribute('hidden');
-      await expect(page.locator('#admin-slot')).toHaveAttribute('hidden', '');
+      await expect(page.locator('#admin-slot')).toHaveAttribute('hidden');
     });
 
     test('session persists across reloads', async ({ page }) => {
@@ -115,7 +115,7 @@ test.describe('Admin Features', () => {
       await page.reload();
 
       await expect(page.locator('#admin-slot')).not.toHaveAttribute('hidden');
-      await expect(page.locator('#admin-gate-form')).toHaveAttribute('hidden', '');
+      await expect(page.locator('#admin-gate-form')).toHaveAttribute('hidden');
     });
   });
 
