@@ -2,7 +2,8 @@ import { test, expect } from '@playwright/test';
 
 // Test admin code - must match PUBLIC_ADMIN_ACCESS_CODE in CI and start:e2e script
 const TEST_ADMIN_CODE = 'test-admin-2024';
-const SESSION_KEY = 'oc-admin-session';
+// Session key v2 matches AdminGate.astro secure version
+const SESSION_KEY = 'oc-admin-session-v2';
 const ATTEMPTS_KEY = 'oc-admin-attempts';
 const LOCKOUT_KEY = 'oc-admin-lockout';
 
@@ -92,7 +93,8 @@ test.describe('Admin Features', () => {
       await unlockViaForm(page);
 
       await expect(page.locator('#admin-slot')).not.toHaveAttribute('hidden');
-      await expect(page.locator('#admin-gate-form')).toHaveAttribute('hidden');
+      // AdminGate hides .admin-gate__card (parent), not the form itself
+      await expect(page.locator('.admin-gate__card')).toHaveAttribute('hidden');
       await expect(page.locator('#logout-btn')).toBeVisible();
     });
 
@@ -104,7 +106,8 @@ test.describe('Admin Features', () => {
 
       await page.click('#logout-btn');
 
-      await expect(page.locator('#admin-gate-form')).not.toHaveAttribute('hidden');
+      // AdminGate shows .admin-gate__card (parent) on logout
+      await expect(page.locator('.admin-gate__card')).not.toHaveAttribute('hidden');
       await expect(page.locator('#admin-slot')).toHaveAttribute('hidden');
     });
 
@@ -117,7 +120,8 @@ test.describe('Admin Features', () => {
       await page.reload();
 
       await expect(page.locator('#admin-slot')).not.toHaveAttribute('hidden');
-      await expect(page.locator('#admin-gate-form')).toHaveAttribute('hidden');
+      // AdminGate hides .admin-gate__card (parent), not the form itself
+      await expect(page.locator('.admin-gate__card')).toHaveAttribute('hidden');
     });
   });
 
