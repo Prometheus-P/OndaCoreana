@@ -4,7 +4,7 @@
  * Centralized configuration for search filters and options.
  */
 
-import type { ContentType } from './content-types';
+import type { ContentType } from '../types/search';
 
 /**
  * Search filter definition
