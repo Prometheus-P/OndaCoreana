@@ -18,7 +18,7 @@ const resultMessage = totalCount === 1
   : `${totalCount} resultados para "${query}"`;
 ---
 
-<div class="search-results" data-testid="search-results">
+<div class="search-results" data-testid={results.length > 0 ? "search-results" : undefined}>
   {/* Result count header */}
   <div class="mb-6">
     <p class="result-count" data-testid="result-count">
