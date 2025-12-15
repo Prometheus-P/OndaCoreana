@@ -1,6 +1,7 @@
 ---
 import { type CollectionEntry, getCollection } from 'astro:content';
 import ArticleLayout from '../../layouts/ArticleLayout.astro';
+import { getRelatedEntries, loadAllArticles } from '../../lib/related';
 
 export async function getStaticPaths() {
   const dramas = await getCollection('dramas');
@@ -14,6 +15,8 @@ type Props = CollectionEntry<'dramas'>;
 
 const drama = Astro.props;
 const { Content } = await drama.render();
+const allArticles = await loadAllArticles();
+const relatedItems = getRelatedEntries(drama, allArticles);
 ---
 
 <ArticleLayout
@@ -25,10 +28,12 @@ const { Content } = await drama.render();
   heroImageAlt={drama.data.heroImageAlt}
   author={drama.data.author}
   tags={drama.data.tags}
+  keywords={drama.data.keywords}
   breadcrumbs={[{ name: 'K-Dramas', url: '/dramas' }]}
   contentType="dramas"
   affiliateHint={drama.data.affiliate_hint}
   noAds={drama.data.noAds}
+  relatedItems={relatedItems}
 >
   <!-- Drama Info Box -->
   <aside class="not-prose mb-8 surface-card" style="background-color: var(--md-color-surface-container); padding: var(--md-spacing-lg);">

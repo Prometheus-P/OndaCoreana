@@ -20,6 +20,10 @@ interface ArticleSchema {
   datePublished: Date;
   dateModified?: Date;
   author?: string;
+  url?: string;
+  keywords?: string[];
+  articleSection?: string;
+  inLanguage?: string;
 }
 
 interface BreadcrumbSchema {
@@ -81,6 +85,10 @@ function generateSchema(s: SchemaType): object {
         image: s.image?.startsWith('http') ? s.image : `${siteUrl}${s.image || '/brand/og-default.svg'}`,
         datePublished: s.datePublished.toISOString(),
         dateModified: (s.dateModified || s.datePublished).toISOString(),
+        url: s.url || Astro.url.href,
+        inLanguage: s.inLanguage || 'es-419',
+        keywords: s.keywords?.length ? s.keywords.join(', ') : undefined,
+        articleSection: s.articleSection,
         author: {
           '@type': 'Person',
           name: s.author || 'OndaCoreana',

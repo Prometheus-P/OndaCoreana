@@ -1,6 +1,7 @@
 ---
 import { type CollectionEntry, getCollection } from 'astro:content';
 import ArticleLayout from '../../layouts/ArticleLayout.astro';
+import { getRelatedEntries, loadAllArticles } from '../../lib/related';
 
 export async function getStaticPaths() {
   const noticias = await getCollection('noticias');
@@ -14,6 +15,8 @@ type Props = CollectionEntry<'noticias'>;
 
 const noticia = Astro.props;
 const { Content } = await noticia.render();
+const allArticles = await loadAllArticles();
+const relatedItems = getRelatedEntries(noticia, allArticles);
 ---
 
 <ArticleLayout
@@ -25,6 +28,7 @@ const { Content } = await noticia.render();
   heroImageAlt={noticia.data.heroImageAlt}
   author={noticia.data.author}
   tags={noticia.data.tags}
+  keywords={noticia.data.keywords}
   breadcrumbs={[
     { name: 'Noticias', url: '/noticias' },
     { name: noticia.data.category, url: `/noticias/categoria/${noticia.data.category}` },
@@ -32,6 +36,7 @@ const { Content } = await noticia.render();
   contentType="noticias"
   affiliateHint={noticia.data.affiliate_hint}
   noAds={noticia.data.noAds}
+  relatedItems={relatedItems}
 >
   <Content />
 

@@ -598,6 +598,7 @@ const shouldNoIndex = normalizedQuery.length === 0;
 
     // Highlight query in excerpt
     const highlightedExcerpt = highlightText(result.excerpt, query);
+    const highlightedTitle = highlightText(result.title, query);
 
     const heroImageHtml = result.heroImage ? `
       <div class="hidden sm:block search-result-card__media" aria-hidden="true">
@@ -625,7 +626,7 @@ const shouldNoIndex = normalizedQuery.length === 0;
               </span>
             </div>
             <h3 class="search-result-title" data-testid="result-title">
-              ${escapeHtml(result.title)}
+              ${highlightedTitle}
             </h3>
             <p class="search-result-excerpt" data-testid="result-excerpt">
               ${highlightedExcerpt}

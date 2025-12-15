@@ -4,6 +4,7 @@ import JsonLd from '../components/seo/JsonLd.astro';
 import ShareButtons from '../components/ui/ShareButtons.astro';
 import AdSlot from '../components/ads/AdSlot.astro';
 import AffiliateBox from '../components/affiliate/AffiliateBox.astro';
+import { buildEntryUrl, type ArticleEntry } from '../lib/related';
 
 interface Props {
   title: string;
@@ -14,12 +15,15 @@ interface Props {
   heroImageAlt?: string;
   author?: string;
   tags?: string[];
+  keywords?: string[];
   breadcrumbs?: Array<{ name: string; url: string }>;
   contentType?: 'dramas' | 'kpop' | 'noticias' | 'guias';
   /** Affiliate hint from frontmatter */
   affiliateHint?: 'kpop_goods' | 'esim' | 'travel_insurance' | 'streaming' | 'korean_learning';
   /** Disable ads on this article */
   noAds?: boolean;
+  /** Related content items */
+  relatedItems?: ArticleEntry[];
 }
 
 const {
@@ -31,11 +35,16 @@ const {
   heroImageAlt = title,
   author = 'OndaCoreana',
   tags = [],
+  keywords = [],
   breadcrumbs = [],
   contentType,
   affiliateHint,
   noAds = false,
+  relatedItems = [],
 } = Astro.props;
+
+const language = 'es-419';
+const keywordList = [...new Set([...tags, ...keywords])];
 
 // Auto-determine affiliate hint based on content type if not explicitly set
 const categoryAffiliateMap: Record<string, string> = {
@@ -49,13 +58,20 @@ const effectiveAffiliateHint = affiliateHint || (contentType ? categoryAffiliate
 // Show ads unless explicitly disabled
 const showAds = !noAds;
 
-const formattedPubDate = pubDate.toLocaleDateString('es-419', {
+const contentTypeLabels: Record<string, string> = {
+  dramas: 'K-Drama',
+  kpop: 'K-Pop',
+  noticias: 'Noticia',
+  guias: 'Guía',
+};
+
+const formattedPubDate = pubDate.toLocaleDateString(language, {
   year: 'numeric',
   month: 'long',
   day: 'numeric',
 });
 
-const formattedUpdatedDate = updatedDate?.toLocaleDateString('es-419', {
+const formattedUpdatedDate = updatedDate?.toLocaleDateString(language, {
   year: 'numeric',
   month: 'long',
   day: 'numeric',
@@ -84,6 +100,10 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString('es-419', {
           datePublished: pubDate,
           dateModified: updatedDate,
           author,
+          url: Astro.url.href,
+          keywords: keywordList,
+          articleSection: contentType,
+          inLanguage: language,
         },
         {
           type: 'BreadcrumbList',
@@ -107,6 +127,8 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString('es-419', {
     {heroImage && <meta data-pagefind-meta="heroImage" content={heroImage} />}
     {heroImageAlt && <meta data-pagefind-meta="heroImageAlt" content={heroImageAlt} />}
     {tags.length > 0 && <meta data-pagefind-meta="tags" content={tags.join(', ')} />}
+    {keywordList.length > 0 && <meta name="keywords" content={keywordList.join(', ')} />}
+    {keywordList.length > 0 && <meta data-pagefind-meta="keywords" content={keywordList.join(', ')} />}
   </Fragment>
 
   <article class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8" style="padding-top: var(--md-sys-spacing-3xl); padding-bottom: var(--md-sys-spacing-3xl);" data-pagefind-body>
@@ -223,6 +245,55 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString('es-419', {
           ))}
         </div>
       </footer>
+    )}
+
+    {relatedItems.length > 0 && (
+      <section class="mt-14">
+        <div class="flex flex-wrap items-baseline justify-between gap-3">
+          <h2 class="text-2xl font-semibold" style="color: var(--md-sys-color-on-surface);">Relacionado</h2>
+          <p class="text-sm" style="color: var(--md-sys-color-on-surface-variant);">Explora más artículos recomendados</p>
+        </div>
+
+        <div class="mt-6 grid gap-6 md:grid-cols-2">
+          {relatedItems.map((item) => (
+            <a
+              href={buildEntryUrl(item)}
+              class="group flex gap-4 rounded-2xl border p-4 transition duration-200"
+              style="border-color: var(--md-sys-color-outline-variant); background-color: color-mix(in srgb, var(--md-sys-color-surface-variant) 25%, transparent);"
+            >
+              {item.data.heroImage && (
+                <img
+                  src={item.data.heroImage}
+                  alt=""
+                  class="hidden h-24 w-24 flex-shrink-0 rounded-xl object-cover sm:block"
+                  loading="lazy"
+                  decoding="async"
+                />
+              )}
+              <div class="min-w-0 flex-1 space-y-2">
+                <div class="flex items-center gap-2">
+                  <span
+                    class="chip"
+                    style="--chip-bg: color-mix(in srgb, var(--md-sys-color-primary) 12%, var(--md-sys-color-surface-variant)); --chip-color: var(--md-sys-color-on-surface);"
+                  >
+                    {contentTypeLabels[item.collection] || 'Artículo'}
+                  </span>
+                  <time class="text-xs" style="color: var(--md-sys-color-on-surface-variant);" datetime={item.data.pubDate.toISOString()}>
+                    {item.data.pubDate.toLocaleDateString(language, { year: 'numeric', month: 'short', day: 'numeric' })}
+                  </time>
+                </div>
+
+                <h3 class="text-lg font-semibold leading-tight line-clamp-2" style="color: var(--md-sys-color-on-surface);">
+                  {item.data.title}
+                </h3>
+                <p class="text-sm line-clamp-2" style="color: var(--md-sys-color-on-surface-variant);">
+                  {item.data.description}
+                </p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
     )}
   </article>
 </BaseLayout>
