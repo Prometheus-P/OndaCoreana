@@ -1,4 +1,11 @@
 ---
+/**
+ * SEOHead Component
+ *
+ * Dynamic locale support for multi-market SEO (LATAM + Brazil)
+ * Uses Astro.currentLocale for proper og:locale and hreflang tags
+ */
+
 interface Props {
   title: string;
   description: string;
@@ -10,6 +17,8 @@ interface Props {
   author?: string;
   canonical?: string;
   noindex?: boolean;
+  /** Override locale detection */
+  locale?: 'es' | 'pt';
 }
 
 const {
@@ -23,13 +32,46 @@ const {
   author = 'OndaCoreana',
   canonical,
   noindex = false,
+  locale: propLocale,
 } = Astro.props;
 
+// Locale configuration - uses Astro i18n
+const currentLocale = propLocale || Astro.currentLocale || 'es';
+
+// OpenGraph locale format mapping
+const ogLocaleMap: Record<string, string> = {
+  es: 'es_419',  // Latin American Spanish
+  pt: 'pt_BR',   // Brazilian Portuguese
+};
+
+// hreflang format mapping
+const hreflangMap: Record<string, string> = {
+  es: 'es-419',
+  pt: 'pt-BR',
+};
+
+// Locale-specific site names
+const siteNameMap: Record<string, string> = {
+  es: 'OndaCoreana',
+  pt: 'OndaCoreana Brasil',
+};
+
+const ogLocale = ogLocaleMap[currentLocale] || 'es_419';
+const alternateOgLocale = ogLocale === 'es_419' ? 'pt_BR' : 'es_419';
+const hreflang = hreflangMap[currentLocale] || 'es-419';
+const siteName = siteNameMap[currentLocale] || 'OndaCoreana';
+
+// URL construction
 const siteUrl = Astro.site?.toString().replace(/\/$/, '') || 'https://ondacoreana.com';
 const pathWithQuery = `${Astro.url.pathname}${Astro.url.search}`;
 const currentUrl = canonical || new URL(pathWithQuery, siteUrl).toString();
 const imageUrl = image.startsWith('http') ? image : `${siteUrl}${image}`;
-const fullTitle = title.includes('OndaCoreana') ? title : `${title} | OndaCoreana`;
+const fullTitle = title.includes('OndaCoreana') ? title : `${title} | ${siteName}`;
+
+// Alternate URLs for hreflang (assuming /pt/ prefix for Portuguese)
+const basePath = Astro.url.pathname.replace(/^\/pt/, '');
+const esUrl = `${siteUrl}${basePath}`;
+const ptUrl = `${siteUrl}/pt${basePath}`;
 ---
 
 <!-- Primary Meta Tags -->
@@ -41,10 +83,14 @@ const fullTitle = title.includes('OndaCoreana') ? title : `${title} | OndaCorean
 
 {noindex && <meta name="robots" content="noindex, nofollow" />}
 
-<!-- Language -->
-<meta property="og:locale" content="es_419" />
-<link rel="alternate" hreflang="es-419" href={currentUrl} />
-<link rel="alternate" hreflang="x-default" href={currentUrl} />
+<!-- Language & Locale (Dynamic based on Astro.currentLocale) -->
+<meta property="og:locale" content={ogLocale} />
+<meta property="og:locale:alternate" content={alternateOgLocale} />
+
+<!-- hreflang tags for international SEO -->
+<link rel="alternate" hreflang="es-419" href={esUrl} />
+<link rel="alternate" hreflang="pt-BR" href={ptUrl} />
+<link rel="alternate" hreflang="x-default" href={esUrl} />
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content={type} />
@@ -53,7 +99,7 @@ const fullTitle = title.includes('OndaCoreana') ? title : `${title} | OndaCorean
 <meta property="og:description" content={description} />
 <meta property="og:image" content={imageUrl} />
 <meta property="og:image:alt" content={imageAlt} />
-<meta property="og:site_name" content="OndaCoreana" />
+<meta property="og:site_name" content={siteName} />
 
 {type === 'article' && publishedTime && (
   <meta property="article:published_time" content={publishedTime.toISOString()} />
@@ -72,3 +118,16 @@ const fullTitle = title.includes('OndaCoreana') ? title : `${title} | OndaCorean
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={imageUrl} />
 <meta name="twitter:image:alt" content={imageAlt} />
+
+<!-- Geographic targeting hints for search engines -->
+{currentLocale === 'es' && (
+  <>
+    <meta name="geo.region" content="419" />
+  </>
+)}
+{currentLocale === 'pt' && (
+  <meta name="geo.region" content="BR" />
+)}
+
+<!-- Content language -->
+<meta http-equiv="content-language" content={hreflang} />

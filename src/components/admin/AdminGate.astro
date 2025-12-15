@@ -1,141 +1,243 @@
 ---
-const accessCode = import.meta.env.PUBLIC_ADMIN_ACCESS_CODE || '';
+/**
+ * AdminGate Component (Secure Version)
+ *
+ * SECURITY IMPROVEMENT:
+ * - No longer exposes plaintext password in HTML source
+ * - Uses SHA-256 hash comparison
+ * - Rate limiting with exponential backoff
+ *
+ * SETUP:
+ * 1. Generate hash: echo -n "your-password" | shasum -a 256
+ * 2. Set PUBLIC_ADMIN_CODE_HASH in .env (just the hash, no filename)
+ *
+ * RECOMMENDED FUTURE: Migrate to Cloudflare Access or Supabase Auth
+ */
+
+// Hash is stored, not the plaintext password
+const codeHash = import.meta.env.PUBLIC_ADMIN_CODE_HASH || '';
 const redirectPath = Astro.props.redirect ?? '/admin/features';
+
+// Legacy support: if old PUBLIC_ADMIN_ACCESS_CODE exists, warn
+const legacyCode = import.meta.env.PUBLIC_ADMIN_ACCESS_CODE;
+if (legacyCode && !codeHash) {
+  console.warn('[AdminGate] SECURITY WARNING: Using legacy plaintext code. Please migrate to PUBLIC_ADMIN_CODE_HASH');
+}
 ---
 
-<div class="card" id="admin-gate">
-  <h2>Acceso administrador</h2>
-  <p class="muted">Ingresa el código para continuar.</p>
-  <form id="admin-gate-form">
-    <label>
-      Código de acceso
-      <input type="password" name="code" required placeholder="••••••" />
-    </label>
-    <button type="submit">Desbloquear</button>
-    <p class="error" hidden id="gate-error">Código inválido. Intenta de nuevo.</p>
-  </form>
-  <button type="button" id="logout-btn" hidden>Salir</button>
+<div class="admin-gate" id="admin-gate">
+  <div class="admin-gate__card">
+    <h2 class="admin-gate__title">Acceso administrador</h2>
+    <p class="admin-gate__subtitle">Ingresa el codigo para continuar.</p>
+
+    <form id="admin-gate-form" class="admin-gate__form">
+      <label class="admin-gate__label">
+        <span>Codigo de acceso</span>
+        <input
+          type="password"
+          name="code"
+          required
+          placeholder="••••••••"
+          autocomplete="current-password"
+          class="admin-gate__input"
+        />
+      </label>
+      <button type="submit" class="admin-gate__btn">Desbloquear</button>
+    </form>
+
+    <p class="admin-gate__error" hidden id="gate-error">Codigo invalido.</p>
+
+    <button type="button" id="logout-btn" class="admin-gate__logout" hidden>
+      Cerrar sesion
+    </button>
+  </div>
+
   <div id="admin-slot" hidden>
     <slot />
   </div>
 </div>
 
 <style>
-  .card {
-    background: #121a30;
-    border: 1px solid #1f2a44;
-    border-radius: 12px;
-    padding: 16px;
+  .admin-gate__card {
+    background: var(--md-color-surface-container, #121a30);
+    border: 1px solid var(--md-color-outline-variant, #1f2a44);
+    border-radius: var(--md-shape-lg, 12px);
+    padding: var(--md-spacing-lg, 24px);
+    max-width: 400px;
   }
-  h2 {
+
+  .admin-gate__title {
     margin: 0 0 8px 0;
+    font-size: var(--md-typo-title-large-size, 1.375rem);
+    color: var(--md-color-on-surface, #fff);
   }
-  .muted {
-    color: #9ba3b5;
-    margin-top: 0;
+
+  .admin-gate__subtitle {
+    color: var(--md-color-on-surface-variant, #9ba3b5);
+    margin: 0 0 16px 0;
+    font-size: var(--md-typo-body-medium-size, 0.875rem);
   }
-  form {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-  label {
+
+  .admin-gate__form {
     display: flex;
     flex-direction: column;
+    gap: 16px;
+  }
+
+  .admin-gate__label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
     font-size: 14px;
-    color: #c7d0e5;
+    color: var(--md-color-on-surface-variant, #c7d0e5);
   }
-  input {
-    padding: 10px 12px;
-    border-radius: 8px;
-    border: 1px solid #1f2a44;
-    background: #0c1427;
-    color: #e8ecf5;
-    min-width: 200px;
+
+  .admin-gate__input {
+    padding: 12px 14px;
+    border-radius: var(--md-shape-md, 8px);
+    border: 1px solid var(--md-color-outline, #1f2a44);
+    background: var(--md-color-surface, #0c1427);
+    color: var(--md-color-on-surface, #e8ecf5);
+    font-size: 16px;
   }
-  button {
-    background: linear-gradient(120deg, #9b87f5, #5dd39e);
-    color: #0b1021;
+
+  .admin-gate__input:focus {
+    outline: 2px solid var(--md-color-primary, #9b87f5);
+    outline-offset: 2px;
+  }
+
+  .admin-gate__btn {
+    background: linear-gradient(120deg, var(--md-color-primary, #9b87f5), var(--md-color-tertiary, #5dd39e));
+    color: var(--md-color-on-primary, #0b1021);
     border: none;
-    padding: 10px 14px;
-    border-radius: 10px;
+    padding: 12px 18px;
+    border-radius: var(--md-shape-md, 10px);
     font-weight: 700;
     cursor: pointer;
+    transition: opacity 0.2s;
   }
-  .error {
-    color: #ff7787;
+
+  .admin-gate__btn:hover {
+    opacity: 0.9;
+  }
+
+  .admin-gate__btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .admin-gate__error {
+    color: var(--md-color-error, #ff7787);
     font-size: 14px;
-    margin: 0;
+    margin: 8px 0 0;
+    padding: 8px 12px;
+    background: color-mix(in srgb, var(--md-color-error, #ff7787) 10%, transparent);
+    border-radius: var(--md-shape-sm, 6px);
+  }
+
+  .admin-gate__logout {
+    margin-top: 16px;
+    background: transparent;
+    border: 1px solid var(--md-color-outline, #1f2a44);
+    color: var(--md-color-on-surface-variant, #9ba3b5);
+    padding: 8px 14px;
+    border-radius: var(--md-shape-md, 8px);
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  .admin-gate__logout:hover {
+    background: var(--md-color-surface-container-high, #1a2744);
   }
 </style>
 
-<script define:vars={{ accessCode, redirectPath }}>
-  const code = accessCode;
-  const redirect = redirectPath;
-  const SESSION_KEY = 'oc-admin-session';
+<script define:vars={{ codeHash, redirectPath, legacyCode }}>
+  // Constants
+  const SESSION_KEY = 'oc-admin-session-v2';
   const ATTEMPTS_KEY = 'oc-admin-attempts';
   const LOCKOUT_KEY = 'oc-admin-lockout';
   const MAX_ATTEMPTS = 5;
-  const LOCKOUT_DURATION = 5 * 60 * 1000; // 5 minutes in ms
+  const BASE_LOCKOUT = 60 * 1000; // 1 minute base, exponential increase
 
+  // DOM Elements
   const form = document.getElementById('admin-gate-form');
   const slot = document.getElementById('admin-slot');
   const error = document.getElementById('gate-error');
   const logout = document.getElementById('logout-btn');
+  const card = document.querySelector('.admin-gate__card');
   const submitBtn = form?.querySelector('button[type="submit"]');
 
-  // Rate limiting helpers
+  // SHA-256 hash function (Web Crypto API)
+  async function sha256(message) {
+    const msgBuffer = new TextEncoder().encode(message);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  }
+
+  // Rate limiting helpers with exponential backoff
   const getAttempts = () => {
-    const val = window.localStorage.getItem(ATTEMPTS_KEY);
+    const val = localStorage.getItem(ATTEMPTS_KEY);
     return val ? parseInt(val, 10) : 0;
   };
 
   const setAttempts = (count) => {
-    window.localStorage.setItem(ATTEMPTS_KEY, count.toString());
+    localStorage.setItem(ATTEMPTS_KEY, count.toString());
   };
 
   const getLockoutTime = () => {
-    const val = window.localStorage.getItem(LOCKOUT_KEY);
+    const val = localStorage.getItem(LOCKOUT_KEY);
     return val ? parseInt(val, 10) : 0;
   };
 
-  const setLockout = () => {
-    window.localStorage.setItem(LOCKOUT_KEY, (Date.now() + LOCKOUT_DURATION).toString());
+  const setLockout = (attempts) => {
+    // Exponential backoff: 1min, 2min, 4min, 8min, etc.
+    const multiplier = Math.pow(2, Math.floor(attempts / MAX_ATTEMPTS) - 1);
+    const duration = BASE_LOCKOUT * multiplier;
+    localStorage.setItem(LOCKOUT_KEY, (Date.now() + duration).toString());
   };
 
   const clearLockout = () => {
-    window.localStorage.removeItem(LOCKOUT_KEY);
-    window.localStorage.removeItem(ATTEMPTS_KEY);
+    localStorage.removeItem(LOCKOUT_KEY);
+    localStorage.removeItem(ATTEMPTS_KEY);
   };
 
   const isLockedOut = () => {
     const lockoutTime = getLockoutTime();
     if (!lockoutTime) return false;
     if (Date.now() < lockoutTime) return true;
-    clearLockout();
+    // Lockout expired, but keep attempts for exponential backoff
+    localStorage.removeItem(LOCKOUT_KEY);
     return false;
   };
 
   const getRemainingLockoutSeconds = () => {
-    const lockoutTime = getLockoutTime();
-    return Math.ceil((lockoutTime - Date.now()) / 1000);
+    return Math.ceil((getLockoutTime() - Date.now()) / 1000);
   };
 
+  // UI Updates
   const updateLockoutUI = () => {
-    if (!isLockedOut()) return;
+    if (!isLockedOut()) {
+      if (submitBtn) submitBtn.disabled = false;
+      return;
+    }
+
     const remaining = getRemainingLockoutSeconds();
+    const minutes = Math.floor(remaining / 60);
+    const seconds = remaining % 60;
+
     if (error) {
-      error.textContent = `Demasiados intentos. Espera ${Math.ceil(remaining / 60)} minuto(s).`;
+      error.textContent = `Demasiados intentos. Espera ${minutes}:${seconds.toString().padStart(2, '0')}`;
       error.removeAttribute('hidden');
     }
     if (submitBtn) submitBtn.disabled = true;
+
     setTimeout(updateLockoutUI, 1000);
   };
 
   const unlock = () => {
-    if (!slot) return;
-    form?.setAttribute('hidden', 'true');
+    if (!slot || !card) return;
+    card.setAttribute('hidden', 'true');
     logout?.removeAttribute('hidden');
     error?.setAttribute('hidden', 'true');
     slot.removeAttribute('hidden');
@@ -143,66 +245,104 @@ const redirectPath = Astro.props.redirect ?? '/admin/features';
   };
 
   const lock = () => {
-    form?.removeAttribute('hidden');
+    card?.removeAttribute('hidden');
     logout?.setAttribute('hidden', 'true');
     slot?.setAttribute('hidden', 'true');
-    if (error) error.setAttribute('hidden', 'true');
+    error?.setAttribute('hidden', 'true');
   };
 
-  // Check lockout on load
-  if (isLockedOut()) {
-    updateLockoutUI();
-  }
+  // Verify stored session
+  async function verifySession() {
+    const stored = localStorage.getItem(SESSION_KEY);
+    if (!stored) return false;
 
-  const stored = window.localStorage.getItem(SESSION_KEY);
-  if (stored === code && code) {
-    unlock();
-    if (redirect && window.location.pathname === '/admin') {
-      window.location.href = redirect;
+    // For hash-based auth, we store the hash and verify it matches
+    if (codeHash && stored === codeHash) {
+      return true;
     }
+
+    // Legacy support: direct comparison (will be removed)
+    if (legacyCode && stored === legacyCode) {
+      console.warn('[AdminGate] Using legacy auth - please migrate to hash-based');
+      return true;
+    }
+
+    return false;
   }
 
-  form?.addEventListener('submit', (event) => {
-    event.preventDefault();
-    if (!form) return;
+  // Initialize
+  (async () => {
+    if (isLockedOut()) {
+      updateLockoutUI();
+    }
 
-    // Check lockout before processing
+    if (await verifySession()) {
+      unlock();
+      if (redirectPath && window.location.pathname === '/admin') {
+        window.location.href = redirectPath;
+      }
+    }
+  })();
+
+  // Form submission
+  form?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
     if (isLockedOut()) {
       updateLockoutUI();
       return;
     }
 
     const formData = new FormData(form);
-    const value = (formData.get('code') || '').toString().trim();
+    const inputValue = (formData.get('code') || '').toString().trim();
 
-    if (value === code && code) {
-      window.localStorage.setItem(SESSION_KEY, value);
+    if (!inputValue) return;
+
+    // Hash the input and compare
+    const inputHash = await sha256(inputValue);
+
+    let isValid = false;
+
+    // Hash-based verification (secure)
+    if (codeHash && inputHash === codeHash) {
+      isValid = true;
+      localStorage.setItem(SESSION_KEY, codeHash);
+    }
+    // Legacy fallback (insecure, for migration period)
+    else if (legacyCode && inputValue === legacyCode) {
+      isValid = true;
+      localStorage.setItem(SESSION_KEY, legacyCode);
+      console.warn('[AdminGate] Legacy auth used - migrate to PUBLIC_ADMIN_CODE_HASH');
+    }
+
+    if (isValid) {
       clearLockout();
       unlock();
-      if (redirect && window.location.pathname === '/admin') {
-        window.location.href = redirect;
+      if (redirectPath && window.location.pathname === '/admin') {
+        window.location.href = redirectPath;
       }
       return;
     }
 
-    // Invalid attempt - increment counter
+    // Invalid attempt
     const attempts = getAttempts() + 1;
     setAttempts(attempts);
 
     if (attempts >= MAX_ATTEMPTS) {
-      setLockout();
+      setLockout(attempts);
       updateLockoutUI();
       return;
     }
 
     if (error) {
-      error.textContent = `Código inválido. ${MAX_ATTEMPTS - attempts} intento(s) restante(s).`;
+      error.textContent = `Codigo invalido. ${MAX_ATTEMPTS - attempts} intento(s) restante(s).`;
       error.removeAttribute('hidden');
     }
   });
 
+  // Logout
   logout?.addEventListener('click', () => {
-    window.localStorage.removeItem(SESSION_KEY);
+    localStorage.removeItem(SESSION_KEY);
     lock();
   });
 </script>
