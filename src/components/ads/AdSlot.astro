@@ -33,15 +33,24 @@ const shouldHide = hideOnPaths.some(path => currentPath.startsWith(path));
 // Don't render if ads disabled or on excluded pages
 const shouldRender = adsenseEnabled && !shouldHide;
 
-// Format-specific styles
+// Format-specific styles with fixed dimensions for CLS prevention
 const formatStyles: Record<string, string> = {
-  auto: 'display: block;',
-  banner: 'display: block; height: 90px;',
-  'in-article': 'display: block; text-align: center;',
-  'in-feed': 'display: block;',
+  auto: 'display: block; min-height: 250px;',
+  banner: 'display: block; height: 90px; min-height: 90px;',
+  'in-article': 'display: block; text-align: center; min-height: 280px;',
+  'in-feed': 'display: block; min-height: 120px;',
+};
+
+// Fixed dimensions for CLS prevention (width x height in px)
+const formatDimensions: Record<string, { minHeight: string; width: string }> = {
+  auto: { minHeight: '250px', width: '100%' },
+  banner: { minHeight: '90px', width: '100%' },
+  'in-article': { minHeight: '280px', width: '100%' },
+  'in-feed': { minHeight: '120px', width: '100%' },
 };
 
 const adStyle = formatStyles[format] || formatStyles.auto;
+const dimensions = formatDimensions[format] || formatDimensions.auto;
 
 // Layout mapping for AdSense
 const layoutMap: Record<string, string> = {
@@ -53,6 +62,7 @@ const layoutMap: Record<string, string> = {
 {shouldRender && (
   <div
     class:list={['ad-slot', `ad-slot--${format}`, className]}
+    style={`min-height: ${dimensions.minHeight}; width: ${dimensions.width};`}
     data-testid={testId}
     data-ad-slot={slot}
   >
@@ -66,19 +76,17 @@ const layoutMap: Record<string, string> = {
         </div>
       </div>
     ) : (
-      <!-- Production AdSense unit -->
+      <!-- Production AdSense unit with lazy loading -->
       <ins
-        class="adsbygoogle"
+        class="adsbygoogle ad-lazy"
         style={adStyle}
         data-ad-client={adsenseClientId}
         data-ad-slot={slot}
         data-ad-format={format === 'auto' ? 'auto' : undefined}
         data-ad-layout={layoutMap[format]}
         data-full-width-responsive={format === 'auto' ? 'true' : undefined}
+        data-ad-loaded="false"
       />
-      <script is:inline>
-        (adsbygoogle = window.adsbygoogle || []).push({});
-      </script>
     )}
   </div>
 )}
@@ -146,3 +154,48 @@ const layoutMap: Record<string, string> = {
     text-transform: uppercase;
   }
 </style>
+
+<script>
+  /**
+   * Lazy load AdSense ads using Intersection Observer.
+   * Ads are only loaded when they enter the viewport.
+   */
+  function initLazyAds() {
+    const lazyAds = document.querySelectorAll('.ad-lazy[data-ad-loaded="false"]');
+
+    if (lazyAds.length === 0) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const ad = entry.target as HTMLElement;
+            if (ad.dataset.adLoaded === 'false') {
+              ad.dataset.adLoaded = 'true';
+              try {
+                // @ts-expect-error - adsbygoogle is a global from Google
+                (window.adsbygoogle = window.adsbygoogle || []).push({});
+              } catch {
+                // AdSense not loaded or blocked
+              }
+              observer.unobserve(ad);
+            }
+          }
+        });
+      },
+      {
+        rootMargin: '200px', // Load ads 200px before they enter viewport
+        threshold: 0,
+      }
+    );
+
+    lazyAds.forEach((ad) => observer.observe(ad));
+  }
+
+  // Initialize on DOM ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initLazyAds);
+  } else {
+    initLazyAds();
+  }
+</script>
