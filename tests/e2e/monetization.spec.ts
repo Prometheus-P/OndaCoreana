@@ -165,8 +165,8 @@ test.describe('Monetization - Ads & Affiliates', () => {
     test('category pages structure supports in-feed ads', async ({ page }) => {
       await page.goto('/dramas');
 
-      // Verify grid structure exists
-      const grid = page.locator('.grid');
+      // Verify grid structure exists (use first() since page may have multiple grids)
+      const grid = page.locator('.grid').first();
       await expect(grid).toBeVisible();
 
       // Verify cards exist for in-feed ad insertion
