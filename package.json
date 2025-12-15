@@ -1,11 +1,12 @@
 {
   "name": "ondacoreana",
   "type": "module",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "Portal de K-Dramas, K-Pop y cultura coreana en español",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "build:check": "astro build && tsx scripts/check-pagefind-size.ts",
     "preview": "astro preview --host 0.0.0.0 --port 5173",
     "preview:e2e": "astro preview",
     "start:e2e": "PUBLIC_ADMIN_ACCESS_CODE=test-admin-2024 pnpm build && astro preview --host 0.0.0.0 --port 5173",
@@ -21,8 +22,6 @@
     "tdd:red": "echo '🔴 RED: Creating failing test...' && pnpm test",
     "tdd:green": "echo '🟢 GREEN: Verifying tests pass...' && pnpm build && pnpm test",
     "tdd:refactor": "echo '🔵 REFACTOR: Improving code...' && pnpm check && pnpm test",
-    "ingest:rss": "tsx scripts/ingest/index.ts",
-    "test:ingest": "tsx tests/ingest/normalize.test.ts",
     "quality:check": "tsx scripts/quality/check_content.ts",
     "quality:strict": "tsx scripts/quality/check_content.ts --strict",
     "lint": "astro check",
@@ -47,7 +46,6 @@
     "ts-node": "^10.9.0",
     "tsx": "^4.21.0",
     "typescript": "^5.0.0",
-    "workbox-window": "^7.0.0",
     "zod": "^3.23.0"
   }
 }

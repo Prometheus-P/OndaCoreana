@@ -45,8 +45,6 @@ const footerLinks = [
   { href: '/privacidad', label: 'Política de Privacidad' },
   { href: '/terminos', label: 'Términos de Uso' },
 ];
-
-const enableSearchSw = import.meta.env.PUBLIC_ENABLE_SEARCH_SW === 'true';
 ---
 
 <!doctype html>
@@ -273,12 +271,6 @@ const enableSearchSw = import.meta.env.PUBLIC_ENABLE_SEARCH_SW === 'true';
         menuButton?.setAttribute('aria-expanded', expanded ? 'true' : 'false');
       });
     </script>
-    {enableSearchSw && (
-      <script type="module" is:inline>
-        import { registerSearchServiceWorker } from '../scripts/register-sw.ts';
-        registerSearchServiceWorker();
-      </script>
-    )}
 
     {/* Outbound link tracking - lightweight, non-blocking */}
     <script is:inline>

@@ -1,4 +1,5 @@
 import type { CollectionEntry } from 'astro:content';
+import { escapeRegex } from '../utils/search-client';
 
 export interface KeywordLink {
   keyword: string;
@@ -79,8 +80,4 @@ export function autolinkHtml(html: string, keywords: KeywordLink[]): string {
   }
 
   return container.innerHTML;
-}
-
-function escapeRegex(value: string) {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
