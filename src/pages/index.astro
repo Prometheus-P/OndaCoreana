@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import NewsletterForm from '../components/newsletter/NewsletterForm.astro';
+import AdSlot from '../components/ads/AdSlot.astro';
 import { getCollection } from 'astro:content';
 
 // Obtener contenido reciente
@@ -55,6 +56,11 @@ const recentNoticias = allNoticias
       </div>
     </div>
   </section>
+
+  <!-- Ad: After Hero -->
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <AdSlot slot="home-hero-bottom" format="banner" testId="ad-home-hero" />
+  </div>
 
   <!-- Últimas Noticias -->
   <section class="section-shell" style="--section-bg: var(--md-color-surface);">
@@ -120,6 +126,11 @@ const recentNoticias = allNoticias
       )}
     </div>
   </section>
+
+  <!-- Ad: Between Noticias and Dramas -->
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <AdSlot slot="home-mid-1" format="auto" testId="ad-home-mid-1" />
+  </div>
 
   <!-- K-Dramas Destacados -->
   <section class="section-shell" style="--section-bg: var(--md-color-surface-container);">
@@ -236,6 +247,11 @@ const recentNoticias = allNoticias
       )}
     </div>
   </section>
+
+  <!-- Ad: Before Newsletter -->
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <AdSlot slot="home-bottom" format="auto" testId="ad-home-bottom" />
+  </div>
 
   <!-- Newsletter CTA -->
   <section class="py-16">

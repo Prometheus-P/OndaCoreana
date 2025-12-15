@@ -1,9 +1,13 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import AdSlot from '../../components/ads/AdSlot.astro';
 import { getCollection } from 'astro:content';
 
 const allKpop = await getCollection('kpop', ({ data }) => !data.draft);
 const artists = allKpop.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+// Insert ad after every N cards
+const AD_INTERVAL = 4;
 ---
 
 <BaseLayout
@@ -19,38 +23,51 @@ const artists = allKpop.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate
     </div>
   </section>
 
+  <!-- Ad: Top of listing -->
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <AdSlot slot="kpop-top" format="banner" testId="ad-kpop-top" />
+  </div>
+
   <section class="section-shell" style="--section-bg: var(--md-color-surface);">
     <div class="section-shell__inner">
       {artists.length > 0 ? (
         <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {artists.map((artist) => (
-            <article class="surface-card surface-card--interactive text-center" style="padding: var(--md-spacing-lg);">
-              <div class="mx-auto h-48 w-48 rounded-full oc-card-shine" style="overflow: hidden; box-shadow: var(--md-elevation-2);">
-                {artist.data.heroImage ? (
-                  <img
-                    src={artist.data.heroImage}
-                    alt={artist.data.heroImageAlt || artist.data.artistName}
-                    class="h-full w-full object-cover"
-                    loading="lazy"
-                  />
-                ) : (
-                  <div class="flex h-full w-full items-center justify-center" style="background: color-mix(in srgb, var(--md-color-tertiary) 30%, transparent); color: var(--md-color-on-tertiary-container); font-size: 2.25rem; font-weight: 700;">
-                    {artist.data.artistName.charAt(0)}
-                  </div>
+          {artists.map((artist, index) => (
+            <>
+              <article class="surface-card surface-card--interactive text-center" style="padding: var(--md-spacing-lg);">
+                <div class="mx-auto h-48 w-48 rounded-full oc-card-shine" style="overflow: hidden; box-shadow: var(--md-elevation-2);">
+                  {artist.data.heroImage ? (
+                    <img
+                      src={artist.data.heroImage}
+                      alt={artist.data.heroImageAlt || artist.data.artistName}
+                      class="h-full w-full object-cover"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div class="flex h-full w-full items-center justify-center" style="background: color-mix(in srgb, var(--md-color-tertiary) 30%, transparent); color: var(--md-color-on-tertiary-container); font-size: 2.25rem; font-weight: 700;">
+                      {artist.data.artistName.charAt(0)}
+                    </div>
+                  )}
+                </div>
+                <h2 class="mt-4 text-lg font-semibold" style="color: var(--md-color-on-surface);">
+                  <a href={`/kpop/${artist.slug}`}>
+                    {artist.data.artistName}
+                  </a>
+                </h2>
+                {artist.data.agency && (
+                  <p class="subtle-text">{artist.data.agency}</p>
                 )}
-              </div>
-              <h2 class="mt-4 text-lg font-semibold" style="color: var(--md-color-on-surface);">
-                <a href={`/kpop/${artist.slug}`}>
-                  {artist.data.artistName}
-                </a>
-              </h2>
-              {artist.data.agency && (
-                <p class="subtle-text">{artist.data.agency}</p>
+                <span class="chip" style="--chip-bg: color-mix(in srgb, var(--md-color-tertiary) 15%, transparent); --chip-color: var(--md-color-on-tertiary-container); margin-top: var(--md-spacing-sm); display: inline-flex; justify-content: center;">
+                  {artist.data.artistType}
+                </span>
+              </article>
+              {/* Insert in-feed ad after every AD_INTERVAL cards */}
+              {(index + 1) % AD_INTERVAL === 0 && index < artists.length - 1 && (
+                <div class="sm:col-span-2 lg:col-span-3 xl:col-span-4">
+                  <AdSlot slot={`kpop-feed-${Math.floor(index / AD_INTERVAL)}`} format="in-feed" testId={`ad-kpop-feed-${index}`} />
+                </div>
               )}
-              <span class="chip" style="--chip-bg: color-mix(in srgb, var(--md-color-tertiary) 15%, transparent); --chip-color: var(--md-color-on-tertiary-container); margin-top: var(--md-spacing-sm); display: inline-flex; justify-content: center;">
-                {artist.data.artistType}
-              </span>
-            </article>
+            </>
           ))}
         </div>
       ) : (
@@ -58,4 +75,9 @@ const artists = allKpop.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate
       )}
     </div>
   </section>
+
+  <!-- Ad: Bottom of listing -->
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-8">
+    <AdSlot slot="kpop-bottom" format="auto" testId="ad-kpop-bottom" />
+  </div>
 </BaseLayout>

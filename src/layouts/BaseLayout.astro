@@ -30,8 +30,9 @@ const shouldRenderSearch = showSearch && !hideSearchForRoute;
 
 // GA4 Measurement ID from environment variable
 const gaMeasurementId = import.meta.env.PUBLIC_GA_MEASUREMENT_ID;
-// Google AdSense Publisher ID from environment variable
-const adsensePublisherId = import.meta.env.PUBLIC_ADSENSE_PUBLISHER_ID;
+// Google AdSense configuration
+const adsenseEnabled = import.meta.env.PUBLIC_ADSENSE_ENABLED === 'true';
+const adsenseClientId = import.meta.env.PUBLIC_ADSENSE_CLIENT_ID;
 
 const primaryNav = [
   { href: '/dramas', label: 'K-Dramas' },
@@ -108,12 +109,12 @@ const enableSearchSw = import.meta.env.PUBLIC_ENABLE_SEARCH_SW === 'true';
       </>
     )}
 
-    {/* Google AdSense */}
-    {adsensePublisherId && (
+    {/* Google AdSense - only load when enabled and client ID exists */}
+    {adsenseEnabled && adsenseClientId && (
       <script
         is:inline
         async
-        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsensePublisherId}`}
+        src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${adsenseClientId}`}
         crossorigin="anonymous"
       ></script>
     )}
@@ -278,5 +279,33 @@ const enableSearchSw = import.meta.env.PUBLIC_ENABLE_SEARCH_SW === 'true';
         registerSearchServiceWorker();
       </script>
     )}
+
+    {/* Outbound link tracking - lightweight, non-blocking */}
+    <script is:inline>
+      (function() {
+        document.addEventListener('click', function(e) {
+          const link = e.target.closest('a[data-outbound="true"]');
+          if (!link) return;
+
+          const url = link.href;
+          const affiliateHint = link.dataset.affiliate || 'unknown';
+
+          // Track with GA4 if available
+          if (typeof gtag === 'function') {
+            gtag('event', 'outbound_click', {
+              event_category: 'affiliate',
+              event_label: affiliateHint,
+              link_url: url,
+              transport_type: 'beacon'
+            });
+          }
+
+          // Dispatch custom event for other listeners
+          window.dispatchEvent(new CustomEvent('oc:outbound', {
+            detail: { url, hint: affiliateHint }
+          }));
+        });
+      })();
+    </script>
   </body>
 </html>

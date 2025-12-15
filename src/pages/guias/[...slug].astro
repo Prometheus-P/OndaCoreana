@@ -30,6 +30,8 @@ const { Content } = await guia.render();
     { name: guia.data.category, url: `/guias/categoria/${guia.data.category}` },
   ]}
   contentType="guias"
+  affiliateHint={guia.data.affiliate_hint}
+  noAds={guia.data.noAds}
 >
   <!-- Guide Meta Info -->
   {(guia.data.difficulty || guia.data.readingTime) && (

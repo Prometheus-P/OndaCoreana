@@ -27,6 +27,8 @@ const { Content } = await artist.render();
   tags={artist.data.tags}
   breadcrumbs={[{ name: 'K-Pop', url: '/kpop' }]}
   contentType="kpop"
+  affiliateHint={artist.data.affiliate_hint}
+  noAds={artist.data.noAds}
 >
   <!-- Artist Info Box -->
   <aside class="not-prose mb-8 surface-card" style="background-color: var(--md-color-surface-container); padding: var(--md-spacing-lg);">

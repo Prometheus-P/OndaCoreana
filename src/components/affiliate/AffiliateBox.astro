@@ -1,0 +1,229 @@
+---
+/**
+ * AffiliateBox Component
+ * Renders affiliate links based on hint and country.
+ * Automatically loads links from data/affiliate-links.json.
+ */
+import affiliateData from '../../../data/affiliate-links.json';
+
+interface AffiliateLink {
+  label: string;
+  url: string;
+  badge?: string;
+  priority: number;
+}
+
+interface Props {
+  /** Affiliate category hint: kpop_goods, esim, travel_insurance, streaming, korean_learning */
+  hint: string;
+  /** Country code: mx, ar, cl, or 'default' */
+  country?: string;
+  /** Maximum number of links to show */
+  maxLinks?: number;
+  /** Optional title override */
+  title?: string;
+  /** Optional class for custom styling */
+  class?: string;
+  /** Test ID for testing */
+  testId?: string;
+}
+
+const {
+  hint,
+  country = 'default',
+  maxLinks = 3,
+  title,
+  class: className = '',
+  testId,
+} = Astro.props;
+
+// Get links for the specified hint
+const hintData = (affiliateData as Record<string, Record<string, AffiliateLink[]>>)[hint];
+
+if (!hintData) {
+  console.warn(`AffiliateBox: Unknown hint "${hint}"`);
+}
+
+// Get country-specific links or fall back to default
+const links: AffiliateLink[] = hintData?.[country] || hintData?.['default'] || [];
+
+// Sort by priority and limit
+const sortedLinks = [...links]
+  .sort((a, b) => a.priority - b.priority)
+  .slice(0, maxLinks);
+
+// Title mapping
+const defaultTitles: Record<string, string> = {
+  kpop_goods: 'Compra merchandise oficial',
+  esim: 'Conectividad en Corea',
+  travel_insurance: 'Viaja protegido',
+  streaming: 'Donde ver',
+  korean_learning: 'Aprende coreano',
+};
+
+const boxTitle = title || defaultTitles[hint] || 'Enlaces recomendados';
+
+// Don't render if no links
+const shouldRender = sortedLinks.length > 0;
+---
+
+{shouldRender && (
+  <aside
+    class:list={['affiliate-box', className]}
+    data-testid={testId}
+    data-affiliate-hint={hint}
+    aria-label="Enlaces de afiliados"
+  >
+    <div class="affiliate-box__header">
+      <span class="affiliate-box__icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+          <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+        </svg>
+      </span>
+      <h4 class="affiliate-box__title">{boxTitle}</h4>
+    </div>
+
+    <ul class="affiliate-box__list">
+      {sortedLinks.map((link) => (
+        <li class="affiliate-box__item">
+          <a
+            href={link.url}
+            target="_blank"
+            rel="noopener noreferrer sponsored"
+            class="affiliate-box__link"
+            data-outbound="true"
+            data-affiliate={hint}
+          >
+            <span class="affiliate-box__label">{link.label}</span>
+            {link.badge && (
+              <span class="affiliate-box__badge">{link.badge}</span>
+            )}
+            <svg class="affiliate-box__arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M7 17l9.2-9.2M17 17V7H7" />
+            </svg>
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <p class="affiliate-box__disclosure">
+      * Enlaces de afiliado. Podemos recibir una comision sin costo adicional para ti.
+    </p>
+  </aside>
+)}
+
+<style>
+  .affiliate-box {
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--md-color-primary-container) 40%, var(--md-color-surface)),
+      color-mix(in srgb, var(--md-color-tertiary-container) 30%, var(--md-color-surface))
+    );
+    border: 1px solid color-mix(in srgb, var(--md-color-outline-variant) 50%, transparent);
+    border-radius: var(--md-shape-lg);
+    padding: var(--md-spacing-lg);
+    margin: var(--md-spacing-xl) 0;
+  }
+
+  .affiliate-box__header {
+    display: flex;
+    align-items: center;
+    gap: var(--md-spacing-sm);
+    margin-bottom: var(--md-spacing-md);
+  }
+
+  .affiliate-box__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--md-shape-full);
+    background: var(--md-color-primary);
+    color: var(--md-color-on-primary);
+  }
+
+  .affiliate-box__title {
+    margin: 0;
+    font-size: var(--md-typo-title-medium-size);
+    font-weight: 600;
+    color: var(--md-color-on-surface);
+  }
+
+  .affiliate-box__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--md-spacing-sm);
+  }
+
+  .affiliate-box__item {
+    margin: 0;
+  }
+
+  .affiliate-box__link {
+    display: flex;
+    align-items: center;
+    gap: var(--md-spacing-sm);
+    padding: var(--md-spacing-md);
+    background: var(--md-color-surface);
+    border-radius: var(--md-shape-md);
+    text-decoration: none;
+    color: var(--md-color-on-surface);
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+  }
+
+  .affiliate-box__link:hover {
+    background: var(--md-color-surface-container-high);
+    border-color: var(--md-color-primary);
+    transform: translateY(-1px);
+  }
+
+  .affiliate-box__label {
+    flex: 1;
+    font-size: var(--md-typo-body-medium-size);
+    font-weight: 500;
+  }
+
+  .affiliate-box__badge {
+    font-size: var(--md-typo-label-small-size);
+    font-weight: 600;
+    padding: var(--md-spacing-xs) var(--md-spacing-sm);
+    background: var(--md-color-primary);
+    color: var(--md-color-on-primary);
+    border-radius: var(--md-shape-full);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  .affiliate-box__arrow {
+    color: var(--md-color-outline);
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+  }
+
+  .affiliate-box__link:hover .affiliate-box__arrow {
+    color: var(--md-color-primary);
+    transform: translate(2px, -2px);
+  }
+
+  .affiliate-box__disclosure {
+    margin: var(--md-spacing-md) 0 0;
+    font-size: var(--md-typo-label-small-size);
+    color: var(--md-color-outline);
+    font-style: italic;
+  }
+
+  /* Dark mode adjustments */
+  :global(.dark) .affiliate-box {
+    background: linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--md-color-primary) 10%, var(--md-color-surface-container)),
+      color-mix(in srgb, var(--md-color-tertiary) 8%, var(--md-color-surface-container))
+    );
+  }
+</style>

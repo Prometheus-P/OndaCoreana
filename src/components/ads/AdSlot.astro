@@ -1,0 +1,148 @@
+---
+/**
+ * AdSlot Component
+ * Renders Google AdSense ad units with dev placeholder support.
+ * Only renders when ADSENSE_ENABLED=true.
+ */
+
+interface Props {
+  slot: string;
+  format?: 'auto' | 'banner' | 'in-article' | 'in-feed';
+  testId?: string;
+  class?: string;
+  /** Hide on specific pages (e.g., privacy/terms) */
+  hideOnPaths?: string[];
+}
+
+const {
+  slot,
+  format = 'auto',
+  testId,
+  class: className = '',
+  hideOnPaths = ['/privacidad', '/terminos', '/404'],
+} = Astro.props;
+
+const isDev = import.meta.env.DEV;
+const adsenseEnabled = import.meta.env.PUBLIC_ADSENSE_ENABLED === 'true';
+const adsenseClientId = import.meta.env.PUBLIC_ADSENSE_CLIENT_ID;
+
+// Check if current path should hide ads
+const currentPath = Astro.url.pathname;
+const shouldHide = hideOnPaths.some(path => currentPath.startsWith(path));
+
+// Don't render if ads disabled or on excluded pages
+const shouldRender = adsenseEnabled && !shouldHide;
+
+// Format-specific styles
+const formatStyles: Record<string, string> = {
+  auto: 'display: block;',
+  banner: 'display: block; height: 90px;',
+  'in-article': 'display: block; text-align: center;',
+  'in-feed': 'display: block;',
+};
+
+const adStyle = formatStyles[format] || formatStyles.auto;
+
+// Layout mapping for AdSense
+const layoutMap: Record<string, string> = {
+  'in-article': 'in-article',
+  'in-feed': 'in-feed-nativead',
+};
+---
+
+{shouldRender && (
+  <div
+    class:list={['ad-slot', `ad-slot--${format}`, className]}
+    data-testid={testId}
+    data-ad-slot={slot}
+  >
+    {isDev ? (
+      <!-- Dev placeholder -->
+      <div class="ad-placeholder">
+        <div class="ad-placeholder__inner">
+          <span class="ad-placeholder__label">AD</span>
+          <span class="ad-placeholder__info">Slot: {slot}</span>
+          <span class="ad-placeholder__format">{format}</span>
+        </div>
+      </div>
+    ) : (
+      <!-- Production AdSense unit -->
+      <ins
+        class="adsbygoogle"
+        style={adStyle}
+        data-ad-client={adsenseClientId}
+        data-ad-slot={slot}
+        data-ad-format={format === 'auto' ? 'auto' : undefined}
+        data-ad-layout={layoutMap[format]}
+        data-full-width-responsive={format === 'auto' ? 'true' : undefined}
+      />
+      <script is:inline>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+    )}
+  </div>
+)}
+
+<style>
+  .ad-slot {
+    margin: var(--md-spacing-lg) 0;
+    min-height: 50px;
+  }
+
+  .ad-slot--banner {
+    min-height: 90px;
+  }
+
+  .ad-slot--in-article {
+    margin: var(--md-spacing-xl) 0;
+  }
+
+  .ad-slot--in-feed {
+    margin: var(--md-spacing-md) 0;
+  }
+
+  /* Dev placeholder styles */
+  .ad-placeholder {
+    background: repeating-linear-gradient(
+      45deg,
+      color-mix(in srgb, var(--md-color-outline) 10%, transparent),
+      color-mix(in srgb, var(--md-color-outline) 10%, transparent) 10px,
+      color-mix(in srgb, var(--md-color-outline) 5%, transparent) 10px,
+      color-mix(in srgb, var(--md-color-outline) 5%, transparent) 20px
+    );
+    border: 2px dashed var(--md-color-outline-variant);
+    border-radius: var(--md-shape-md);
+    padding: var(--md-spacing-lg);
+    min-height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ad-placeholder__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--md-spacing-xs);
+    text-align: center;
+  }
+
+  .ad-placeholder__label {
+    font-size: var(--md-typo-headline-small-size);
+    font-weight: 700;
+    color: var(--md-color-outline);
+    letter-spacing: 0.1em;
+  }
+
+  .ad-placeholder__info {
+    font-size: var(--md-typo-label-small-size);
+    color: var(--md-color-outline);
+    font-family: monospace;
+  }
+
+  .ad-placeholder__format {
+    font-size: var(--md-typo-label-small-size);
+    color: var(--md-color-outline-variant);
+    text-transform: uppercase;
+  }
+</style>

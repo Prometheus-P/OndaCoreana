@@ -1,0 +1,198 @@
+{
+  "kpop_goods": {
+    "mx": [
+      {
+        "label": "Comprar K-Pop en Amazon MX",
+        "url": "https://www.amazon.com.mx/s?k=kpop+albums&tag=AFFILIATE_TAG",
+        "badge": "Amazon",
+        "priority": 1
+      },
+      {
+        "label": "Albums oficiales en MercadoLibre",
+        "url": "https://www.mercadolibre.com.mx/kpop-albums",
+        "badge": "MercadoLibre",
+        "priority": 2
+      }
+    ],
+    "ar": [
+      {
+        "label": "K-Pop en Amazon",
+        "url": "https://www.amazon.com/s?k=kpop+albums&tag=AFFILIATE_TAG",
+        "badge": "Amazon",
+        "priority": 1
+      },
+      {
+        "label": "Albums en MercadoLibre AR",
+        "url": "https://www.mercadolibre.com.ar/kpop-albums",
+        "badge": "MercadoLibre",
+        "priority": 2
+      }
+    ],
+    "cl": [
+      {
+        "label": "K-Pop en Amazon",
+        "url": "https://www.amazon.com/s?k=kpop+albums&tag=AFFILIATE_TAG",
+        "badge": "Amazon",
+        "priority": 1
+      }
+    ],
+    "default": [
+      {
+        "label": "Comprar K-Pop en Amazon",
+        "url": "https://www.amazon.com/s?k=kpop+albums&tag=AFFILIATE_TAG",
+        "badge": "Amazon",
+        "priority": 1
+      },
+      {
+        "label": "K-Pop en YesAsia",
+        "url": "https://www.yesasia.com/kpop?aff=AFFILIATE_TAG",
+        "badge": "YesAsia",
+        "priority": 2
+      }
+    ]
+  },
+  "esim": {
+    "mx": [
+      {
+        "label": "eSIM para Corea - Airalo",
+        "url": "https://ref.airalo.com/AFFILIATE_TAG?destination=south-korea",
+        "badge": "eSIM",
+        "priority": 1
+      },
+      {
+        "label": "eSIM Holafly Corea",
+        "url": "https://holafly.com/es/esim-corea-del-sur?ref=AFFILIATE_TAG",
+        "badge": "Holafly",
+        "priority": 2
+      }
+    ],
+    "ar": [
+      {
+        "label": "eSIM para Corea - Airalo",
+        "url": "https://ref.airalo.com/AFFILIATE_TAG?destination=south-korea",
+        "badge": "eSIM",
+        "priority": 1
+      }
+    ],
+    "cl": [
+      {
+        "label": "eSIM para Corea - Airalo",
+        "url": "https://ref.airalo.com/AFFILIATE_TAG?destination=south-korea",
+        "badge": "eSIM",
+        "priority": 1
+      }
+    ],
+    "default": [
+      {
+        "label": "eSIM para Corea - Airalo",
+        "url": "https://ref.airalo.com/AFFILIATE_TAG?destination=south-korea",
+        "badge": "eSIM",
+        "priority": 1
+      },
+      {
+        "label": "eSIM Holafly Corea",
+        "url": "https://holafly.com/es/esim-corea-del-sur?ref=AFFILIATE_TAG",
+        "badge": "Holafly",
+        "priority": 2
+      }
+    ]
+  },
+  "travel_insurance": {
+    "mx": [
+      {
+        "label": "Seguro de viaje - SafetyWing",
+        "url": "https://safetywing.com/nomad-insurance?referral=AFFILIATE_TAG",
+        "badge": "Recomendado",
+        "priority": 1
+      },
+      {
+        "label": "Seguro World Nomads",
+        "url": "https://www.worldnomads.com/travel-insurance?affiliate=AFFILIATE_TAG",
+        "badge": "World Nomads",
+        "priority": 2
+      }
+    ],
+    "ar": [
+      {
+        "label": "Seguro de viaje - Assist Card",
+        "url": "https://www.assistcard.com/ar?ref=AFFILIATE_TAG",
+        "badge": "Assist Card",
+        "priority": 1
+      }
+    ],
+    "cl": [
+      {
+        "label": "Seguro de viaje - SafetyWing",
+        "url": "https://safetywing.com/nomad-insurance?referral=AFFILIATE_TAG",
+        "badge": "Recomendado",
+        "priority": 1
+      }
+    ],
+    "default": [
+      {
+        "label": "Seguro de viaje - SafetyWing",
+        "url": "https://safetywing.com/nomad-insurance?referral=AFFILIATE_TAG",
+        "badge": "Recomendado",
+        "priority": 1
+      },
+      {
+        "label": "Seguro World Nomads",
+        "url": "https://www.worldnomads.com/travel-insurance?affiliate=AFFILIATE_TAG",
+        "badge": "World Nomads",
+        "priority": 2
+      }
+    ]
+  },
+  "streaming": {
+    "mx": [
+      {
+        "label": "Ver en Netflix",
+        "url": "https://www.netflix.com/browse?jbv=SHOW_ID",
+        "badge": "Netflix",
+        "priority": 1
+      },
+      {
+        "label": "Ver en Viki",
+        "url": "https://www.viki.com?aff=AFFILIATE_TAG",
+        "badge": "Viki",
+        "priority": 2
+      }
+    ],
+    "default": [
+      {
+        "label": "Ver en Netflix",
+        "url": "https://www.netflix.com/browse",
+        "badge": "Netflix",
+        "priority": 1
+      },
+      {
+        "label": "Ver en Viki",
+        "url": "https://www.viki.com?aff=AFFILIATE_TAG",
+        "badge": "Viki",
+        "priority": 2
+      },
+      {
+        "label": "Ver en Disney+",
+        "url": "https://www.disneyplus.com",
+        "badge": "Disney+",
+        "priority": 3
+      }
+    ]
+  },
+  "korean_learning": {
+    "default": [
+      {
+        "label": "Aprende coreano en TTMIK",
+        "url": "https://talktomeinkorean.com?ref=AFFILIATE_TAG",
+        "badge": "Recomendado",
+        "priority": 1
+      },
+      {
+        "label": "Cursos en Coursera",
+        "url": "https://www.coursera.org/courses?query=korean&aff=AFFILIATE_TAG",
+        "badge": "Coursera",
+        "priority": 2
+      }
+    ]
+  }
+}

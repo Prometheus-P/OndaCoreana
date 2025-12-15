@@ -30,6 +30,8 @@ const { Content } = await noticia.render();
     { name: noticia.data.category, url: `/noticias/categoria/${noticia.data.category}` },
   ]}
   contentType="noticias"
+  affiliateHint={noticia.data.affiliate_hint}
+  noAds={noticia.data.noAds}
 >
   <Content />
 

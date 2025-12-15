@@ -2,6 +2,8 @@
 import BaseLayout from './BaseLayout.astro';
 import JsonLd from '../components/seo/JsonLd.astro';
 import ShareButtons from '../components/ui/ShareButtons.astro';
+import AdSlot from '../components/ads/AdSlot.astro';
+import AffiliateBox from '../components/affiliate/AffiliateBox.astro';
 
 interface Props {
   title: string;
@@ -14,6 +16,10 @@ interface Props {
   tags?: string[];
   breadcrumbs?: Array<{ name: string; url: string }>;
   contentType?: 'dramas' | 'kpop' | 'noticias' | 'guias';
+  /** Affiliate hint from frontmatter */
+  affiliateHint?: 'kpop_goods' | 'esim' | 'travel_insurance' | 'streaming' | 'korean_learning';
+  /** Disable ads on this article */
+  noAds?: boolean;
 }
 
 const {
@@ -27,7 +33,21 @@ const {
   tags = [],
   breadcrumbs = [],
   contentType,
+  affiliateHint,
+  noAds = false,
 } = Astro.props;
+
+// Auto-determine affiliate hint based on content type if not explicitly set
+const categoryAffiliateMap: Record<string, string> = {
+  kpop: 'kpop_goods',
+  dramas: 'streaming',
+  guias: 'esim',
+  noticias: '', // No default for news
+};
+const effectiveAffiliateHint = affiliateHint || (contentType ? categoryAffiliateMap[contentType] : '');
+
+// Show ads unless explicitly disabled
+const showAds = !noAds;
 
 const formattedPubDate = pubDate.toLocaleDateString('es-419', {
   year: 'numeric',
@@ -167,10 +187,25 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString('es-419', {
       </figure>
     )}
 
+    <!-- Ad: Top of article -->
+    {showAds && (
+      <AdSlot slot="article-top" format="in-article" testId="ad-article-top" />
+    )}
+
     <!-- Content -->
     <div class="prose prose-lg prose-pink mx-auto max-w-none" style="color: var(--md-sys-color-on-surface);">
       <slot />
     </div>
+
+    <!-- Ad: After content -->
+    {showAds && (
+      <AdSlot slot="article-bottom" format="in-article" testId="ad-article-bottom" />
+    )}
+
+    <!-- Affiliate Box: Auto-inserted based on content type or frontmatter hint -->
+    {effectiveAffiliateHint && (
+      <AffiliateBox hint={effectiveAffiliateHint} testId="affiliate-box" />
+    )}
 
     <!-- Tags footer -->
     {tags.length > 0 && (

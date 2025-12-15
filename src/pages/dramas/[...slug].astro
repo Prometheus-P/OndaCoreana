@@ -27,6 +27,8 @@ const { Content } = await drama.render();
   tags={drama.data.tags}
   breadcrumbs={[{ name: 'K-Dramas', url: '/dramas' }]}
   contentType="dramas"
+  affiliateHint={drama.data.affiliate_hint}
+  noAds={drama.data.noAds}
 >
   <!-- Drama Info Box -->
   <aside class="not-prose mb-8 surface-card" style="background-color: var(--md-color-surface-container); padding: var(--md-spacing-lg);">
