@@ -196,7 +196,7 @@ const shouldNoIndex = normalizedQuery.length === 0;
 </style>
 
 <script>
-  import { escapeHtml, escapeRegex, highlightMatch } from '../utils/search-client';
+  import { escapeHtml, highlightMatch } from '../utils/search-client';
 
   // Type definitions for client-side use
   type ContentType = 'all' | 'dramas' | 'kpop' | 'noticias' | 'guias';
@@ -255,13 +255,14 @@ const shouldNoIndex = normalizedQuery.length === 0;
   const RESULTS_PER_PAGE = 10;
 
   // Get pagefind instance (lazy load once)
-  async function getPagefind() {
+  async function getPagefind(): Promise<PagefindInstance> {
     if (!pagefindInstance) {
       const pagefindPath = '/pagefind/pagefind.js';
-      pagefindInstance = await import(/* @vite-ignore */ pagefindPath);
-      await pagefindInstance.init();
+      const pf = await import(/* @vite-ignore */ pagefindPath) as PagefindInstance;
+      await pf.init();
+      pagefindInstance = pf;
     }
-    return pagefindInstance;
+    return pagefindInstance!;
   }
 
   // Load more results (pagination)
