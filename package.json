@@ -11,16 +11,18 @@
     "start:e2e": "PUBLIC_ADMIN_ACCESS_CODE=test-admin-2024 pnpm build && astro preview --host 0.0.0.0 --port 5173",
     "astro": "astro",
     "check": "astro check",
-    "test": "pnpm test:content && pnpm test:build && pnpm test:seo",
+    "test": "pnpm test:content && pnpm test:build && pnpm test:seo && pnpm test:ingest",
     "test:content": "tsx tests/content/validate-frontmatter.test.ts",
     "test:build": "tsx tests/build/validate-build.test.ts",
     "test:seo": "tsx tests/seo/validate-seo.test.ts",
+    "test:ingest": "tsx tests/ingest/ingest-utils.test.ts",
     "test:e2e": "npx playwright test",
     "test:e2e:ui": "npx playwright test --ui",
     "test:tdd": "tsx tests/run-tdd.ts",
     "tdd:red": "echo '🔴 RED: Creating failing test...' && pnpm test",
     "tdd:green": "echo '🟢 GREEN: Verifying tests pass...' && pnpm build && pnpm test",
-    "tdd:refactor": "echo '🔵 REFACTOR: Improving code...' && pnpm check && pnpm test"
+    "tdd:refactor": "echo '🔵 REFACTOR: Improving code...' && pnpm check && pnpm test",
+    "ingest:rss": "tsx scripts/ingest/index.ts"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.12",
