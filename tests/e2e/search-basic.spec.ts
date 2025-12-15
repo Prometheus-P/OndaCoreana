@@ -6,11 +6,33 @@ import { test, expect } from '@playwright/test';
  */
 
 test.describe('US1: Basic Content Search', () => {
+  // Helper to get a visible search input (handles mobile menu)
+  async function getVisibleSearchInput(page: any) {
+    // Check if any search input is visible
+    const searchInput = page.locator('[data-testid="site-search-input"]:visible').first();
+    const isVisible = await searchInput.isVisible().catch(() => false);
+
+    if (isVisible) {
+      return searchInput;
+    }
+
+    // On mobile, we need to open the menu to access search
+    const menuButton = page.locator('#mobile-menu-button');
+    if (await menuButton.isVisible()) {
+      await menuButton.click();
+      // Wait for mobile menu to be visible
+      await page.locator('#mobile-menu').waitFor({ state: 'visible' });
+    }
+
+    // Return the visible search input (now mobile menu search should be visible)
+    return page.locator('[data-testid="site-search-input"]:visible').first();
+  }
+
   // T013: Search form submission navigates to /buscar with query param
   test('search form submission navigates to /buscar with query param', async ({ page }) => {
     await page.goto('/');
 
-    const searchInput = page.locator('[data-testid="site-search-input"]');
+    const searchInput = await getVisibleSearchInput(page);
     await expect(searchInput).toBeVisible();
 
     // Enter search query
@@ -72,7 +94,7 @@ test.describe('US1: Basic Content Search', () => {
   test('search input is accessible from homepage header', async ({ page }) => {
     await page.goto('/');
 
-    const searchInput = page.locator('[data-testid="site-search-input"]');
+    const searchInput = await getVisibleSearchInput(page);
     await expect(searchInput).toBeVisible();
     await expect(searchInput).toHaveAttribute('placeholder', /buscar/i);
   });

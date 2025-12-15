@@ -6,9 +6,33 @@ import { test, expect } from '@playwright/test';
  */
 
 test.describe('US2: Real-Time Search Suggestions', () => {
-  // Helper to get the search wrapper
+  // Helper to get a visible search wrapper (handles mobile menu)
+  async function getVisibleSearchWrapper(page: any) {
+    // Try to get a visible search input first
+    const visibleSearch = page.locator('[data-search-wrapper]:visible').first();
+
+    // Check if any search is visible
+    const isVisible = await visibleSearch.locator('[data-testid="site-search-input"]').isVisible().catch(() => false);
+
+    if (isVisible) {
+      return visibleSearch;
+    }
+
+    // On mobile, we need to open the menu to access search
+    const menuButton = page.locator('#mobile-menu-button');
+    if (await menuButton.isVisible()) {
+      await menuButton.click();
+      // Wait for mobile menu to be visible
+      await page.locator('#mobile-menu').waitFor({ state: 'visible' });
+    }
+
+    // Return the visible wrapper (now mobile menu search should be visible)
+    return page.locator('[data-search-wrapper]:visible').first();
+  }
+
+  // Legacy helper for backward compatibility
   async function getSearchWrapper(page: any) {
-    return page.locator('[data-search-wrapper]').first();
+    return getVisibleSearchWrapper(page);
   }
 
   // T027: Typing 2+ characters triggers search within 300ms
