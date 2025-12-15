@@ -113,3 +113,13 @@ export const featureCategoryConfig: Record<FeatureCategory, { label: string; bg:
 export function getFeatureCategoryConfig(category: string): { label: string; bg: string; text: string } {
   return featureCategoryConfig[category as FeatureCategory] || { label: category, bg: 'var(--oc-surface)', text: 'var(--oc-text)' };
 }
+
+/**
+ * News category types (for noticias collection)
+ */
+export type NewsCategory = 'drama' | 'kpop' | 'cine' | 'cultura' | 'general';
+
+/**
+ * News categories list
+ */
+export const newsCategories: NewsCategory[] = ['drama', 'kpop', 'cine', 'cultura', 'general'];

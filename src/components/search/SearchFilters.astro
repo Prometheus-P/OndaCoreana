@@ -1,5 +1,6 @@
 ---
 import type { ContentType } from '../../types/search';
+import { searchFilters } from '../../config/search';
 
 interface Props {
   activeFilter?: ContentType;
@@ -7,15 +8,6 @@ interface Props {
 }
 
 const { activeFilter = 'all', query = '' } = Astro.props;
-
-// Filter options with labels and colors
-const filters: { type: ContentType; label: string; testId: string }[] = [
-  { type: 'all', label: 'Todos', testId: 'filter-all' },
-  { type: 'dramas', label: 'K-Dramas', testId: 'filter-dramas' },
-  { type: 'kpop', label: 'K-Pop', testId: 'filter-kpop' },
-  { type: 'noticias', label: 'Noticias', testId: 'filter-noticias' },
-  { type: 'guias', label: 'Guías', testId: 'filter-guias' },
-];
 
 // Get the base URL with query parameter
 function getFilterUrl(filterType: ContentType): string {
@@ -28,7 +20,7 @@ function getFilterUrl(filterType: ContentType): string {
 
 <div class="search-filters" data-testid="search-filters" role="tablist" aria-label="Filtrar por tipo de contenido">
   <div class="flex flex-wrap gap-2">
-    {filters.map((filter) => (
+    {searchFilters.map((filter) => (
       <a
         href={getFilterUrl(filter.type)}
         class="filter-tab chip"
