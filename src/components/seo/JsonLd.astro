@@ -121,5 +121,5 @@ const jsonLdScripts = schemas.map((s) => JSON.stringify(generateSchema(s)));
 ---
 
 {jsonLdScripts.map((script) => (
-  <script type="application/ld+json" set:html={script} />
+  <script is:inline type="application/ld+json" set:html={script} />
 ))}

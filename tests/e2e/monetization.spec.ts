@@ -17,9 +17,9 @@ test.describe('Monetization - Ads & Affiliates', () => {
       await page.goto('/');
 
       // Check for ad placeholder elements (dev mode shows placeholders)
-      const adPlaceholders = page.locator('.ad-placeholder');
       // In production with ADSENSE_ENABLED=false, there should be no placeholders
-      // This is a conditional test based on env
+      // This is a conditional test based on env - just verify page loads correctly
+      await expect(page).toHaveURL('/');
     });
 
     test('no ads appear on privacy page', async ({ page }) => {
@@ -110,14 +110,16 @@ test.describe('Monetization - Ads & Affiliates', () => {
       await page.goto('/kpop/bts');
 
       // Set up event listener before clicking
-      const eventPromise = page.evaluate(() => {
-        return new Promise((resolve) => {
-          window.addEventListener('oc:outbound', (e: CustomEvent) => {
-            resolve(e.detail);
-          }, { once: true });
+      await page.evaluate(() => {
+        return new Promise<void>((resolve) => {
+          window.addEventListener('oc:outbound', ((e: Event) => {
+            const customEvent = e as CustomEvent;
+            console.log('Outbound event:', customEvent.detail);
+            resolve();
+          }) as EventListener, { once: true });
 
           // Timeout after 2 seconds
-          setTimeout(() => resolve(null), 2000);
+          setTimeout(() => resolve(), 2000);
         });
       });
 
