@@ -20,7 +20,9 @@
     "test:tdd": "tsx tests/run-tdd.ts",
     "tdd:red": "echo '🔴 RED: Creating failing test...' && pnpm test",
     "tdd:green": "echo '🟢 GREEN: Verifying tests pass...' && pnpm build && pnpm test",
-    "tdd:refactor": "echo '🔵 REFACTOR: Improving code...' && pnpm check && pnpm test"
+    "tdd:refactor": "echo '🔵 REFACTOR: Improving code...' && pnpm check && pnpm test",
+    "ingest:rss": "tsx scripts/ingest/index.ts",
+    "test:ingest": "tsx tests/ingest/normalize.test.ts"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.12",

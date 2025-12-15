@@ -59,6 +59,13 @@ service-account*.json
 *.sublime-project
 
 # ============================================
+# Data & Drafts
+# ============================================
+
+# Ingest pipeline drafts (local data)
+data/drafts/
+
+# ============================================
 # Build & Dependencies
 # ============================================
 
