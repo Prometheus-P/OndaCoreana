@@ -133,6 +133,9 @@ const instanceId = Math.random().toString(36).substring(2, 9);
 </div>
 
 <script>
+  import { debounce } from '../../utils/debounce';
+  import { escapeHtml, highlightMatch, contentTypeLabels, contentTypeStyles } from '../../utils/search-client';
+
   // Types
   type ContentType = 'all' | 'dramas' | 'kpop' | 'noticias' | 'guias';
 
@@ -169,43 +172,6 @@ const instanceId = Math.random().toString(36).substring(2, 9);
     search: (query: string) => Promise<PagefindSearchResponse>;
   }
 
-  // Debounce utility
-  function debounce<Args extends unknown[], R>(
-    func: (...args: Args) => R,
-    wait: number
-  ): (...args: Args) => void {
-    let timeoutId: ReturnType<typeof setTimeout> | null = null;
-
-    return function (this: unknown, ...args: Args) {
-      if (timeoutId !== null) {
-        clearTimeout(timeoutId);
-      }
-
-      timeoutId = setTimeout(() => {
-        func.apply(this, args);
-        timeoutId = null;
-      }, wait);
-    };
-  }
-
-  // Content type labels
-  const typeLabels: Record<string, string> = {
-    dramas: 'K-Drama',
-    kpop: 'K-Pop',
-    noticias: 'Noticia',
-    guias: 'Guía',
-    all: 'Contenido',
-  };
-
-  // Content type styles
-  const typeStyles: Record<string, { bg: string; color: string }> = {
-    dramas: { bg: 'var(--md-color-primary-container)', color: 'var(--md-color-on-primary-container)' },
-    kpop: { bg: 'var(--md-color-tertiary-container)', color: 'var(--md-color-on-tertiary-container)' },
-    noticias: { bg: 'var(--md-color-secondary-container)', color: 'var(--md-color-on-secondary-container)' },
-    guias: { bg: 'color-mix(in srgb, var(--md-color-tertiary) 15%, var(--md-color-surface-variant))', color: 'var(--md-color-on-surface)' },
-    all: { bg: 'var(--md-color-surface-variant)', color: 'var(--md-color-on-surface-variant)' },
-  };
-
   // Pagefind instance (shared across all search inputs)
   let pagefindInstance: PagefindInstance | null = null;
   let pagefindLoading = false;
@@ -233,24 +199,6 @@ const instanceId = Math.random().toString(36).substring(2, 9);
     })();
 
     return pagefindLoadPromise;
-  }
-
-  // Escape HTML
-  function escapeHtml(text: string): string {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
-  }
-
-  function escapeRegex(value: string): string {
-    return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  }
-
-  function highlightMatch(text: string, query: string): string {
-    if (!query.trim()) return escapeHtml(text);
-    const escaped = escapeHtml(text);
-    const regex = new RegExp(`(${escapeRegex(query)})`, 'gi');
-    return escaped.replace(regex, '<mark class="search-highlight">$1</mark>');
   }
 
   // Initialize each search wrapper
@@ -324,8 +272,8 @@ const instanceId = Math.random().toString(36).substring(2, 9);
 
     // Render a dropdown result item
     function renderDropdownResult(result: SearchResult, query: string): string {
-      const typeLabel = typeLabels[result.contentType] || typeLabels.all;
-      const typeColor = typeStyles[result.contentType] || typeStyles.all;
+      const typeLabel = contentTypeLabels[result.contentType] || contentTypeLabels.all;
+      const typeColor = contentTypeStyles[result.contentType] || contentTypeStyles.all;
       const highlightedTitle = highlightMatch(result.title, query);
       const highlightedExcerpt = highlightMatch(result.excerpt, query);
 

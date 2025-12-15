@@ -1,6 +1,7 @@
 ---
 import type { SearchResult } from '../../types/search';
 import { contentTypeLabels } from '../../types/search';
+import { highlightMatch, contentTypeStyles } from '../../utils/search-client';
 
 interface Props {
   result: SearchResult;
@@ -9,25 +10,6 @@ interface Props {
 
 const { result, query } = Astro.props;
 
-function escapeRegex(value: string): string {
-  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
-function escapeHtml(value: string): string {
-  return value
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
-}
-
-// Highlight query terms in excerpt
-function highlightText(text: string, query: string): string {
-  if (!query.trim()) return escapeHtml(text);
-  const escaped = escapeHtml(text);
-  const regex = new RegExp(`(${escapeRegex(query)})`, 'gi');
-  return escaped.replace(regex, '<mark class="search-highlight">$1</mark>');
-}
-
 // Format date in Spanish locale
 const formattedDate = result.pubDate.toLocaleDateString('es-419', {
   year: 'numeric',
@@ -35,16 +17,7 @@ const formattedDate = result.pubDate.toLocaleDateString('es-419', {
   day: 'numeric',
 });
 
-// Badge styles per content type
-const typeStyles: Record<string, { bg: string; color: string }> = {
-  dramas: { bg: 'var(--md-color-primary-container)', color: 'var(--md-color-on-primary-container)' },
-  kpop: { bg: 'var(--md-color-tertiary-container)', color: 'var(--md-color-on-tertiary-container)' },
-  noticias: { bg: 'var(--md-color-secondary-container)', color: 'var(--md-color-on-secondary-container)' },
-  guias: { bg: 'color-mix(in srgb, var(--md-color-tertiary) 15%, var(--md-color-surface-variant))', color: 'var(--md-color-on-surface)' },
-  all: { bg: 'var(--md-color-surface-variant)', color: 'var(--md-color-on-surface-variant)' },
-};
-
-const badgeColors = typeStyles[result.contentType] || typeStyles.all;
+const badgeColors = contentTypeStyles[result.contentType] || contentTypeStyles.all;
 const typeLabel = contentTypeLabels[result.contentType] || result.contentType;
 ---
 
@@ -85,14 +58,14 @@ const typeLabel = contentTypeLabels[result.contentType] || result.contentType;
           class="text-lg font-semibold line-clamp-2"
           style="color: var(--md-sys-color-on-surface);"
           data-testid="result-title"
-          set:html={highlightText(result.title, query)}
+          set:html={highlightMatch(result.title, query)}
         />
 
         <p
           class="text-sm line-clamp-2"
           style="margin-top: var(--md-sys-spacing-xs); color: var(--md-sys-color-on-surface-variant);"
           data-testid="result-excerpt"
-          set:html={highlightText(result.excerpt, query)}
+          set:html={highlightMatch(result.excerpt, query)}
         />
 
         <time
