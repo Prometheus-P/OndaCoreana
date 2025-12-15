@@ -1,0 +1,112 @@
+name: Scheduled Content Ingest
+
+on:
+  schedule:
+    # Run daily at 6 AM UTC (adjust for your timezone)
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Run in dry-run mode (no files written)'
+        required: false
+        default: 'false'
+        type: boolean
+
+concurrency:
+  group: content-ingest
+  cancel-in-progress: false
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  ingest-rss:
+    name: RSS Ingest
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run RSS Ingest
+        id: ingest
+        run: |
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            pnpm ingest:rss --dry-run 2>&1 | tee ingest.log
+          else
+            pnpm ingest:rss 2>&1 | tee ingest.log
+          fi
+
+          # Extract stats for summary
+          echo "fetched=$(grep 'Fetched:' ingest.log | awk '{print $2}')" >> $GITHUB_OUTPUT
+          echo "written=$(grep 'Written:' ingest.log | awk '{print $2}')" >> $GITHUB_OUTPUT
+
+      - name: Upload Ingest Log
+        uses: actions/upload-artifact@v4
+        with:
+          name: ingest-log-${{ github.run_number }}
+          path: ingest.log
+          retention-days: 30
+
+      - name: Check for New Drafts
+        id: check_drafts
+        run: |
+          DRAFT_COUNT=$(find data/drafts -name "*.json" 2>/dev/null | wc -l || echo "0")
+          echo "draft_count=$DRAFT_COUNT" >> $GITHUB_OUTPUT
+          if [ "$DRAFT_COUNT" -gt "0" ]; then
+            echo "has_drafts=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_drafts=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run Quality Check on Existing Content
+        run: pnpm quality:check
+        continue-on-error: true
+
+      - name: Create Summary
+        run: |
+          echo "## 📡 RSS Ingest Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Metric | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Items Fetched | ${{ steps.ingest.outputs.fetched || 'N/A' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Drafts Written | ${{ steps.ingest.outputs.written || 'N/A' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Total Drafts | ${{ steps.check_drafts.outputs.draft_count }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📁 Drafts location: \`data/drafts/YYYY-MM-DD/*.json\`" >> $GITHUB_STEP_SUMMARY
+
+  # Optional: Create PR with new drafts (disabled by default)
+  # create-draft-pr:
+  #   name: Create Draft PR
+  #   runs-on: ubuntu-latest
+  #   needs: ingest-rss
+  #   if: needs.ingest-rss.outputs.has_drafts == 'true' && github.event.inputs.dry_run != 'true'
+  #
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v4
+  #
+  #     - name: Create PR with Drafts
+  #       uses: peter-evans/create-pull-request@v5
+  #       with:
+  #         title: "[Auto] New content drafts - ${{ github.run_number }}"
+  #         body: |
+  #           Automated PR with new content drafts from RSS ingest.
+  #
+  #           Review the drafts in `data/drafts/` before merging.
+  #         branch: auto/content-drafts-${{ github.run_number }}
+  #         commit-message: "chore: add content drafts from RSS ingest"

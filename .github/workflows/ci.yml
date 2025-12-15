@@ -37,11 +37,29 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Run pnpm check (skips if script is missing)
-        run: pnpm run --if-present check
+      - name: Lint (Astro Check)
+        run: pnpm lint
+
+      - name: Type Check
+        run: pnpm typecheck
+        continue-on-error: true
+
+      - name: Run Tests
+        run: pnpm test
+
+      - name: Content Quality Check
+        run: pnpm quality:check
 
       - name: Build
         run: pnpm build
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: build-output
+          path: dist/
+          retention-days: 7
 
   e2e-tests:
     name: E2E Tests

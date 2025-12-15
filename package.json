@@ -22,7 +22,11 @@
     "tdd:green": "echo '🟢 GREEN: Verifying tests pass...' && pnpm build && pnpm test",
     "tdd:refactor": "echo '🔵 REFACTOR: Improving code...' && pnpm check && pnpm test",
     "ingest:rss": "tsx scripts/ingest/index.ts",
-    "test:ingest": "tsx tests/ingest/normalize.test.ts"
+    "test:ingest": "tsx tests/ingest/normalize.test.ts",
+    "quality:check": "tsx scripts/quality/check_content.ts",
+    "quality:strict": "tsx scripts/quality/check_content.ts --strict",
+    "lint": "astro check",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@astrojs/mdx": "^4.3.12",
