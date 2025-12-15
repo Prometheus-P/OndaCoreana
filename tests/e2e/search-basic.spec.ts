@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 
 /**
  * E2E Tests for User Story 1: Basic Content Search
@@ -7,7 +7,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('US1: Basic Content Search', () => {
   // Helper to get a visible search input (handles mobile menu)
-  async function getVisibleSearchInput(page: any) {
+  async function getVisibleSearchInput(page: Page) {
     // Check if any search input is visible
     const searchInput = page.locator('[data-testid="site-search-input"]:visible').first();
     const isVisible = await searchInput.isVisible().catch(() => false);

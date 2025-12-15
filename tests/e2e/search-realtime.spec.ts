@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
 
 /**
  * E2E Tests for User Story 2: Real-Time Search Suggestions
@@ -7,7 +7,7 @@ import { test, expect } from '@playwright/test';
 
 test.describe('US2: Real-Time Search Suggestions', () => {
   // Helper to get a visible search wrapper (handles mobile menu)
-  async function getVisibleSearchWrapper(page: any) {
+  async function getVisibleSearchWrapper(page: Page) {
     // Try to get a visible search input first
     const visibleSearch = page.locator('[data-search-wrapper]:visible').first();
 
@@ -31,7 +31,7 @@ test.describe('US2: Real-Time Search Suggestions', () => {
   }
 
   // Legacy helper for backward compatibility
-  async function getSearchWrapper(page: any) {
+  async function getSearchWrapper(page: Page) {
     return getVisibleSearchWrapper(page);
   }
 

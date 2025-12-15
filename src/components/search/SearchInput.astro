@@ -143,14 +143,40 @@ const instanceId = Math.random().toString(36).substring(2, 9);
     contentType: ContentType;
   }
 
+  // Pagefind types (inline for browser runtime)
+  interface PagefindResultMeta {
+    title?: string;
+    description?: string;
+    contentType?: string;
+  }
+
+  interface PagefindResultData {
+    url: string;
+    excerpt: string;
+    meta: PagefindResultMeta;
+  }
+
+  interface PagefindResult {
+    data: () => Promise<PagefindResultData>;
+  }
+
+  interface PagefindSearchResponse {
+    results: PagefindResult[];
+  }
+
+  interface PagefindInstance {
+    init: () => Promise<void>;
+    search: (query: string) => Promise<PagefindSearchResponse>;
+  }
+
   // Debounce utility
-  function debounce<T extends (...args: any[]) => any>(
-    func: T,
+  function debounce<Args extends unknown[], R>(
+    func: (...args: Args) => R,
     wait: number
-  ): (...args: Parameters<T>) => void {
+  ): (...args: Args) => void {
     let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
-    return function (this: any, ...args: Parameters<T>) {
+    return function (this: unknown, ...args: Args) {
       if (timeoutId !== null) {
         clearTimeout(timeoutId);
       }
@@ -181,10 +207,10 @@ const instanceId = Math.random().toString(36).substring(2, 9);
   };
 
   // Pagefind instance (shared across all search inputs)
-let pagefindInstance: any = null;
-let pagefindLoading = false;
-let pagefindLoadPromise: Promise<any> | null = null;
-let shortcutRegistered = false;
+  let pagefindInstance: PagefindInstance | null = null;
+  let pagefindLoading = false;
+  let pagefindLoadPromise: Promise<PagefindInstance> | null = null;
+  let shortcutRegistered = false;
 
   async function loadPagefind() {
     if (pagefindInstance) return pagefindInstance;
@@ -344,11 +370,11 @@ let shortcutRegistered = false;
 
         // Load result data (first 5 for dropdown)
         const resultsData = await Promise.all(
-          search.results.slice(0, 5).map((result: any) => result.data())
+          search.results.slice(0, 5).map((result) => result.data())
         );
 
         // Transform results
-        const results: SearchResult[] = resultsData.map((data: any) => ({
+        const results: SearchResult[] = resultsData.map((data) => ({
           title: data.meta?.title || 'Sin título',
           excerpt: data.excerpt || data.meta?.description || '',
           url: data.url,

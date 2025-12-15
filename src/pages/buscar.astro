@@ -209,11 +209,45 @@ const shouldNoIndex = normalizedQuery.length === 0;
     relevanceScore: number;
   }
 
+  // Pagefind types (inline for browser runtime)
+  interface PagefindResultMeta {
+    title?: string;
+    description?: string;
+    contentType?: string;
+    pubDate?: string;
+    heroImage?: string;
+  }
+
+  interface PagefindResultData {
+    url: string;
+    excerpt: string;
+    meta: PagefindResultMeta;
+  }
+
+  interface PagefindResult {
+    id: string;
+    score: number;
+    data: () => Promise<PagefindResultData>;
+  }
+
+  interface PagefindSearchResponse {
+    results: PagefindResult[];
+  }
+
+  interface PagefindSearchOptions {
+    filters?: Record<string, string | string[]>;
+  }
+
+  interface PagefindInstance {
+    init: () => Promise<void>;
+    search: (query: string, options?: PagefindSearchOptions) => Promise<PagefindSearchResponse>;
+  }
+
   // Store pagefind instance globally
-  let pagefindInstance: any = null;
+  let pagefindInstance: PagefindInstance | null = null;
 
   // Pagination state
-  let currentSearchResults: any[] = [];
+  let currentSearchResults: PagefindResult[] = [];
   let currentQuery = '';
   let displayedCount = 0;
   const RESULTS_PER_PAGE = 10;
@@ -236,11 +270,11 @@ const shouldNoIndex = normalizedQuery.length === 0;
 
     // Load result data for the current page
     const resultsData = await Promise.all(
-      currentSearchResults.slice(startIndex, endIndex).map((result: any) => result.data())
+      currentSearchResults.slice(startIndex, endIndex).map((result) => result.data())
     );
 
     // Transform to our SearchResult type
-    const results: SearchResult[] = resultsData.map((data: any, index: number) => ({
+    const results: SearchResult[] = resultsData.map((data, index) => ({
       title: data.meta?.title || 'Sin título',
       excerpt: data.excerpt || data.meta?.description || '',
       url: data.url,
@@ -419,7 +453,7 @@ const shouldNoIndex = normalizedQuery.length === 0;
       const pagefind = await getPagefind();
 
       // Perform search with optional filter
-      const searchOptions: any = {};
+      const searchOptions: PagefindSearchOptions = {};
       if (filterType !== 'all') {
         searchOptions.filters = {
           contentType: filterType
