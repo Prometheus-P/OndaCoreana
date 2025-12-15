@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getPublishedContent, type ContentCollection } from '../../utils/content-helpers';
+import { contentTypeConfig } from '../../config/content-types';
 
 export async function getStaticPaths() {
   // Get all content from all collections
@@ -56,14 +57,6 @@ const { items, tagName } = Astro.props;
 
 // Capitalize tag for display
 const displayTag = tagName.charAt(0).toUpperCase() + tagName.slice(1);
-
-// Collection type colors and labels
-const typeConfig = {
-  dramas: { bg: 'var(--oc-primary-soft)', color: 'var(--oc-text)', label: 'K-Drama' },
-  kpop: { bg: 'var(--oc-accent-soft)', color: 'var(--oc-text)', label: 'K-Pop' },
-  noticias: { bg: 'color-mix(in srgb, var(--oc-accent) 12%, var(--oc-surface))', color: 'var(--oc-text)', label: 'Noticia' },
-  guias: { bg: 'color-mix(in srgb, var(--oc-primary) 10%, var(--oc-surface))', color: 'var(--oc-text)', label: 'Guía' },
-};
 ---
 
 <BaseLayout
@@ -91,7 +84,7 @@ const typeConfig = {
 
     <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {items.map((item) => {
-        const config = typeConfig[item.collectionType];
+        const config = contentTypeConfig[item.collectionType];
         const href = `/${item.collectionType}/${item.slug}`;
 
         return (

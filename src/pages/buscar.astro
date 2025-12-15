@@ -196,7 +196,7 @@ const shouldNoIndex = normalizedQuery.length === 0;
 </style>
 
 <script>
-  import { escapeHtml, highlightMatch } from '../utils/search-client';
+  import { escapeHtml, highlightMatch, contentTypeLabels } from '../utils/search-client';
 
   // Type definitions for client-side use
   type ContentType = 'all' | 'dramas' | 'kpop' | 'noticias' | 'guias';
@@ -617,15 +617,7 @@ const shouldNoIndex = normalizedQuery.length === 0;
 
   // Render a single result card
   function renderResultCard(result: SearchResult, query: string): string {
-    const typeLabels: Record<string, string> = {
-      dramas: 'K-Drama',
-      kpop: 'K-Pop',
-      noticias: 'Noticia',
-      guias: 'Guía',
-      all: 'Contenido',
-    };
-
-    const typeLabel = typeLabels[result.contentType] || result.contentType;
+    const typeLabel = contentTypeLabels[result.contentType] || result.contentType;
 
     const formattedDate = result.pubDate.toLocaleDateString('es-419', {
       year: 'numeric',

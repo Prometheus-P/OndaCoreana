@@ -5,6 +5,7 @@ import ShareButtons from '../components/ui/ShareButtons.astro';
 import AdSlot from '../components/ads/AdSlot.astro';
 import AffiliateBox from '../components/affiliate/AffiliateBox.astro';
 import { buildEntryUrl, type ArticleEntry } from '../lib/related';
+import { contentTypeLabels } from '../config/content-types';
 
 interface Props {
   title: string;
@@ -57,13 +58,6 @@ const effectiveAffiliateHint = affiliateHint || (contentType ? categoryAffiliate
 
 // Show ads unless explicitly disabled
 const showAds = !noAds;
-
-const contentTypeLabels: Record<string, string> = {
-  dramas: 'K-Drama',
-  kpop: 'K-Pop',
-  noticias: 'Noticia',
-  guias: 'Guía',
-};
 
 const formattedPubDate = pubDate.toLocaleDateString(language, {
   year: 'numeric',

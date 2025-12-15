@@ -2,17 +2,10 @@
  * Search Types for OndaCoreana Content Search
  */
 
-// T008: ContentType enum
-export type ContentType = 'all' | 'dramas' | 'kpop' | 'noticias' | 'guias';
-
-// Content type labels in Spanish
-export const contentTypeLabels: Record<ContentType, string> = {
-  all: 'Todos',
-  dramas: 'K-Dramas',
-  kpop: 'K-Pop',
-  noticias: 'Noticias',
-  guias: 'Guías',
-};
+// Re-export content type configuration from centralized config
+export type { ContentType } from '../config/content-types';
+export { contentTypeLabels, contentTypeStyles, getContentTypeLabel } from '../config/content-types';
+import type { ContentType } from '../config/content-types';
 
 // T009: SearchResult interface
 export interface SearchResult {
