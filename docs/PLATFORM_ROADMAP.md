@@ -6,18 +6,23 @@ OndaCoreana는 단순 콘텐츠 사이트를 넘어 남미와 한국을 잇는 *
 
 ---
 
-## Phase 0-1: Foundation (현재 ~ 1개월)
+## Phase 0-1: Foundation (완료)
 
 ### 완료된 작업
 - [x] AdminGate 보안 강화 (SHA-256 해시 기반 인증)
 - [x] SEOHead 동적 로케일 지원 (es-419, pt-BR)
 - [x] i18n 유틸리티 생성
 - [x] AdSense 및 Affiliate 시스템 구축
+- [x] RSS 피드 자동 인제스트 파이프라인 (`scripts/ingest/`)
+- [x] Content Quality Gates 구현 (`scripts/quality/`)
+- [x] CI/CD 파이프라인 강화 (lint, typecheck, tests, quality)
+- [x] GitHub Actions 워크플로우 (CI + Scheduled Ingest)
+- [x] Operations Runbook 작성 (`OPS_RUNBOOK.md`)
 
-### 기술 부채 해결
+### 기술 부채 (다음 단계)
 - [ ] Cloudflare Access 또는 Supabase Auth로 Admin 인증 마이그레이션
 - [ ] 콘텐츠 CMS 도입 (Sanity, Strapi, 또는 Keystatic)
-- [ ] RSS 피드 자동 인제스트 파이프라인 안정화
+- [ ] Affiliate 태그 실제 값으로 교체 (`data/affiliate-links.json`)
 
 ---
 
@@ -319,4 +324,4 @@ GET    /api/me/notifications    // 알림
 
 ---
 
-*Last updated: 2025-01*
+*Last updated: 2025-12-15*
