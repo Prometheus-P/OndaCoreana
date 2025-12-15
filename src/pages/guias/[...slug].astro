@@ -1,6 +1,8 @@
 ---
 import { type CollectionEntry, getCollection } from 'astro:content';
 import ArticleLayout from '../../layouts/ArticleLayout.astro';
+import { autolinkHtml, buildKeywordLinks } from '../../lib/autolink';
+import { getRelatedEntries, loadAllArticles } from '../../lib/related';
 
 export async function getStaticPaths() {
   const guias = await getCollection('guias');
@@ -14,6 +16,12 @@ type Props = CollectionEntry<'guias'>;
 
 const guia = Astro.props;
 const { Content } = await guia.render();
+const allArticles = await loadAllArticles();
+const relatedItems = getRelatedEntries(guia, allArticles);
+const keywordLinks = buildKeywordLinks(
+  allArticles.filter((entry) => entry.collection === 'guias') as CollectionEntry<'guias'>[],
+  guia.slug
+);
 ---
 
 <ArticleLayout
@@ -25,6 +33,7 @@ const { Content } = await guia.render();
   heroImageAlt={guia.data.heroImageAlt}
   author={guia.data.author}
   tags={guia.data.tags}
+  keywords={guia.data.keywords}
   breadcrumbs={[
     { name: 'Guías', url: '/guias' },
     { name: guia.data.category, url: `/guias/categoria/${guia.data.category}` },
@@ -32,6 +41,7 @@ const { Content } = await guia.render();
   contentType="guias"
   affiliateHint={guia.data.affiliate_hint}
   noAds={guia.data.noAds}
+  relatedItems={relatedItems}
 >
   <!-- Guide Meta Info -->
   {(guia.data.difficulty || guia.data.readingTime) && (
@@ -54,4 +64,19 @@ const { Content } = await guia.render();
   )}
 
   <Content />
+
+  {keywordLinks.length > 0 && (
+    <script type="module" is:inline define:vars={{ keywordLinks }}>
+      import { autolinkHtml } from '../../lib/autolink';
+
+      const article = document.querySelector('.prose');
+
+      if (article instanceof HTMLElement) {
+        const updated = autolinkHtml(article.innerHTML, keywordLinks);
+        if (updated !== article.innerHTML) {
+          article.innerHTML = updated;
+        }
+      }
+    </script>
+  )}
 </ArticleLayout>

@@ -181,9 +181,10 @@ const instanceId = Math.random().toString(36).substring(2, 9);
   };
 
   // Pagefind instance (shared across all search inputs)
-  let pagefindInstance: any = null;
-  let pagefindLoading = false;
-  let pagefindLoadPromise: Promise<any> | null = null;
+let pagefindInstance: any = null;
+let pagefindLoading = false;
+let pagefindLoadPromise: Promise<any> | null = null;
+let shortcutRegistered = false;
 
   async function loadPagefind() {
     if (pagefindInstance) return pagefindInstance;
@@ -213,6 +214,17 @@ const instanceId = Math.random().toString(36).substring(2, 9);
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+  }
+
+  function escapeRegex(value: string): string {
+    return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  function highlightMatch(text: string, query: string): string {
+    if (!query.trim()) return escapeHtml(text);
+    const escaped = escapeHtml(text);
+    const regex = new RegExp(`(${escapeRegex(query)})`, 'gi');
+    return escaped.replace(regex, '<mark class="search-highlight">$1</mark>');
   }
 
   // Initialize each search wrapper
@@ -270,7 +282,10 @@ const instanceId = Math.random().toString(36).substring(2, 9);
       noResultsEl.classList.add('hidden');
 
       if (results.length > 0) {
-        resultsEl.innerHTML = results.slice(0, 5).map(result => renderDropdownResult(result)).join('');
+        resultsEl.innerHTML = results
+          .slice(0, 5)
+          .map((result) => renderDropdownResult(result, query))
+          .join('');
         resultsEl.classList.remove('hidden');
         viewAllContainer.classList.remove('hidden');
         viewAllLink.href = `/buscar?q=${encodeURIComponent(query)}`;
@@ -282,9 +297,11 @@ const instanceId = Math.random().toString(36).substring(2, 9);
     }
 
     // Render a dropdown result item
-    function renderDropdownResult(result: SearchResult): string {
+    function renderDropdownResult(result: SearchResult, query: string): string {
       const typeLabel = typeLabels[result.contentType] || typeLabels.all;
       const typeColor = typeStyles[result.contentType] || typeStyles.all;
+      const highlightedTitle = highlightMatch(result.title, query);
+      const highlightedExcerpt = highlightMatch(result.excerpt, query);
 
       return `
         <a
@@ -298,8 +315,8 @@ const instanceId = Math.random().toString(36).substring(2, 9);
               ${typeLabel}
             </span>
             <div class="min-w-0">
-              <p class="dropdown-result__title">${escapeHtml(result.title)}</p>
-              <p class="dropdown-result__excerpt">${escapeHtml(result.excerpt)}</p>
+              <p class="dropdown-result__title">${highlightedTitle}</p>
+              <p class="dropdown-result__excerpt">${highlightedExcerpt}</p>
             </div>
           </div>
         </a>
@@ -408,6 +425,35 @@ const instanceId = Math.random().toString(36).substring(2, 9);
     document.querySelectorAll('[data-search-wrapper]').forEach((wrapper) => {
       initSearchWrapper(wrapper as HTMLElement);
     });
+
+    registerSearchShortcut();
+  }
+
+  function registerSearchShortcut() {
+    if (shortcutRegistered) return;
+    shortcutRegistered = true;
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== '/' || event.altKey || event.ctrlKey || event.metaKey) return;
+
+      const target = event.target as HTMLElement | null;
+      if (!target) return;
+
+      const isEditable =
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        (target as HTMLElement).isContentEditable;
+
+      if (isEditable) return;
+
+      const firstInput = document.querySelector('[data-search-wrapper] [data-testid="site-search-input"]') as HTMLInputElement | null;
+
+      if (firstInput) {
+        event.preventDefault();
+        firstInput.focus();
+        firstInput.select();
+      }
+    });
   }
 
   // Run initialization
@@ -453,5 +499,12 @@ const instanceId = Math.random().toString(36).substring(2, 9);
     -webkit-line-clamp: 1;
     -webkit-box-orient: vertical;
     overflow: hidden;
+  }
+
+  .search-highlight {
+    background-color: color-mix(in srgb, var(--md-color-primary) 25%, transparent);
+    color: var(--md-color-on-surface);
+    border-radius: var(--md-shape-sm);
+    padding: 0 var(--md-spacing-xxs, 0.125rem);
   }
 </style>

@@ -10,6 +10,7 @@ const baseArticleSchema = z.object({
   heroImageAlt: z.string().optional(),
   author: z.string().default('OndaCoreana'),
   tags: z.array(z.string()).default([]),
+  keywords: z.array(z.string()).default([]),
   draft: z.boolean().default(false),
   /** Affiliate hint for auto-rendering AffiliateBox: kpop_goods, esim, travel_insurance, streaming, korean_learning */
   affiliate_hint: z.enum(['kpop_goods', 'esim', 'travel_insurance', 'streaming', 'korean_learning']).optional(),
