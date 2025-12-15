@@ -46,11 +46,12 @@ if (legacyCode && !codeHash) {
     </form>
 
     <p class="admin-gate__error" hidden id="gate-error">Codigo invalido.</p>
-
-    <button type="button" id="logout-btn" class="admin-gate__logout" hidden>
-      Cerrar sesion
-    </button>
   </div>
+
+  <!-- Logout button outside card so it's visible when card is hidden -->
+  <button type="button" id="logout-btn" class="admin-gate__logout" hidden>
+    Cerrar sesion
+  </button>
 
   <div id="admin-slot" hidden>
     <slot />
