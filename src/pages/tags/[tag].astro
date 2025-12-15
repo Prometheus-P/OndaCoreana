@@ -1,23 +1,18 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getCollection } from 'astro:content';
+import { getPublishedContent, type ContentCollection } from '../../utils/content-helpers';
 
 export async function getStaticPaths() {
   // Get all content from all collections
-  const [allDramas, allKpop, allNoticias, allGuias] = await Promise.all([
-    getCollection('dramas', ({ data }) => !data.draft),
-    getCollection('kpop', ({ data }) => !data.draft),
-    getCollection('noticias', ({ data }) => !data.draft),
-    getCollection('guias', ({ data }) => !data.draft),
-  ]);
+  const collections: ContentCollection[] = ['dramas', 'kpop', 'noticias', 'guias'];
+  const allEntries = await Promise.all(
+    collections.map((c) => getPublishedContent(c))
+  );
 
   // Combine all content with collection type
-  const allContent = [
-    ...allDramas.map(item => ({ ...item, collectionType: 'dramas' as const })),
-    ...allKpop.map(item => ({ ...item, collectionType: 'kpop' as const })),
-    ...allNoticias.map(item => ({ ...item, collectionType: 'noticias' as const })),
-    ...allGuias.map(item => ({ ...item, collectionType: 'guias' as const })),
-  ];
+  const allContent = collections.flatMap((collectionType, index) =>
+    allEntries[index].map(item => ({ ...item, collectionType }))
+  );
 
   // Extract all unique tags
   const tagMap = new Map<string, typeof allContent>();

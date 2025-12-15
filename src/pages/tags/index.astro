@@ -1,17 +1,9 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getCollection } from 'astro:content';
+import { getMergedContent } from '../../utils/content-helpers';
 
 // Get all content from all collections
-const [allDramas, allKpop, allNoticias, allGuias] = await Promise.all([
-  getCollection('dramas', ({ data }) => !data.draft),
-  getCollection('kpop', ({ data }) => !data.draft),
-  getCollection('noticias', ({ data }) => !data.draft),
-  getCollection('guias', ({ data }) => !data.draft),
-]);
-
-// Combine all content
-const allContent = [...allDramas, ...allKpop, ...allNoticias, ...allGuias];
+const allContent = await getMergedContent(['dramas', 'kpop', 'noticias', 'guias']);
 
 // Count tags
 const tagCounts = new Map<string, number>();

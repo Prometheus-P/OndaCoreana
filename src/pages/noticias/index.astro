@@ -1,9 +1,8 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getCollection } from 'astro:content';
+import { getPublishedContentSorted } from '../../utils/content-helpers';
 
-const allNoticias = await getCollection('noticias', ({ data }) => !data.draft);
-const noticias = allNoticias.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const noticias = await getPublishedContentSorted('noticias');
 
 const categories = ['drama', 'kpop', 'cine', 'cultura', 'general'];
 ---

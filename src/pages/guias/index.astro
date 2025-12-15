@@ -1,9 +1,8 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getCollection } from 'astro:content';
+import { getPublishedContentSorted } from '../../utils/content-helpers';
 
-const allGuias = await getCollection('guias', ({ data }) => !data.draft);
-const guias = allGuias.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const guias = await getPublishedContentSorted('guias');
 
 const categories = ['streaming', 'viaje', 'idioma', 'cultura', 'general'];
 ---

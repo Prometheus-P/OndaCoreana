@@ -2,25 +2,12 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import NewsletterForm from '../components/newsletter/NewsletterForm.astro';
 import AdSlot from '../components/ads/AdSlot.astro';
-import { getCollection } from 'astro:content';
+import { getRecentContent } from '../utils/content-helpers';
 
 // Obtener contenido reciente
-const allDramas = await getCollection('dramas', ({ data }) => !data.draft);
-const allKpop = await getCollection('kpop', ({ data }) => !data.draft);
-const allNoticias = await getCollection('noticias', ({ data }) => !data.draft);
-
-// Ordenar por fecha y tomar los más recientes
-const recentDramas = allDramas
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 4);
-
-const recentKpop = allKpop
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 4);
-
-const recentNoticias = allNoticias
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
-  .slice(0, 6);
+const recentDramas = await getRecentContent('dramas', 4);
+const recentKpop = await getRecentContent('kpop', 4);
+const recentNoticias = await getRecentContent('noticias', 6);
 ---
 
 <BaseLayout
