@@ -5,6 +5,7 @@
   "description": "Portal de K-Dramas, K-Pop y cultura coreana en español",
   "scripts": {
     "dev": "astro dev",
+    "dev:cms": "KEYSTATIC_CMS=true astro dev",
     "build": "astro build",
     "build:check": "astro build && tsx scripts/check-pagefind-size.ts",
     "preview": "astro preview --host 0.0.0.0 --port 5173",
@@ -28,10 +29,19 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@astrojs/markdoc": "^0.15.10",
     "@astrojs/mdx": "^4.3.12",
+    "@astrojs/node": "^9.5.1",
+    "@astrojs/react": "^4.4.2",
     "@astrojs/sitemap": "^3.6.0",
+    "@keystatic/astro": "^5.0.6",
+    "@keystatic/core": "^0.5.48",
     "@tailwindcss/vite": "^4.1.17",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
     "astro": "^5.16.1",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
     "tailwindcss": "^4.1.17"
   },
   "devDependencies": {
