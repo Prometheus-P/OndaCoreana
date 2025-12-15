@@ -1,0 +1,120 @@
+---
+/**
+ * ContentCard Component
+ *
+ * Reusable card component for displaying content items.
+ * Supports multiple variants for different content types.
+ */
+
+interface Props {
+  /** URL the card links to */
+  href: string;
+  /** Card title */
+  title: string;
+  /** Card description */
+  description?: string;
+  /** Hero image URL */
+  heroImage?: string;
+  /** Hero image alt text */
+  heroImageAlt?: string;
+  /** Image height (default: 12rem) */
+  imageHeight?: string;
+  /** Card variant */
+  variant?: 'default' | 'kpop-artist' | 'horizontal';
+  /** Line clamp for description (default: 3) */
+  descriptionClamp?: number;
+  /** Additional CSS classes for the article */
+  class?: string;
+  /** Test ID for testing */
+  testId?: string;
+}
+
+const {
+  href,
+  title,
+  description,
+  heroImage,
+  heroImageAlt,
+  imageHeight = '12rem',
+  variant = 'default',
+  descriptionClamp = 3,
+  class: className = '',
+  testId,
+} = Astro.props;
+
+const isKpopArtist = variant === 'kpop-artist';
+---
+
+{isKpopArtist ? (
+  <article
+    class:list={['surface-card', 'surface-card--interactive', 'text-center', className]}
+    style="padding: var(--md-spacing-lg);"
+    data-testid={testId}
+  >
+    <a href={href} class="content-card__link content-card__link--kpop">
+      <div
+        class="content-card__avatar oc-card-shine"
+        style="margin: 0 auto; width: 12rem; height: 12rem; border-radius: 9999px; overflow: hidden; box-shadow: var(--md-elevation-2);"
+      >
+        {heroImage ? (
+          <img
+            src={heroImage}
+            alt={heroImageAlt || title}
+            class="h-full w-full object-cover"
+            loading="lazy"
+          />
+        ) : (
+          <div
+            class="flex h-full w-full items-center justify-center"
+            style="background: color-mix(in srgb, var(--md-color-tertiary) 30%, transparent); color: var(--md-color-on-tertiary-container); font-size: 2.25rem; font-weight: 700;"
+          >
+            {title.charAt(0)}
+          </div>
+        )}
+      </div>
+      <h2 class="mt-4 text-lg font-semibold" style="color: var(--md-color-on-surface);">
+        {title}
+      </h2>
+    </a>
+    <slot name="subtitle" />
+    <div class="content-card__badges" style="margin-top: var(--md-spacing-sm); display: inline-flex; justify-content: center;">
+      <slot name="badges" />
+    </div>
+    <slot name="metadata" />
+  </article>
+) : (
+  <article
+    class:list={['surface-card', 'surface-card--interactive', 'flex', 'flex-col', className]}
+    style="overflow: hidden;"
+    data-testid={testId}
+  >
+    {heroImage && (
+      <img
+        src={heroImage}
+        alt={heroImageAlt || title}
+        class="w-full object-cover"
+        style={`height: ${imageHeight};`}
+        loading="lazy"
+      />
+    )}
+    <div style="padding: var(--md-spacing-md); display: flex; flex-direction: column; gap: var(--md-spacing-sm);">
+      <div class="flex flex-wrap items-center gap-2">
+        <slot name="badges" />
+      </div>
+      <h2 class="font-semibold" style="color: var(--md-color-on-surface); font-size: var(--md-typo-title-medium-size);">
+        <a href={href}>
+          {title}
+        </a>
+      </h2>
+      {description && (
+        <p
+          class="subtle-text"
+          style={`display: -webkit-box; -webkit-line-clamp: ${descriptionClamp}; -webkit-box-orient: vertical; overflow: hidden;`}
+        >
+          {description}
+        </p>
+      )}
+      <slot name="metadata" />
+    </div>
+  </article>
+)}

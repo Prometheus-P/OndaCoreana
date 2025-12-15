@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import AdSlot from '../../components/ads/AdSlot.astro';
+import ContentCard from '../../components/ui/ContentCard.astro';
 import { getPublishedContentSorted } from '../../utils/content-helpers';
 
 const artists = await getPublishedContentSorted('kpop');
@@ -33,33 +34,24 @@ const AD_INTERVAL = 4;
         <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {artists.map((artist, index) => (
             <>
-              <article class="surface-card surface-card--interactive text-center" style="padding: var(--md-spacing-lg);">
-                <div class="mx-auto h-48 w-48 rounded-full oc-card-shine" style="overflow: hidden; box-shadow: var(--md-elevation-2);">
-                  {artist.data.heroImage ? (
-                    <img
-                      src={artist.data.heroImage}
-                      alt={artist.data.heroImageAlt || artist.data.artistName}
-                      class="h-full w-full object-cover"
-                      loading="lazy"
-                    />
-                  ) : (
-                    <div class="flex h-full w-full items-center justify-center" style="background: color-mix(in srgb, var(--md-color-tertiary) 30%, transparent); color: var(--md-color-on-tertiary-container); font-size: 2.25rem; font-weight: 700;">
-                      {artist.data.artistName.charAt(0)}
-                    </div>
+              <ContentCard
+                href={`/kpop/${artist.slug}`}
+                title={artist.data.artistName}
+                heroImage={artist.data.heroImage}
+                heroImageAlt={artist.data.heroImageAlt}
+                variant="kpop-artist"
+              >
+                <Fragment slot="subtitle">
+                  {artist.data.agency && (
+                    <p class="subtle-text">{artist.data.agency}</p>
                   )}
-                </div>
-                <h2 class="mt-4 text-lg font-semibold" style="color: var(--md-color-on-surface);">
-                  <a href={`/kpop/${artist.slug}`}>
-                    {artist.data.artistName}
-                  </a>
-                </h2>
-                {artist.data.agency && (
-                  <p class="subtle-text">{artist.data.agency}</p>
-                )}
-                <span class="chip" style="--chip-bg: color-mix(in srgb, var(--md-color-tertiary) 15%, transparent); --chip-color: var(--md-color-on-tertiary-container); margin-top: var(--md-spacing-sm); display: inline-flex; justify-content: center;">
-                  {artist.data.artistType}
-                </span>
-              </article>
+                </Fragment>
+                <Fragment slot="badges">
+                  <span class="chip" style="--chip-bg: color-mix(in srgb, var(--md-color-tertiary) 15%, transparent); --chip-color: var(--md-color-on-tertiary-container);">
+                    {artist.data.artistType}
+                  </span>
+                </Fragment>
+              </ContentCard>
               {/* Insert in-feed ad after every AD_INTERVAL cards */}
               {(index + 1) % AD_INTERVAL === 0 && index < artists.length - 1 && (
                 <div class="sm:col-span-2 lg:col-span-3 xl:col-span-4">

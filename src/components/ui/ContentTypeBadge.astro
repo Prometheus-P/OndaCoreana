@@ -1,0 +1,33 @@
+---
+/**
+ * ContentTypeBadge Component
+ *
+ * Displays a styled badge/chip for content types using centralized configuration.
+ * Ensures consistent styling across all pages.
+ */
+import { getContentTypeConfig, type ContentType } from '../../config/content-types';
+
+interface Props {
+  /** Content type to display */
+  type: ContentType | string;
+  /** Additional CSS classes */
+  class?: string;
+  /** Custom label override (default: from config) */
+  label?: string;
+  /** Test ID for testing */
+  testId?: string;
+}
+
+const { type, class: className = '', label, testId } = Astro.props;
+const config = getContentTypeConfig(type);
+const displayLabel = label ?? config.label;
+---
+
+<span
+  class:list={['chip', className]}
+  style={`--chip-bg: ${config.bg}; --chip-color: ${config.color};`}
+  data-content-type={type}
+  data-testid={testId}
+>
+  {displayLabel}
+</span>

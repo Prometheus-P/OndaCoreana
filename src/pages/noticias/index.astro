@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import ContentCard from '../../components/ui/ContentCard.astro';
 import { getPublishedContentSorted } from '../../utils/content-helpers';
 import { newsCategories } from '../../config/content-types';
 
@@ -44,43 +45,32 @@ const noticias = await getPublishedContentSorted('noticias');
       {noticias.length > 0 ? (
         <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {noticias.map((noticia) => (
-            <article class="surface-card surface-card--interactive flex flex-col" style="overflow: hidden;">
-              {noticia.data.heroImage && (
-                <img
-                  src={noticia.data.heroImage}
-                  alt={noticia.data.heroImageAlt || noticia.data.title}
-                  class="w-full object-cover"
-                  style="height: 12rem;"
-                  loading="lazy"
-                />
-              )}
-              <div style="padding: var(--md-spacing-md); display: flex; flex-direction: column; gap: var(--md-spacing-sm);">
-                <div class="flex items-center gap-2">
-                  <span class="chip" style="--chip-bg: color-mix(in srgb, var(--md-color-primary) 15%, transparent); --chip-color: var(--md-color-on-primary-container); text-transform: capitalize;">
-                    {noticia.data.category}
+            <ContentCard
+              href={`/noticias/${noticia.slug}`}
+              title={noticia.data.title}
+              description={noticia.data.description}
+              heroImage={noticia.data.heroImage}
+              heroImageAlt={noticia.data.heroImageAlt}
+            >
+              <Fragment slot="badges">
+                <span class="chip" style="--chip-bg: color-mix(in srgb, var(--md-color-primary) 15%, transparent); --chip-color: var(--md-color-on-primary-container); text-transform: capitalize;">
+                  {noticia.data.category}
+                </span>
+                {noticia.data.breaking && (
+                  <span class="chip" style="--chip-bg: var(--md-color-error); --chip-color: var(--md-color-on-error);">
+                    Urgente
                   </span>
-                  {noticia.data.breaking && (
-                    <span class="chip" style="--chip-bg: var(--md-color-error); --chip-color: var(--md-color-on-error);">
-                      Urgente
-                    </span>
-                  )}
-                </div>
-                <h2 class="font-semibold" style="color: var(--md-color-on-surface); font-size: var(--md-typo-title-medium-size);">
-                  <a href={`/noticias/${noticia.slug}`}>
-                    {noticia.data.title}
-                  </a>
-                </h2>
-                <p class="subtle-text" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
-                  {noticia.data.description}
-                </p>
+                )}
+              </Fragment>
+              <Fragment slot="metadata">
                 <time
                   datetime={noticia.data.pubDate.toISOString()}
                   style="font-size: var(--md-typo-label-medium-size); color: color-mix(in srgb, var(--md-color-on-surface-variant) 80%, transparent);"
                 >
                   {noticia.data.pubDate.toLocaleDateString('es-419', { year: 'numeric', month: 'long', day: 'numeric' })}
                 </time>
-              </div>
-            </article>
+              </Fragment>
+            </ContentCard>
           ))}
         </div>
       ) : (
