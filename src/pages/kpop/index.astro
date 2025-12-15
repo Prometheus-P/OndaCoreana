@@ -1,10 +1,9 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import AdSlot from '../../components/ads/AdSlot.astro';
-import { getCollection } from 'astro:content';
+import { getPublishedContentSorted } from '../../utils/content-helpers';
 
-const allKpop = await getCollection('kpop', ({ data }) => !data.draft);
-const artists = allKpop.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const artists = await getPublishedContentSorted('kpop');
 
 // Insert ad after every N cards
 const AD_INTERVAL = 4;
