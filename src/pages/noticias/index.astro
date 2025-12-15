@@ -1,10 +1,9 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getPublishedContentSorted } from '../../utils/content-helpers';
+import { newsCategories } from '../../config/content-types';
 
 const noticias = await getPublishedContentSorted('noticias');
-
-const categories = ['drama', 'kpop', 'cine', 'cultura', 'general'];
 ---
 
 <BaseLayout
@@ -31,7 +30,7 @@ const categories = ['drama', 'kpop', 'cine', 'cultura', 'general'];
         >
           Todas
         </a>
-        {categories.map((cat) => (
+        {newsCategories.map((cat) => (
           <a
             href={`/noticias/categoria/${cat}`}
             class="chip"
