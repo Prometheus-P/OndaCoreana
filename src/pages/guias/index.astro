@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import ContentCard from '../../components/ui/ContentCard.astro';
 import { getPublishedContentSorted } from '../../utils/content-helpers';
 
 const guias = await getPublishedContentSorted('guias');
@@ -45,42 +46,31 @@ const categories = ['streaming', 'viaje', 'idioma', 'cultura', 'general'];
       {guias.length > 0 ? (
         <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {guias.map((guia) => (
-            <article class="surface-card surface-card--interactive flex flex-col" style="overflow: hidden;">
-              {guia.data.heroImage && (
-                <img
-                  src={guia.data.heroImage}
-                  alt={guia.data.heroImageAlt || guia.data.title}
-                  class="w-full object-cover"
-                  style="height: 12rem;"
-                  loading="lazy"
-                />
-              )}
-              <div style="padding: var(--md-spacing-md); display: flex; flex-direction: column; gap: var(--md-spacing-sm);">
-                <div class="flex flex-wrap items-center gap-2">
-                  <span class="chip" style="--chip-bg: color-mix(in srgb, var(--md-color-tertiary) 15%, transparent); --chip-color: var(--md-color-on-tertiary-container); text-transform: capitalize;">
-                    {guia.data.category}
+            <ContentCard
+              href={`/guias/${guia.slug}`}
+              title={guia.data.title}
+              description={guia.data.description}
+              heroImage={guia.data.heroImage}
+              heroImageAlt={guia.data.heroImageAlt}
+            >
+              <Fragment slot="badges">
+                <span class="chip" style="--chip-bg: color-mix(in srgb, var(--md-color-tertiary) 15%, transparent); --chip-color: var(--md-color-on-tertiary-container); text-transform: capitalize;">
+                  {guia.data.category}
+                </span>
+                {guia.data.difficulty && (
+                  <span class="chip" style="--chip-bg: color-mix(in srgb, var(--md-color-surface-variant) 80%, transparent); --chip-color: var(--md-color-on-surface); text-transform: capitalize;">
+                    {guia.data.difficulty}
                   </span>
-                  {guia.data.difficulty && (
-                    <span class="chip" style="--chip-bg: color-mix(in srgb, var(--md-color-surface-variant) 80%, transparent); --chip-color: var(--md-color-on-surface); text-transform: capitalize;">
-                      {guia.data.difficulty}
-                    </span>
-                  )}
-                </div>
-                <h2 class="font-semibold" style="color: var(--md-color-on-surface); font-size: var(--md-typo-title-medium-size);">
-                  <a href={`/guias/${guia.slug}`}>
-                    {guia.data.title}
-                  </a>
-                </h2>
-                <p class="subtle-text" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
-                  {guia.data.description}
-                </p>
+                )}
+              </Fragment>
+              <Fragment slot="metadata">
                 {guia.data.readingTime && (
                   <p style="font-size: var(--md-typo-label-medium-size); color: color-mix(in srgb, var(--md-color-on-surface-variant) 80%, transparent);">
                     Tiempo de lectura: {guia.data.readingTime} min
                   </p>
                 )}
-              </div>
-            </article>
+              </Fragment>
+            </ContentCard>
           ))}
         </div>
       ) : (

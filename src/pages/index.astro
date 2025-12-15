@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import NewsletterForm from '../components/newsletter/NewsletterForm.astro';
 import AdSlot from '../components/ads/AdSlot.astro';
+import ContentCard from '../components/ui/ContentCard.astro';
 import { getRecentContent } from '../utils/content-helpers';
 
 // Obtener contenido reciente
@@ -139,39 +140,30 @@ const recentNoticias = await getRecentContent('noticias', 6);
       {recentDramas.length > 0 ? (
         <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {recentDramas.map((drama) => (
-            <article class="surface-card surface-card--interactive flex flex-col" style="overflow: hidden;">
-              {drama.data.heroImage && (
-                <img
-                  src={drama.data.heroImage}
-                  alt={drama.data.heroImageAlt || drama.data.title}
-                  class="w-full object-cover"
-                  style="height: 16rem;"
-                  loading="lazy"
-                />
-              )}
-              <div style="padding: var(--md-spacing-md); display: flex; flex-direction: column; gap: var(--md-spacing-sm);">
-                <div class="flex flex-wrap gap-2">
-                  {drama.data.genre?.slice(0, 2).map((g) => (
-                    <span class="chip" style="--chip-bg: color-mix(in srgb, var(--md-color-primary) 10%, var(--md-color-surface-variant)); --chip-color: var(--md-color-on-surface);">
-                      {g}
-                    </span>
-                  ))}
-                </div>
-                <h3 class="font-semibold" style="color: var(--md-color-on-surface); font-size: var(--md-typo-title-medium-size);">
-                  <a href={`/dramas/${drama.slug}`}>
-                    {drama.data.title}
-                  </a>
-                </h3>
-                <p class="subtle-text" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-                  {drama.data.description}
-                </p>
+            <ContentCard
+              href={`/dramas/${drama.slug}`}
+              title={drama.data.title}
+              description={drama.data.description}
+              heroImage={drama.data.heroImage}
+              heroImageAlt={drama.data.heroImageAlt}
+              imageHeight="16rem"
+              descriptionClamp={2}
+            >
+              <Fragment slot="badges">
+                {drama.data.genre?.slice(0, 2).map((g) => (
+                  <span class="chip" style="--chip-bg: color-mix(in srgb, var(--md-color-primary) 10%, var(--md-color-surface-variant)); --chip-color: var(--md-color-on-surface);">
+                    {g}
+                  </span>
+                ))}
+              </Fragment>
+              <Fragment slot="metadata">
                 {drama.data.network && (
                   <p style="font-size: var(--md-typo-label-medium-size); color: color-mix(in srgb, var(--md-color-on-surface-variant) 80%, transparent);">
                     {drama.data.network}
                   </p>
                 )}
-              </div>
-            </article>
+              </Fragment>
+            </ContentCard>
           ))}
         </div>
       ) : (

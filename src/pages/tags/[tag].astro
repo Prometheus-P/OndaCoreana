@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import ContentTypeBadge from '../../components/ui/ContentTypeBadge.astro';
 import { getPublishedContent, type ContentCollection } from '../../utils/content-helpers';
 
 export async function getStaticPaths() {
@@ -56,14 +57,6 @@ const { items, tagName } = Astro.props;
 
 // Capitalize tag for display
 const displayTag = tagName.charAt(0).toUpperCase() + tagName.slice(1);
-
-// Collection type colors and labels
-const typeConfig = {
-  dramas: { bg: 'var(--oc-primary-soft)', color: 'var(--oc-text)', label: 'K-Drama' },
-  kpop: { bg: 'var(--oc-accent-soft)', color: 'var(--oc-text)', label: 'K-Pop' },
-  noticias: { bg: 'color-mix(in srgb, var(--oc-accent) 12%, var(--oc-surface))', color: 'var(--oc-text)', label: 'Noticia' },
-  guias: { bg: 'color-mix(in srgb, var(--oc-primary) 10%, var(--oc-surface))', color: 'var(--oc-text)', label: 'Guía' },
-};
 ---
 
 <BaseLayout
@@ -91,7 +84,6 @@ const typeConfig = {
 
     <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {items.map((item) => {
-        const config = typeConfig[item.collectionType];
         const href = `/${item.collectionType}/${item.slug}`;
 
         return (
@@ -105,12 +97,7 @@ const typeConfig = {
               />
             )}
             <div class="p-4">
-              <span
-                class="inline-block rounded-full px-3 py-1 text-xs font-medium"
-                style={`background: ${config.bg}; color: ${config.color}; border: 1px solid var(--oc-border);`}
-              >
-                {config.label}
-              </span>
+              <ContentTypeBadge type={item.collectionType} />
               <h2 class="mt-2 text-lg font-semibold text-[color:var(--oc-text)] group-hover:text-[color:var(--oc-primary)]">
                 <a href={href}>
                   {item.data.title}
