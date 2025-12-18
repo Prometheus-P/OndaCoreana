@@ -174,7 +174,7 @@ const instanceId = Math.random().toString(36).substring(2, 9);
 
   // Pagefind instance (shared across all search inputs)
   let pagefindInstance: PagefindInstance | null = null;
-  let pagefindLoading = false;
+  // pagefindLoading tracked via pagefindLoadPromise
   let pagefindLoadPromise: Promise<PagefindInstance> | null = null;
   let shortcutRegistered = false;
 
@@ -182,7 +182,6 @@ const instanceId = Math.random().toString(36).substring(2, 9);
     if (pagefindInstance) return pagefindInstance;
     if (pagefindLoadPromise) return pagefindLoadPromise;
 
-    pagefindLoading = true;
     pagefindLoadPromise = (async () => {
       try {
         const pagefindPath = '/pagefind/pagefind.js';
@@ -193,8 +192,6 @@ const instanceId = Math.random().toString(36).substring(2, 9);
       } catch (error) {
         console.error('Failed to load Pagefind:', error);
         throw error;
-      } finally {
-        pagefindLoading = false;
       }
     })();
 
@@ -203,7 +200,6 @@ const instanceId = Math.random().toString(36).substring(2, 9);
 
   // Initialize each search wrapper
   function initSearchWrapper(wrapper: HTMLElement) {
-    const instanceId = wrapper.dataset.instanceId;
     const input = wrapper.querySelector('[data-testid="site-search-input"]') as HTMLInputElement;
     const form = wrapper.querySelector('[data-testid="search-form"]') as HTMLFormElement;
     const dropdown = wrapper.querySelector('[data-testid="search-dropdown"]') as HTMLElement;

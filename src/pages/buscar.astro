@@ -196,7 +196,6 @@ const shouldNoIndex = normalizedQuery.length === 0;
 </style>
 
 <script>
-  import { escapeHtml } from '../utils/search-client';
   import {
     renderLoadingState,
     renderEmptyState,
@@ -256,7 +255,6 @@ const shouldNoIndex = normalizedQuery.length === 0;
 
   // Pagination state
   let currentSearchResults: PagefindResult[] = [];
-  let currentQuery = '';
   let displayedCount = 0;
   const RESULTS_PER_PAGE = 10;
 
@@ -397,7 +395,6 @@ const shouldNoIndex = normalizedQuery.length === 0;
 
       // Store search results for pagination
       currentSearchResults = search.results;
-      currentQuery = query;
       displayedCount = 0;
 
       // Update SEO meta tags with result count

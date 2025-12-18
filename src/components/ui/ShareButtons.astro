@@ -12,12 +12,11 @@ interface Props {
   description?: string;
 }
 
-const { title, url, description = '' } = Astro.props;
+const { title, url } = Astro.props;
 
 // Encode for URL parameters
 const encodedTitle = encodeURIComponent(title);
 const encodedUrl = encodeURIComponent(url);
-const encodedDescription = encodeURIComponent(description);
 
 // Share URLs
 const shareUrls = {

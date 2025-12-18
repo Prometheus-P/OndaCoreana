@@ -134,7 +134,7 @@ const formAction = `https://buttondown.email/api/emails/embed-subscribe/${button
 
       try {
         // Submit to Buttondown API (CORS-friendly endpoint)
-        const response = await fetch((form as HTMLFormElement).action, {
+        await fetch((form as HTMLFormElement).action, {
           method: 'POST',
           body: formData,
           mode: 'no-cors', // Buttondown doesn't support CORS from browser
