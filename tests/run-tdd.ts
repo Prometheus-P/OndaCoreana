@@ -7,7 +7,6 @@
  */
 
 import { execSync } from 'child_process';
-import * as path from 'path';
 
 const TESTS = [
   { name: 'Content Validation', script: 'tests/content/validate-frontmatter.test.ts' },

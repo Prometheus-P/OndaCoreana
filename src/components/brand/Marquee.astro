@@ -21,7 +21,7 @@ const displayItems = [...items, ...items];
 
 <div class:list={['oc-marquee-wrapper', className]}>
   <div class="oc-marquee-track" style={`animation-duration: ${speed}s`}>
-    {displayItems.map((item, i) => (
+    {displayItems.map((item) => (
       <span class="oc-marquee-item">
         {item.split(' ').map((word, j) => (
           j === 0
