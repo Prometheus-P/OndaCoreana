@@ -26,7 +26,6 @@ const {
   publishDate,
   author,
   tags,
-  blocks,
   seoMeta,
 } = feature.data;
 
@@ -175,20 +174,6 @@ const categoryInfo = categoryConfig[category] || categoryConfig.culture;
           loading="eager"
         />
       </figure>
-    )}
-
-    <!-- Content Blocks -->
-    {blocks.length > 0 && (
-      <div class="mb-8 space-y-6">
-        {blocks.map((block) => (
-          <div class="rounded-lg border border-[color:var(--oc-border)] bg-[color:var(--oc-surface)] p-6 shadow-sm">
-            {block.heading && (
-              <h2 class="mb-2 text-lg font-semibold text-[color:var(--oc-text)]">{block.heading}</h2>
-            )}
-            <p class="text-[color:var(--oc-muted)]">{block.body}</p>
-          </div>
-        ))}
-      </div>
     )}
 
     <!-- MDX Content -->
