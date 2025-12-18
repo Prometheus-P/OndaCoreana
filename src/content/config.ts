@@ -78,14 +78,7 @@ const features = defineCollection({
     publishDate: z.coerce.date(),
     author: z.string().default('OndaCoreana'),
     tags: z.array(z.string()).default([]),
-    blocks: z
-      .array(
-        z.object({
-          heading: z.string().optional(),
-          body: z.string(),
-        })
-      )
-      .default([]),
+    // MDX content is handled automatically by Astro - no blocks field needed
     seoMeta: z
       .object({
         title: z.string().optional(),
