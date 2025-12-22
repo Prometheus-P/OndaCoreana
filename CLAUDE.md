@@ -1,7 +1,3 @@
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-Co-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>
-
 게시 절대 금지.
 
 # ondacoreana Development Guidelines

@@ -124,10 +124,12 @@ function runTests() {
   console.log('\n🏗️ TDD Build Validation Tests\n');
   console.log('='.repeat(60));
 
-  const distDir = path.join(process.cwd(), 'dist');
+  // Astro with server mode outputs to dist/client for static files
+  const baseDistDir = path.join(process.cwd(), 'dist');
+  const clientDistDir = path.join(baseDistDir, 'client');
 
   // Check if build exists
-  if (!fs.existsSync(distDir)) {
+  if (!fs.existsSync(baseDistDir)) {
     console.log('\n⚠️ Build directory not found. Running build...\n');
     try {
       execSync('pnpm build', { stdio: 'inherit', cwd: process.cwd() });
@@ -137,13 +139,16 @@ function runTests() {
     }
   }
 
+  // Re-check for client directory after build
+  const finalDistDir = fs.existsSync(clientDistDir) ? clientDistDir : baseDistDir;
+
   console.log('\n📋 Checking build requirements:\n');
 
   let totalPass = 0;
   let totalFail = 0;
 
   for (const req of buildRequirements) {
-    const result = checkRequirement(req, distDir);
+    const result = checkRequirement(req, finalDistDir);
     const icon = result.status === 'PASS' ? '✅' : '❌';
     console.log(`  ${icon} ${result.name}: ${result.message}`);
 
@@ -153,8 +158,8 @@ function runTests() {
 
   // Summary statistics
   console.log('\n📊 Build Statistics:\n');
-  const htmlCount = countHTMLFiles(distDir);
-  const buildSize = getBuildSize(distDir);
+  const htmlCount = countHTMLFiles(finalDistDir);
+  const buildSize = getBuildSize(finalDistDir);
   console.log(`  📄 HTML Pages: ${htmlCount}`);
   console.log(`  📦 Total Size: ${(buildSize / 1024 / 1024).toFixed(2)} MB`);
 
@@ -162,7 +167,7 @@ function runTests() {
   console.log('\n📁 Content Counts:\n');
   const collections = ['dramas', 'kpop', 'noticias', 'guias'];
   for (const col of collections) {
-    const colDir = path.join(distDir, col);
+    const colDir = path.join(finalDistDir, col);
     if (fs.existsSync(colDir)) {
       const files = fs.readdirSync(colDir).filter(f => f.endsWith('.html'));
       console.log(`  ${col}: ${files.length} pages`);

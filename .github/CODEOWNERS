@@ -1,0 +1,26 @@
+# Code Owners for ondacoreana
+# These owners will be requested for review when someone opens a pull request.
+
+# Global rule: owner reviews all changes
+* @Prometheus-P
+
+# Frontend components
+/src/components/ @Prometheus-P
+/src/layouts/ @Prometheus-P
+/src/pages/ @Prometheus-P
+
+# Content
+/src/content/ @Prometheus-P
+
+# Configuration files
+*.config.* @Prometheus-P
+astro.config.mjs @Prometheus-P
+tailwind.config.js @Prometheus-P
+tsconfig.json @Prometheus-P
+
+# GitHub workflows
+/.github/ @Prometheus-P
+
+# Tests
+/tests/ @Prometheus-P
+playwright.config.ts @Prometheus-P

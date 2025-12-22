@@ -37,13 +37,15 @@ id_dsa*
 credentials.json
 service-account*.json
 
+# Supabase Local
+.supabase/
+
 # ============================================
 # Development Environment (Local Only)
 # ============================================
 
-# Claude Code - Local Settings
-.claude/settings.local.json
-.claude/*.local.*
+# Claude Code - Local Settings (entire directory is local)
+.claude/
 
 # Speckit - Memory & Local State
 .specify/memory/
@@ -58,6 +60,9 @@ service-account*.json
 *.sublime-workspace
 *.sublime-project
 
+# Cursor IDE
+.cursor/
+
 # ============================================
 # Data & Drafts
 # ============================================
@@ -71,7 +76,7 @@ data/drafts/
 
 # Build Output
 dist/
-build/
+/build/
 .output/
 .vercel/
 .netlify/

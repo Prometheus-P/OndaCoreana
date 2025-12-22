@@ -3,9 +3,10 @@ import { defineConfig, devices } from '@playwright/test';
 const previewPort = Number(process.env.PLAYWRIGHT_PORT ?? '4321');
 const previewHost = process.env.PLAYWRIGHT_HOST ?? '127.0.0.1';
 const previewURL = `http://${previewHost}:${previewPort}`;
+// Use environment variables for node server (entry.mjs doesn't support CLI args)
 const previewCommand =
   process.env.PLAYWRIGHT_WEBSERVER_COMMAND ??
-  `pnpm preview:e2e --port ${previewPort} --host ${previewHost}`;
+  `PORT=${previewPort} HOST=${previewHost} pnpm preview:e2e`;
 
 export default defineConfig({
   testDir: './tests/e2e',
