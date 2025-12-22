@@ -9,7 +9,7 @@
     "build": "astro build",
     "build:check": "astro build && tsx scripts/check-pagefind-size.ts",
     "preview": "astro preview --host 0.0.0.0 --port 5173",
-    "preview:e2e": "astro preview",
+    "preview:e2e": "node dist/server/entry.mjs",
     "start:e2e": "PUBLIC_ADMIN_ACCESS_CODE=test-admin-2024 pnpm build && astro preview --host 0.0.0.0 --port 5173",
     "astro": "astro",
     "check": "astro check",
