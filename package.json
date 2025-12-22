@@ -39,7 +39,7 @@
     "@keystatic/core": "^0.5.48",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.89.0",
-    "@tailwindcss/vite": "^4.1.17",
+    "@tailwindcss/vite": "^4.1.18",
     "@types/inquirer": "^9.0.9",
     "@types/js-yaml": "^4.0.9",
     "@types/react": "^19.2.7",
