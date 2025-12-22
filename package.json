@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@astrojs/markdoc": "^0.15.10",
-    "@astrojs/mdx": "^4.3.12",
+    "@astrojs/mdx": "^4.3.13",
     "@astrojs/node": "^9.5.1",
     "@astrojs/react": "^4.4.2",
     "@astrojs/sitemap": "^3.6.0",
@@ -44,7 +44,7 @@
     "@types/js-yaml": "^4.0.9",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
-    "astro": "^5.16.1",
+    "astro": "^5.16.6",
     "axios": "^1.13.2",
     "dotenv": "^17.2.3",
     "inquirer": "^13.1.0",
