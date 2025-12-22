@@ -12,7 +12,7 @@
 export const prerender = false;
 
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import type { Profile, GroupOrder, Participation, GroupOrderStatus } from '../../types/supabase';
+import type { Profile, GroupOrder, GroupOrderStatus } from '../../types/supabase';
 
 const { supabase, user } = Astro.locals;
 
@@ -21,20 +21,24 @@ if (!user) {
   return Astro.redirect('/auth/login');
 }
 
-// Fetch profile
-const { data: profile } = await supabase
+// Fetch profile with explicit type
+const { data: profileData } = await supabase
   .from('profiles')
   .select('*')
   .eq('id', user.id)
   .single();
 
-// Fetch organized orders
-const { data: organizedOrders } = await supabase
+const profile = profileData as Profile | null;
+
+// Fetch organized orders with explicit type
+const { data: organizedOrdersData } = await supabase
   .from('group_orders')
   .select('*')
   .eq('organizer_id', user.id)
   .order('created_at', { ascending: false })
   .limit(5);
+
+const organizedOrders = organizedOrdersData as GroupOrder[] | null;
 
 // Fetch participations with order details
 const { data: participations } = await supabase
