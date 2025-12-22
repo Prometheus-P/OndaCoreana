@@ -76,7 +76,7 @@ data/drafts/
 
 # Build Output
 dist/
-build/
+/build/
 .output/
 .vercel/
 .netlify/
