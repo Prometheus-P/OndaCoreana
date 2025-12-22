@@ -1,0 +1,36 @@
+---
+/**
+ * Auth Callback Handler
+ *
+ * Handles the Magic Link redirect from Supabase.
+ * Exchanges the authorization code for a session using PKCE flow.
+ */
+export const prerender = false;
+
+// Get the authorization code from the URL
+const code = Astro.url.searchParams.get('code');
+const error = Astro.url.searchParams.get('error');
+const errorDescription = Astro.url.searchParams.get('error_description');
+
+// Handle error from Supabase
+if (error) {
+  console.error('Auth callback error:', error, errorDescription);
+  return Astro.redirect('/auth/login?error=callback_failed');
+}
+
+// No code provided
+if (!code) {
+  return Astro.redirect('/auth/login?error=callback_failed');
+}
+
+// Exchange the code for a session
+const { error: exchangeError } = await Astro.locals.supabase.auth.exchangeCodeForSession(code);
+
+if (exchangeError) {
+  console.error('Session exchange error:', exchangeError.message);
+  return Astro.redirect('/auth/login?error=callback_failed');
+}
+
+// Success - redirect to dashboard
+return Astro.redirect('/dashboard');
+---

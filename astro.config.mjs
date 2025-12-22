@@ -6,36 +6,37 @@ import sitemap from '@astrojs/sitemap';
 import react from '@astrojs/react';
 import markdoc from '@astrojs/markdoc';
 import pagefind from 'astro-pagefind';
+import node from '@astrojs/node';
 
 const SEARCH_ROUTE = '/buscar';
 
 /**
- * Keystatic CMS Mode
+ * Hybrid Mode Configuration
  *
+ * Astro 5.x uses static output with selective SSR (formerly "hybrid").
+ * - Most pages are pre-rendered (static)
+ * - Auth/dashboard pages use `export const prerender = false` for SSR
+ * - Node adapter is always enabled for SSR pages
+ *
+ * Keystatic CMS Mode:
  * When KEYSTATIC_CMS=true, enables the Keystatic admin UI at /keystatic
- * This requires server mode which is incompatible with pagefind,
- * so we use conditional configuration.
+ * This requires server mode for all pages.
  *
  * Usage:
+ * - Development: pnpm dev
  * - Development with CMS: KEYSTATIC_CMS=true pnpm dev
- * - Development without CMS: pnpm dev
- * - Production build: pnpm build (always static)
+ * - Production build: pnpm build
  */
 const isCmsMode = process.env.KEYSTATIC_CMS === 'true';
 
 // Conditional imports for CMS mode
 const cmsConfig = isCmsMode
-  ? await Promise.all([
-      import('@keystatic/astro').then((m) => m.default),
-      import('@astrojs/node').then((m) => m.default),
-    ]).then(([keystatic, node]) => ({
+  ? await import('@keystatic/astro').then((m) => ({
       output: /** @type {const} */ ('server'),
-      adapter: node({ mode: 'standalone' }),
-      integrations: [keystatic()],
+      integrations: [m.default()],
     }))
   : {
       output: /** @type {const} */ ('static'),
-      adapter: undefined,
       integrations: [],
     };
 
@@ -43,7 +44,7 @@ const cmsConfig = isCmsMode
 export default defineConfig({
   site: 'https://ondacoreana.com',
   output: cmsConfig.output,
-  adapter: cmsConfig.adapter,
+  adapter: node({ mode: 'standalone' }),
   trailingSlash: 'never',
 
   i18n: {
