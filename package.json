@@ -57,15 +57,15 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.0",
     "@playwright/test": "^1.57.0",
-    "@types/jsdom": "^21.1.0",
-    "@types/node": "^20.19.27",
+    "@types/jsdom": "^27.0.0",
+    "@types/node": "^25.0.3",
     "astro-pagefind": "^1.8.5",
     "gray-matter": "^4.0.3",
-    "jsdom": "^24.0.0",
+    "jsdom": "^27.3.0",
     "pagefind": "^1.4.0",
     "ts-node": "^10.9.2",
     "tsx": "^4.21.0",
     "typescript": "^5.9.3",
-    "zod": "^3.23.0"
+    "zod": "^4.2.1"
   }
 }
