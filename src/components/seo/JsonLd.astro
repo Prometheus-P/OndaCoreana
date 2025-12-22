@@ -68,7 +68,7 @@ function generateSchema(s: SchemaType): object {
         '@type': 'Organization',
         name: s.name || 'OndaCoreana',
         url: s.url || siteUrl,
-        logo: s.logo || `${siteUrl}/logo.png`,
+        logo: s.logo || `${siteUrl}/brand/og-default.svg`,
         sameAs: [
           'https://twitter.com/ondacoreana',
           'https://facebook.com/ondacoreana',
@@ -98,7 +98,7 @@ function generateSchema(s: SchemaType): object {
           name: 'OndaCoreana',
           logo: {
             '@type': 'ImageObject',
-            url: `${siteUrl}/logo.png`,
+            url: `${siteUrl}/brand/og-default.svg`,
           },
         },
         mainEntityOfPage: {
