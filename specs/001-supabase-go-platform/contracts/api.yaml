@@ -1,0 +1,423 @@
+openapi: 3.1.0
+info:
+  title: OndaCoreana G.O Platform API
+  description: |
+    API specification for the Group Order (공동구매) platform.
+    Built on Supabase with RLS - most endpoints use Supabase client directly.
+    This spec documents server-side Astro API routes and page behaviors.
+  version: 1.0.0
+  contact:
+    name: OndaCoreana
+    url: https://ondacoreana.com
+
+servers:
+  - url: https://ondacoreana.com
+    description: Production
+  - url: http://localhost:4321
+    description: Development
+
+tags:
+  - name: Auth
+    description: Authentication endpoints (Magic Link)
+  - name: Dashboard
+    description: User dashboard pages (SSR)
+  - name: Profile
+    description: User profile operations
+
+paths:
+  /auth/login:
+    get:
+      tags: [Auth]
+      summary: Login page
+      description: Renders Magic Link login form. Redirects to dashboard if already authenticated.
+      responses:
+        '200':
+          description: Login page HTML
+          content:
+            text/html:
+              schema:
+                type: string
+        '302':
+          description: Redirect to dashboard (if authenticated)
+          headers:
+            Location:
+              schema:
+                type: string
+                example: /dashboard
+
+    post:
+      tags: [Auth]
+      summary: Request Magic Link
+      description: |
+        Sends Magic Link email to user. Rate limited to 1 per 5 minutes per email (client-side)
+        and 1 per 60 seconds (Supabase server-side).
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email:
+                  type: string
+                  format: email
+                  example: usuario@ejemplo.com
+      responses:
+        '200':
+          description: Success message page
+          content:
+            text/html:
+              schema:
+                type: string
+        '429':
+          description: Rate limit exceeded
+
+  /auth/callback:
+    get:
+      tags: [Auth]
+      summary: Magic Link callback
+      description: |
+        Handles Magic Link redirect. Exchanges code for session using PKCE flow.
+        Redirects to dashboard on success, login on failure.
+      parameters:
+        - name: code
+          in: query
+          required: true
+          schema:
+            type: string
+          description: Authorization code from Magic Link
+        - name: error
+          in: query
+          schema:
+            type: string
+          description: Error code if authentication failed
+      responses:
+        '302':
+          description: Redirect to dashboard (success) or login (failure)
+          headers:
+            Location:
+              schema:
+                type: string
+            Set-Cookie:
+              description: Session cookies (httpOnly, 7-day expiration)
+              schema:
+                type: string
+
+  /auth/logout:
+    get:
+      tags: [Auth]
+      summary: Logout
+      description: Clears session cookies and redirects to homepage.
+      responses:
+        '302':
+          description: Redirect to homepage
+          headers:
+            Location:
+              schema:
+                type: string
+                example: /
+            Set-Cookie:
+              description: Clear session cookies
+              schema:
+                type: string
+
+    post:
+      tags: [Auth]
+      summary: Logout (POST)
+      description: Same as GET, for form submissions.
+      responses:
+        '302':
+          description: Redirect to homepage
+
+  /dashboard:
+    get:
+      tags: [Dashboard]
+      summary: User dashboard
+      description: |
+        Main dashboard showing user profile, organized orders, and participations.
+        Requires authentication - redirects to login if not authenticated.
+      security:
+        - sessionCookie: []
+      responses:
+        '200':
+          description: Dashboard page HTML
+          content:
+            text/html:
+              schema:
+                type: string
+        '302':
+          description: Redirect to login (if not authenticated)
+          headers:
+            Location:
+              schema:
+                type: string
+                example: /auth/login?next=/dashboard
+
+  /api/profile/check-username:
+    get:
+      tags: [Profile]
+      summary: Check username availability
+      description: Real-time username uniqueness validation.
+      parameters:
+        - name: username
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 3
+            maxLength: 30
+            pattern: '^[a-z0-9_]+$'
+      responses:
+        '200':
+          description: Username availability result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  available:
+                    type: boolean
+                  message:
+                    type: string
+              examples:
+                available:
+                  value:
+                    available: true
+                    message: Username disponible
+                taken:
+                  value:
+                    available: false
+                    message: Este nombre de usuario ya está en uso
+
+components:
+  securitySchemes:
+    sessionCookie:
+      type: apiKey
+      in: cookie
+      name: sb-access-token
+      description: |
+        Supabase session cookie. Set automatically after Magic Link authentication.
+        httpOnly, secure, sameSite=lax, 7-day expiration.
+
+  schemas:
+    Profile:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        username:
+          type: string
+          nullable: true
+        display_name:
+          type: string
+          nullable: true
+        country:
+          type: string
+          description: ISO 3166-1 alpha-2
+          nullable: true
+        locale:
+          type: string
+          enum: [es, pt]
+          default: es
+        trust_score:
+          type: integer
+          minimum: 0
+          default: 0
+        verified_at:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    GroupOrder:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        organizer_id:
+          type: string
+          format: uuid
+        title:
+          type: string
+          minLength: 3
+        description:
+          type: string
+          nullable: true
+        product_url:
+          type: string
+          format: uri
+          nullable: true
+        product_image:
+          type: string
+          format: uri
+          nullable: true
+        unit_price_krw:
+          type: integer
+          minimum: 1
+        shipping_per_unit_krw:
+          type: integer
+          minimum: 0
+          default: 0
+        platform_fee_percent:
+          type: number
+          format: decimal
+          minimum: 0
+          maximum: 100
+          default: 5.00
+        min_quantity:
+          type: integer
+          minimum: 1
+        max_quantity:
+          type: integer
+          nullable: true
+        current_quantity:
+          type: integer
+          minimum: 0
+          default: 0
+        destination_countries:
+          type: array
+          items:
+            type: string
+          default: [MX, AR, CL, BR, CO, PE]
+        status:
+          type: string
+          enum: [draft, open, filled, purchasing, shipping, completed, cancelled]
+          default: draft
+        deadline:
+          type: string
+          format: date-time
+        estimated_delivery:
+          type: string
+          format: date
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    Participation:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        group_order_id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        quantity:
+          type: integer
+          minimum: 1
+          default: 1
+        shipping_address:
+          $ref: '#/components/schemas/ShippingAddress'
+        payment_status:
+          type: string
+          enum: [pending, paid, refunded, failed]
+          default: pending
+        payment_id:
+          type: string
+          nullable: true
+        amount_paid_usd:
+          type: number
+          format: decimal
+          nullable: true
+        status:
+          type: string
+          enum: [active, cancelled, fulfilled]
+          default: active
+        created_at:
+          type: string
+          format: date-time
+
+    ShippingAddress:
+      type: object
+      nullable: true
+      properties:
+        name:
+          type: string
+        street:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        postal_code:
+          type: string
+        country:
+          type: string
+          description: ISO 3166-1 alpha-2
+        phone:
+          type: string
+          nullable: true
+
+    Review:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        group_order_id:
+          type: string
+          format: uuid
+        reviewer_id:
+          type: string
+          format: uuid
+        rating:
+          type: integer
+          minimum: 1
+          maximum: 5
+        comment:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+
+    Notification:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum: [order_update, payment_received, shipping_update, order_filled, order_deadline]
+        title:
+          type: string
+        body:
+          type: string
+          nullable: true
+        data:
+          type: object
+          nullable: true
+        read_at:
+          type: string
+          format: date-time
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string

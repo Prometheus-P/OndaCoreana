@@ -1,0 +1,390 @@
+---
+/**
+ * User Dashboard
+ *
+ * Main dashboard showing:
+ * - User profile summary
+ * - Organized group orders
+ * - Participations in other orders
+ * - Unread notifications count
+ * - Quick action cards
+ */
+export const prerender = false;
+
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import type { Profile, GroupOrder, Participation, GroupOrderStatus } from '../../types/supabase';
+
+const { supabase, user } = Astro.locals;
+
+// User is guaranteed to exist (protected by middleware)
+if (!user) {
+  return Astro.redirect('/auth/login');
+}
+
+// Fetch profile
+const { data: profile } = await supabase
+  .from('profiles')
+  .select('*')
+  .eq('id', user.id)
+  .single();
+
+// Fetch organized orders
+const { data: organizedOrders } = await supabase
+  .from('group_orders')
+  .select('*')
+  .eq('organizer_id', user.id)
+  .order('created_at', { ascending: false })
+  .limit(5);
+
+// Fetch participations with order details
+const { data: participations } = await supabase
+  .from('participations')
+  .select(`
+    *,
+    group_order:group_orders (*)
+  `)
+  .eq('user_id', user.id)
+  .order('created_at', { ascending: false })
+  .limit(5);
+
+// Fetch unread notifications count
+const { count: unreadCount } = await supabase
+  .from('notifications')
+  .select('*', { count: 'exact', head: true })
+  .eq('user_id', user.id)
+  .is('read_at', null);
+
+// Status labels in Spanish with colors
+const statusLabels: Record<GroupOrderStatus, { label: string; color: string; bg: string }> = {
+  draft: { label: 'Borrador', color: 'var(--md-color-on-surface-variant)', bg: 'var(--md-color-surface-variant)' },
+  open: { label: 'Abierto', color: 'var(--md-color-on-primary)', bg: 'var(--md-color-primary)' },
+  filled: { label: 'Completo', color: 'var(--md-color-on-secondary)', bg: 'var(--md-color-secondary)' },
+  purchasing: { label: 'Comprando', color: '#fff', bg: '#f59e0b' },
+  shipping: { label: 'Enviando', color: '#fff', bg: '#8b5cf6' },
+  completed: { label: 'Completado', color: '#fff', bg: '#10b981' },
+  cancelled: { label: 'Cancelado', color: 'var(--md-color-on-error)', bg: 'var(--md-color-error)' },
+};
+
+function getStatusStyle(status: GroupOrderStatus) {
+  return statusLabels[status] || statusLabels.draft;
+}
+
+function formatDate(dateString: string): string {
+  return new Date(dateString).toLocaleDateString('es-MX', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+}
+
+function formatCurrency(amount: number): string {
+  return new Intl.NumberFormat('ko-KR', {
+    style: 'currency',
+    currency: 'KRW',
+    maximumFractionDigits: 0,
+  }).format(amount);
+}
+---
+
+<BaseLayout
+  title="Mi Panel | OndaCoreana"
+  description="Tu panel de control de OndaCoreana"
+  noindex={true}
+  showSearch={false}
+>
+  <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="mb-8 flex flex-wrap items-center justify-between gap-4">
+      <div>
+        <h1
+          class="text-2xl font-bold sm:text-3xl"
+          style="color: var(--md-color-on-surface);"
+        >
+          Hola, {profile?.display_name || user.email?.split('@')[0]}
+        </h1>
+        <p
+          class="mt-1 text-sm"
+          style="color: var(--md-color-on-surface-variant);"
+        >
+          Bienvenido a tu panel de control
+        </p>
+      </div>
+      <div class="flex items-center gap-3">
+        {unreadCount && unreadCount > 0 && (
+          <div
+            class="flex items-center gap-2 rounded-full px-3 py-1.5"
+            style="background-color: color-mix(in srgb, var(--md-color-primary) 15%, transparent);"
+          >
+            <svg class="h-4 w-4" style="color: var(--md-color-primary);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
+            <span class="text-sm font-medium" style="color: var(--md-color-primary);">
+              {unreadCount}
+            </span>
+          </div>
+        )}
+        <a
+          href="/auth/logout"
+          class="rounded-lg px-4 py-2 text-sm font-medium transition-colors"
+          style="border: 1px solid var(--md-color-outline); color: var(--md-color-on-surface); min-height: 44px; display: flex; align-items: center;"
+        >
+          Cerrar sesión
+        </a>
+      </div>
+    </div>
+
+    <!-- Profile Summary Card -->
+    <div
+      class="mb-8 rounded-2xl p-6"
+      style="background-color: var(--md-color-surface-container); box-shadow: var(--md-elevation-1);"
+    >
+      <div class="flex flex-wrap items-center gap-6">
+        <div
+          class="flex h-16 w-16 items-center justify-center rounded-full text-2xl font-bold"
+          style="background-color: var(--md-color-primary); color: var(--md-color-on-primary);"
+        >
+          {(profile?.display_name || user.email || 'U')[0].toUpperCase()}
+        </div>
+        <div class="flex-1">
+          <p class="font-semibold" style="color: var(--md-color-on-surface);">
+            {profile?.display_name || 'Sin nombre'}
+          </p>
+          <p class="text-sm" style="color: var(--md-color-on-surface-variant);">
+            {user.email}
+          </p>
+          <div class="mt-2 flex flex-wrap items-center gap-4 text-sm" style="color: var(--md-color-on-surface-variant);">
+            {profile?.country && (
+              <span>
+                {profile.country}
+              </span>
+            )}
+            <span>
+              Puntuación: {profile?.trust_score || 0}
+            </span>
+            {profile?.verified_at && (
+              <span class="flex items-center gap-1" style="color: var(--md-color-primary);">
+                <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                </svg>
+                Verificado
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="mb-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <a
+        href="#"
+        class="quick-action-card group rounded-xl p-5 transition-all"
+        style="background-color: var(--md-color-primary-container); min-height: 44px;"
+      >
+        <div class="flex items-center gap-4">
+          <div
+            class="flex h-12 w-12 items-center justify-center rounded-lg"
+            style="background-color: var(--md-color-primary);"
+          >
+            <svg class="h-6 w-6" style="color: var(--md-color-on-primary);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+            </svg>
+          </div>
+          <div>
+            <p class="font-semibold" style="color: var(--md-color-on-primary-container);">
+              Crear pedido grupal
+            </p>
+            <p class="text-sm opacity-80" style="color: var(--md-color-on-primary-container);">
+              Organiza una compra
+            </p>
+          </div>
+        </div>
+      </a>
+
+      <a
+        href="#"
+        class="quick-action-card group rounded-xl p-5 transition-all"
+        style="background-color: var(--md-color-secondary-container); min-height: 44px;"
+      >
+        <div class="flex items-center gap-4">
+          <div
+            class="flex h-12 w-12 items-center justify-center rounded-lg"
+            style="background-color: var(--md-color-secondary);"
+          >
+            <svg class="h-6 w-6" style="color: var(--md-color-on-secondary);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+          <div>
+            <p class="font-semibold" style="color: var(--md-color-on-secondary-container);">
+              Explorar pedidos
+            </p>
+            <p class="text-sm opacity-80" style="color: var(--md-color-on-secondary-container);">
+              Encuentra productos
+            </p>
+          </div>
+        </div>
+      </a>
+
+      <a
+        href="#"
+        class="quick-action-card group rounded-xl p-5 transition-all sm:col-span-2 lg:col-span-1"
+        style="background-color: var(--md-color-tertiary-container); min-height: 44px;"
+      >
+        <div class="flex items-center gap-4">
+          <div
+            class="flex h-12 w-12 items-center justify-center rounded-lg"
+            style="background-color: var(--md-color-tertiary);"
+          >
+            <svg class="h-6 w-6" style="color: var(--md-color-on-tertiary);" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+          </div>
+          <div>
+            <p class="font-semibold" style="color: var(--md-color-on-tertiary-container);">
+              Mi perfil
+            </p>
+            <p class="text-sm opacity-80" style="color: var(--md-color-on-tertiary-container);">
+              Editar información
+            </p>
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <!-- Content Grid -->
+    <div class="grid gap-8 lg:grid-cols-2">
+      <!-- Organized Orders -->
+      <div
+        class="rounded-2xl p-6"
+        style="background-color: var(--md-color-surface-container); box-shadow: var(--md-elevation-1);"
+      >
+        <h2 class="mb-4 text-lg font-semibold" style="color: var(--md-color-on-surface);">
+          Mis pedidos organizados
+        </h2>
+        {organizedOrders && organizedOrders.length > 0 ? (
+          <ul class="space-y-3">
+            {organizedOrders.map((order) => {
+              const status = getStatusStyle(order.status as GroupOrderStatus);
+              return (
+                <li
+                  class="rounded-lg p-4 transition-colors"
+                  style="background-color: var(--md-color-surface); border: 1px solid var(--md-color-outline-variant);"
+                >
+                  <div class="flex flex-wrap items-start justify-between gap-2">
+                    <div class="flex-1 min-w-0">
+                      <p class="font-medium truncate" style="color: var(--md-color-on-surface);">
+                        {order.title}
+                      </p>
+                      <p class="mt-1 text-sm" style="color: var(--md-color-on-surface-variant);">
+                        {formatCurrency(order.unit_price_krw)} · {order.current_quantity}/{order.min_quantity} unidades
+                      </p>
+                    </div>
+                    <span
+                      class="rounded-full px-2.5 py-1 text-xs font-medium whitespace-nowrap"
+                      style={`background-color: ${status.bg}; color: ${status.color};`}
+                    >
+                      {status.label}
+                    </span>
+                  </div>
+                  <p class="mt-2 text-xs" style="color: var(--md-color-on-surface-variant);">
+                    Fecha límite: {formatDate(order.deadline)}
+                  </p>
+                </li>
+              );
+            })}
+          </ul>
+        ) : (
+          <div
+            class="rounded-lg p-6 text-center"
+            style="background-color: var(--md-color-surface); border: 1px dashed var(--md-color-outline-variant);"
+          >
+            <p style="color: var(--md-color-on-surface-variant);">
+              Aún no has organizado ningún pedido
+            </p>
+            <a
+              href="#"
+              class="mt-3 inline-block text-sm font-medium"
+              style="color: var(--md-color-primary);"
+            >
+              Crear mi primer pedido
+            </a>
+          </div>
+        )}
+      </div>
+
+      <!-- Participations -->
+      <div
+        class="rounded-2xl p-6"
+        style="background-color: var(--md-color-surface-container); box-shadow: var(--md-elevation-1);"
+      >
+        <h2 class="mb-4 text-lg font-semibold" style="color: var(--md-color-on-surface);">
+          Mis participaciones
+        </h2>
+        {participations && participations.length > 0 ? (
+          <ul class="space-y-3">
+            {participations.map((participation: any) => {
+              const order = participation.group_order;
+              if (!order) return null;
+              const status = getStatusStyle(order.status as GroupOrderStatus);
+              return (
+                <li
+                  class="rounded-lg p-4 transition-colors"
+                  style="background-color: var(--md-color-surface); border: 1px solid var(--md-color-outline-variant);"
+                >
+                  <div class="flex flex-wrap items-start justify-between gap-2">
+                    <div class="flex-1 min-w-0">
+                      <p class="font-medium truncate" style="color: var(--md-color-on-surface);">
+                        {order.title}
+                      </p>
+                      <p class="mt-1 text-sm" style="color: var(--md-color-on-surface-variant);">
+                        {participation.quantity} unidades · {formatCurrency(order.unit_price_krw * participation.quantity)}
+                      </p>
+                    </div>
+                    <span
+                      class="rounded-full px-2.5 py-1 text-xs font-medium whitespace-nowrap"
+                      style={`background-color: ${status.bg}; color: ${status.color};`}
+                    >
+                      {status.label}
+                    </span>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        ) : (
+          <div
+            class="rounded-lg p-6 text-center"
+            style="background-color: var(--md-color-surface); border: 1px dashed var(--md-color-outline-variant);"
+          >
+            <p style="color: var(--md-color-on-surface-variant);">
+              Aún no participas en ningún pedido
+            </p>
+            <a
+              href="#"
+              class="mt-3 inline-block text-sm font-medium"
+              style="color: var(--md-color-primary);"
+            >
+              Explorar pedidos
+            </a>
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .quick-action-card {
+    box-shadow: var(--md-elevation-1);
+  }
+
+  .quick-action-card:hover {
+    box-shadow: var(--md-elevation-2);
+    transform: translateY(-2px);
+  }
+
+  .quick-action-card:active {
+    transform: translateY(0);
+  }
+</style>
