@@ -26,7 +26,7 @@ const baseArticleSchema = z.object({
 });
 
 const dramaSchema = baseArticleSchema.extend({
-  dramaTitle: z.string({ required_error: 'dramaTitle is required for dramas collection' }),
+  dramaTitle: z.string({ error: 'dramaTitle is required for dramas collection' }),
   dramaYear: z.number().optional(),
   network: z.string().optional(),
   episodes: z.number().optional(),
@@ -36,7 +36,7 @@ const dramaSchema = baseArticleSchema.extend({
 });
 
 const kpopSchema = baseArticleSchema.extend({
-  artistName: z.string({ required_error: 'artistName is required for kpop collection' }),
+  artistName: z.string({ error: 'artistName is required for kpop collection' }),
   artistType: z.enum(['solista', 'grupo', 'banda']).default('grupo'),
   agency: z.string().optional(),
   debutYear: z.number().optional(),
@@ -45,7 +45,7 @@ const kpopSchema = baseArticleSchema.extend({
 
 const noticiasSchema = baseArticleSchema.extend({
   category: z.enum(['drama', 'kpop', 'cine', 'cultura', 'general'], {
-    required_error: 'category is required for noticias collection',
+    error: 'category is required for noticias collection',
   }),
   breaking: z.boolean().default(false),
   source: z.string().optional(),
@@ -53,7 +53,7 @@ const noticiasSchema = baseArticleSchema.extend({
 
 const guiasSchema = baseArticleSchema.extend({
   category: z.enum(['streaming', 'viaje', 'idioma', 'cultura', 'general'], {
-    required_error: 'category is required for guias collection',
+    error: 'category is required for guias collection',
   }),
   difficulty: z.enum(['principiante', 'intermedio', 'avanzado']).optional(),
   readingTime: z.number().optional(),
@@ -93,7 +93,7 @@ function validateFile(filePath: string, collection: string): TestResult {
   } catch (error) {
     result.status = 'FAIL';
     if (error instanceof z.ZodError) {
-      result.errors = error.errors.map(e => `${e.path.join('.')}: ${e.message}`);
+      result.errors = error.issues.map((e) => `${e.path.join('.')}: ${e.message}`);
     } else if (error instanceof Error) {
       result.errors = [error.message];
     }
