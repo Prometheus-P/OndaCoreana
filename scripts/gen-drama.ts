@@ -242,10 +242,6 @@ ${overview}
 
 ${frontmatter.cast.map(actor => `- ${actor}`).join('\\n')}
 
-### ¿Dónde ver este drama?
-
-<AffiliateBox contentId='${slug}' />
-
 ### Nuestra Opinión
 
 *(Aquí puedes añadir tu reseña personal sobre el drama...)*
