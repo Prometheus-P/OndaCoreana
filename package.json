@@ -25,6 +25,8 @@
     "tdd:refactor": "echo '🔵 REFACTOR: Improving code...' && pnpm check && pnpm test",
     "quality:check": "tsx scripts/quality/check_content.ts",
     "quality:strict": "tsx scripts/quality/check_content.ts --strict",
+    "gen:drama": "tsx scripts/gen-drama.ts",
+    "gen:drama:popular": "tsx scripts/gen-drama.ts --popular --count=6",
     "lint": "astro check",
     "typecheck": "tsc --noEmit"
   },
