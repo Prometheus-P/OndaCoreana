@@ -89,13 +89,14 @@ const isKpopArtist = variant === 'kpop-artist';
     data-testid={testId}
   >
     {heroImage && (
-      <img
-        src={heroImage}
-        alt={heroImageAlt || title}
-        class="w-full object-cover"
-        style={`height: ${imageHeight};`}
-        loading="lazy"
-      />
+      <div class="relative w-full overflow-hidden" style={`aspect-ratio: 16/9;`}>
+        <img
+          src={heroImage}
+          alt={heroImageAlt || title}
+          class="absolute inset-0 h-full w-full object-cover"
+          loading="lazy"
+        />
+      </div>
     )}
     <div style="padding: var(--md-spacing-md); display: flex; flex-direction: column; gap: var(--md-spacing-sm);">
       <div class="flex flex-wrap items-center gap-2">

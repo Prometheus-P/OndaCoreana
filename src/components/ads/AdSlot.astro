@@ -42,11 +42,12 @@ const formatStyles: Record<string, string> = {
 };
 
 // Fixed dimensions for CLS prevention (width x height in px)
-const formatDimensions: Record<string, { minHeight: string; width: string }> = {
-  auto: { minHeight: '250px', width: '100%' },
-  banner: { minHeight: '90px', width: '100%' },
-  'in-article': { minHeight: '280px', width: '100%' },
-  'in-feed': { minHeight: '120px', width: '100%' },
+// Mobile-friendly sizes reduce visual disruption on small screens
+const formatDimensions: Record<string, { minHeight: string; mobileMinHeight: string; width: string }> = {
+  auto: { minHeight: '250px', mobileMinHeight: '100px', width: '100%' },
+  banner: { minHeight: '90px', mobileMinHeight: '50px', width: '100%' },
+  'in-article': { minHeight: '280px', mobileMinHeight: '150px', width: '100%' },
+  'in-feed': { minHeight: '120px', mobileMinHeight: '90px', width: '100%' },
 };
 
 const adStyle = formatStyles[format] || formatStyles.auto;
@@ -62,7 +63,7 @@ const layoutMap: Record<string, string> = {
 {shouldRender && (
   <div
     class:list={['ad-slot', `ad-slot--${format}`, className]}
-    style={`min-height: ${dimensions.minHeight}; width: ${dimensions.width};`}
+    style={`--ad-min-height: ${dimensions.minHeight}; --ad-mobile-min-height: ${dimensions.mobileMinHeight}; min-height: var(--ad-mobile-min-height); width: ${dimensions.width};`}
     data-testid={testId}
     data-ad-slot={slot}
   >
@@ -199,3 +200,12 @@ const layoutMap: Record<string, string> = {
     initLazyAds();
   }
 </script>
+
+<style>
+  /* Desktop: use full ad height */
+  @media (min-width: 768px) {
+    .ad-slot {
+      min-height: var(--ad-min-height) !important;
+    }
+  }
+</style>

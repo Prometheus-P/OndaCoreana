@@ -107,6 +107,14 @@ const instanceId = Math.random().toString(36).substring(2, 9);
         <p style="margin-top: var(--md-spacing-xs); font-size: var(--md-typo-body-medium-size); color: var(--md-color-on-surface-variant);">Buscando...</p>
       </div>
 
+      {/* Error state */}
+      <div class="search-error hidden p-4 text-center" data-testid="search-error" style="color: var(--md-color-error);">
+        <svg class="mx-auto h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+        <p style="margin-top: var(--md-spacing-xs); font-size: var(--md-typo-body-medium-size);">Error en la búsqueda. Intenta de nuevo.</p>
+      </div>
+
       {/* Results container */}
       <div class="search-results-inline hidden" data-testid="search-results-inline">
         {/* Results will be populated by JavaScript */}
@@ -214,6 +222,7 @@ const instanceId = Math.random().toString(36).substring(2, 9);
     const loadingEl = dropdown.querySelector('[data-testid="search-loading-inline"]') as HTMLElement;
     const resultsEl = dropdown.querySelector('[data-testid="search-results-inline"]') as HTMLElement;
     const noResultsEl = dropdown.querySelector('[data-testid="search-no-results-inline"]') as HTMLElement;
+    const errorEl = dropdown.querySelector('[data-testid="search-error"]') as HTMLElement;
     const viewAllContainer = dropdown.querySelector('[data-testid="search-view-all-container"]') as HTMLElement;
     const viewAllLink = dropdown.querySelector('[data-testid="view-all-results"]') as HTMLAnchorElement;
 
@@ -243,6 +252,16 @@ const instanceId = Math.random().toString(36).substring(2, 9);
       loadingEl.classList.remove('hidden');
       resultsEl.classList.add('hidden');
       noResultsEl.classList.add('hidden');
+      errorEl.classList.add('hidden');
+      viewAllContainer.classList.add('hidden');
+    }
+
+    // Show error state
+    function showError() {
+      loadingEl.classList.add('hidden');
+      resultsEl.classList.add('hidden');
+      noResultsEl.classList.add('hidden');
+      errorEl.classList.remove('hidden');
       viewAllContainer.classList.add('hidden');
     }
 
@@ -250,6 +269,7 @@ const instanceId = Math.random().toString(36).substring(2, 9);
     function showResults(results: SearchResult[], query: string) {
       loadingEl.classList.add('hidden');
       noResultsEl.classList.add('hidden');
+      errorEl.classList.add('hidden');
 
       if (results.length > 0) {
         resultsEl.innerHTML = results
@@ -331,7 +351,7 @@ const instanceId = Math.random().toString(36).substring(2, 9);
         showResults(results, query);
       } catch (error) {
         console.error('Search error:', error);
-        hideDropdown();
+        showError();
       }
     }
 
