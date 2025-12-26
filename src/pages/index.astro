@@ -12,7 +12,7 @@ const recentDramas = await getRecentContent('dramas', 4);
 const recentKpop = await getRecentContent('kpop', 4);
 const recentNoticias = await getRecentContent('noticias', 6);
 
-// FAQ data for AEO optimization
+// FAQ data for AEO optimization (10 questions for better AEO score)
 const homepageFaq = [
   {
     question: "¿Qué es OndaCoreana?",
@@ -33,6 +33,26 @@ const homepageFaq = [
   {
     question: "¿Qué grupos de K-Pop son los más famosos actualmente?",
     answer: "Los grupos de K-Pop más famosos incluyen BTS, BLACKPINK, Stray Kids, NewJeans y aespa. BTS ha roto récords mundiales, mientras que BLACKPINK es el grupo femenino más seguido. La nueva generación está liderada por NewJeans y Stray Kids."
+  },
+  {
+    question: "¿Cuánto cuesta una suscripción a Netflix o Viki para ver K-Dramas?",
+    answer: "Netflix tiene planes desde $6.99 USD/mes (básico) hasta $22.99 USD/mes (premium). Viki ofrece contenido gratis con anuncios o Viki Pass desde $4.99 USD/mes. Ambas plataformas ofrecen pruebas gratuitas para nuevos usuarios."
+  },
+  {
+    question: "¿Qué significa Hallyu o la Ola Coreana?",
+    answer: "Hallyu (한류) significa literalmente 'ola coreana' y se refiere al fenómeno global de la cultura pop surcoreana. Incluye K-Dramas, K-Pop, cine coreano, gastronomía y moda. Este movimiento cultural comenzó en los años 90 y ha crecido exponencialmente."
+  },
+  {
+    question: "¿Cuál es la diferencia entre un K-Drama y un dorama?",
+    answer: "K-Drama se refiere específicamente a dramas de Corea del Sur, mientras que 'dorama' es un término general para dramas asiáticos (japoneses, chinos, taiwaneses, etc.). Los K-Dramas suelen tener 16-20 episodios y una sola temporada con historia completa."
+  },
+  {
+    question: "¿Cómo puedo viajar a Corea del Sur desde Latinoamérica?",
+    answer: "Para viajar a Corea del Sur necesitas pasaporte vigente y, dependiendo de tu país, una visa K-ETA. Los vuelos desde CDMX, São Paulo o Lima tienen escalas en EE.UU. o Asia. El costo promedio es $1,200-2,000 USD ida y vuelta. La mejor época para visitar es primavera u otoño."
+  },
+  {
+    question: "¿Qué es un idol de K-Pop y cómo se entrenan?",
+    answer: "Un idol de K-Pop es un artista entrenado por una agencia de entretenimiento coreana. El entrenamiento dura 2-7 años e incluye canto, baile, actuación e idiomas. Las principales agencias son HYBE (BTS), SM (aespa), JYP (Stray Kids) y YG (BLACKPINK)."
   }
 ];
 ---
@@ -78,6 +98,91 @@ const homepageFaq = [
           Conocer artistas K-Pop
         </a>
       </div>
+    </div>
+  </section>
+
+  <!-- Quick Answers Summary for AEO -->
+  <section class="section-shell" style="--section-bg: var(--md-color-surface);">
+    <div class="section-shell__inner">
+      <h2 class="text-2xl font-semibold mb-6" style="color: var(--md-color-on-surface);">
+        ¿Qué encontrarás en OndaCoreana?
+      </h2>
+      <p class="mb-6" style="color: var(--md-color-on-surface-variant); max-width: 48rem; line-height: 1.7;">
+        <strong>OndaCoreana es tu guía completa de cultura coreana en español.</strong> Aquí puedes descubrir los mejores K-Dramas para ver en Netflix y Viki, conocer a los artistas de K-Pop más populares como BTS y BLACKPINK, y encontrar guías prácticas para aprender coreano o planificar tu viaje a Corea del Sur.
+      </p>
+
+      <!-- Definition List for Key Terms -->
+      <h3 class="text-xl font-semibold mb-4" style="color: var(--md-color-on-surface);">
+        Glosario: Términos clave de la cultura coreana
+      </h3>
+      <dl class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 mb-8" style="color: var(--md-color-on-surface);">
+        <div class="p-4" style="background-color: var(--md-color-surface-container); border-radius: var(--md-shape-md);">
+          <dt class="font-semibold text-base">K-Drama</dt>
+          <dd class="text-sm mt-1" style="color: var(--md-color-on-surface-variant);">Serie de televisión producida en Corea del Sur, generalmente de 16-20 episodios con historia completa.</dd>
+        </div>
+        <div class="p-4" style="background-color: var(--md-color-surface-container); border-radius: var(--md-shape-md);">
+          <dt class="font-semibold text-base">K-Pop</dt>
+          <dd class="text-sm mt-1" style="color: var(--md-color-on-surface-variant);">Música pop coreana caracterizada por coreografías elaboradas, producción de alta calidad y grupos de idols.</dd>
+        </div>
+        <div class="p-4" style="background-color: var(--md-color-surface-container); border-radius: var(--md-shape-md);">
+          <dt class="font-semibold text-base">Hallyu (한류)</dt>
+          <dd class="text-sm mt-1" style="color: var(--md-color-on-surface-variant);">La "Ola Coreana", fenómeno global que incluye K-Pop, K-Dramas, cine, gastronomía y moda coreana.</dd>
+        </div>
+        <div class="p-4" style="background-color: var(--md-color-surface-container); border-radius: var(--md-shape-md);">
+          <dt class="font-semibold text-base">Idol</dt>
+          <dd class="text-sm mt-1" style="color: var(--md-color-on-surface-variant);">Artista de K-Pop entrenado por una agencia, que domina canto, baile y actuación tras años de preparación.</dd>
+        </div>
+        <div class="p-4" style="background-color: var(--md-color-surface-container); border-radius: var(--md-shape-md);">
+          <dt class="font-semibold text-base">Hangul (한글)</dt>
+          <dd class="text-sm mt-1" style="color: var(--md-color-on-surface-variant);">El alfabeto coreano, creado en 1443. Tiene 14 consonantes y 10 vocales, fácil de aprender en pocas horas.</dd>
+        </div>
+        <div class="p-4" style="background-color: var(--md-color-surface-container); border-radius: var(--md-shape-md);">
+          <dt class="font-semibold text-base">OST</dt>
+          <dd class="text-sm mt-1" style="color: var(--md-color-on-surface-variant);">Original Soundtrack, banda sonora de un K-Drama. Las canciones suelen ser éxitos y se lanzan durante la emisión.</dd>
+        </div>
+      </dl>
+
+      <!-- Step-by-step Guide -->
+      <h3 class="text-xl font-semibold mb-4" style="color: var(--md-color-on-surface);">
+        ¿Cómo empezar a ver K-Dramas? Guía en 5 pasos
+      </h3>
+      <ol class="space-y-3 mb-6" style="max-width: 48rem;">
+        <li class="flex gap-3 items-start">
+          <span class="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold" style="background-color: var(--md-color-primary); color: var(--md-color-on-primary);">1</span>
+          <div>
+            <strong style="color: var(--md-color-on-surface);">Elige una plataforma de streaming</strong>
+            <p class="text-sm" style="color: var(--md-color-on-surface-variant);">Netflix tiene doblaje latino, Viki ofrece la mayor biblioteca con subtítulos.</p>
+          </div>
+        </li>
+        <li class="flex gap-3 items-start">
+          <span class="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold" style="background-color: var(--md-color-primary); color: var(--md-color-on-primary);">2</span>
+          <div>
+            <strong style="color: var(--md-color-on-surface);">Comienza con dramas populares</strong>
+            <p class="text-sm" style="color: var(--md-color-on-surface-variant);">Crash Landing on You, Goblin o El Juego del Calamar son excelentes para principiantes.</p>
+          </div>
+        </li>
+        <li class="flex gap-3 items-start">
+          <span class="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold" style="background-color: var(--md-color-primary); color: var(--md-color-on-primary);">3</span>
+          <div>
+            <strong style="color: var(--md-color-on-surface);">Elige tu género favorito</strong>
+            <p class="text-sm" style="color: var(--md-color-on-surface-variant);">Romance, thriller, fantasía, comedia... los K-Dramas cubren todos los géneros.</p>
+          </div>
+        </li>
+        <li class="flex gap-3 items-start">
+          <span class="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold" style="background-color: var(--md-color-primary); color: var(--md-color-on-primary);">4</span>
+          <div>
+            <strong style="color: var(--md-color-on-surface);">Lee reseñas antes de ver</strong>
+            <p class="text-sm" style="color: var(--md-color-on-surface-variant);">En OndaCoreana encontrarás reseñas sin spoilers para elegir tu próximo drama.</p>
+          </div>
+        </li>
+        <li class="flex gap-3 items-start">
+          <span class="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-sm font-bold" style="background-color: var(--md-color-primary); color: var(--md-color-on-primary);">5</span>
+          <div>
+            <strong style="color: var(--md-color-on-surface);">Únete a la comunidad</strong>
+            <p class="text-sm" style="color: var(--md-color-on-surface-variant);">Suscríbete a nuestro newsletter para recibir recomendaciones y novedades.</p>
+          </div>
+        </li>
+      </ol>
     </div>
   </section>
 
