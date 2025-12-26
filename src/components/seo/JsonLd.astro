@@ -34,7 +34,15 @@ interface BreadcrumbSchema {
   }>;
 }
 
-type SchemaType = WebSiteSchema | OrganizationSchema | ArticleSchema | BreadcrumbSchema;
+interface FAQSchema {
+  type: 'FAQPage';
+  questions: Array<{
+    question: string;
+    answer: string;
+  }>;
+}
+
+type SchemaType = WebSiteSchema | OrganizationSchema | ArticleSchema | BreadcrumbSchema | FAQSchema;
 
 interface Props {
   schema: SchemaType | SchemaType[];
@@ -116,6 +124,20 @@ function generateSchema(s: SchemaType): object {
           position: index + 1,
           name: item.name,
           item: item.url.startsWith('http') ? item.url : `${siteUrl}${item.url}`,
+        })),
+      };
+
+    case 'FAQPage':
+      return {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: s.questions.map((q) => ({
+          '@type': 'Question',
+          name: q.question,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: q.answer,
+          },
         })),
       };
 

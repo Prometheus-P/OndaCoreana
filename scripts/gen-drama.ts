@@ -94,9 +94,15 @@ interface TvDetails {
   }
 }
 
+interface FAQItem {
+    question: string;
+    answer: string;
+}
+
 interface AiContent {
     seoDescription: string;
     introHook: string;
+    faq: FAQItem[];
 }
 
 // TMDB Genre ID to Name mapping (for common K-drama genres)
@@ -140,14 +146,25 @@ function createSlug(title: string): string {
     return slugify(title, { lower: true, strict: true, locale: 'es' });
 }
 
-async function generateAiContent(overview: string): Promise<AiContent> {
+async function generateAiContent(overview: string, dramaTitle: string, episodes: number, network: string, cast: string[]): Promise<AiContent> {
     const prompt = `
-Contexto: El siguiente es el resumen de la trama de un K-Drama: "${overview}"
+Contexto: El siguiente es el resumen de la trama de un K-Drama llamado "${dramaTitle}": "${overview}"
+Información adicional:
+- Episodios: ${episodes}
+- Cadena: ${network}
+- Reparto principal: ${cast.slice(0, 3).join(', ')}
 
-Tarea: Basado en el resumen, genera el siguiente contenido en español, formateado como un único objeto JSON con dos claves, "seoDescription" e "introHook".
+Tarea: Basado en el resumen, genera el siguiente contenido en español, formateado como un único objeto JSON con tres claves: "seoDescription", "introHook" y "faq".
 
 1.  "seoDescription": Una descripción atractiva y concisa para SEO, dirigida a una audiencia sudamericana. Debe tener menos de 160 caracteres.
 2.  "introHook": Un párrafo introductorio apasionado y emocionante para una publicación de blog sobre por qué alguien debería ver este drama. Usa emojis para hacerlo más atractivo.
+3.  "faq": Un array de 5 objetos FAQ, cada uno con "question" y "answer". Las preguntas deben ser las que un fan latinoamericano típicamente haría sobre este drama. Incluye preguntas como:
+    - ¿Cuántos episodios tiene [nombre del drama]?
+    - ¿Dónde puedo ver [nombre del drama] en español?
+    - ¿Quiénes son los actores principales de [nombre del drama]?
+    - ¿De qué trata [nombre del drama]?
+    - ¿Cuándo se estrenó [nombre del drama]?
+    Las respuestas deben ser informativas, concisas y útiles (2-3 oraciones cada una).
 
 Proporciona únicamente el objeto JSON en tu respuesta. No envuelvas el JSON en bloques de código markdown.
 `;
@@ -161,10 +178,32 @@ Proporciona únicamente el objeto JSON en tu respuesta. No envuelvas el JSON en 
         return JSON.parse(cleanedText) as AiContent;
     } catch (error) {
         console.error("❌ Error generating AI content:", error);
-        // Return a fallback object
+        // Return a fallback object with basic FAQ
         return {
             seoDescription: "Descubre todo sobre este emocionante K-Drama, incluyendo su trama, elenco y dónde verlo.",
-            introHook: "¡Prepárate para una nueva obsesión! Este K-Drama tiene todo lo que buscas: romance, misterio y actuaciones inolvidables. 🍿✨"
+            introHook: "¡Prepárate para una nueva obsesión! Este K-Drama tiene todo lo que buscas: romance, misterio y actuaciones inolvidables. 🍿✨",
+            faq: [
+                {
+                    question: `¿Cuántos episodios tiene ${dramaTitle}?`,
+                    answer: `${dramaTitle} cuenta con ${episodes} episodios disponibles para ver en plataformas de streaming.`
+                },
+                {
+                    question: `¿Dónde puedo ver ${dramaTitle}?`,
+                    answer: `Puedes ver ${dramaTitle} en plataformas como Netflix o Viki con subtítulos en español.`
+                },
+                {
+                    question: `¿Quiénes son los actores principales de ${dramaTitle}?`,
+                    answer: `El reparto principal incluye a ${cast.slice(0, 3).join(', ')}, entre otros talentosos actores coreanos.`
+                },
+                {
+                    question: `¿De qué trata ${dramaTitle}?`,
+                    answer: overview.length > 150 ? overview.substring(0, 150) + '...' : overview
+                },
+                {
+                    question: `¿En qué cadena se transmitió ${dramaTitle}?`,
+                    answer: `${dramaTitle} fue transmitido originalmente por ${network} en Corea del Sur.`
+                }
+            ]
         };
     }
 }
@@ -209,9 +248,17 @@ async function generateDramaContent(dramaId: number): Promise<void> {
   console.log(`🖼️  Descargando poster a ${imageLocalPath}...`);
   await downloadImage(imageUrl, imageLocalPath);
 
+  const network = dramaDetails.networks[0]?.name || 'N/A';
+  const episodes = dramaDetails.number_of_episodes;
+  const cast = dramaDetails.credits.cast.slice(0, 5).map(c => c.name);
+
+  // --- Step 3: AI Post-processing ---
+  console.log('🤖 Generando contenido con Gemini 2.0 Flash (incluye FAQ para AEO)...');
+  const aiContent = await generateAiContent(overview, title, episodes, network, cast);
+
   const frontmatter = {
     title: title,
-    description: '', // Placeholder, will be filled by AI
+    description: aiContent.seoDescription,
     pubDate: new Date(dramaDetails.first_air_date),
     modDate: new Date(),
     heroImage: `/images/dramas/${slug}.jpg`,
@@ -219,18 +266,14 @@ async function generateDramaContent(dramaId: number): Promise<void> {
     tags: ['drama', 'resena'],
     dramaTitle: dramaDetails.original_name,
     dramaYear: new Date(dramaDetails.first_air_date).getFullYear(),
-    network: dramaDetails.networks[0]?.name || 'N/A',
-    episodes: dramaDetails.number_of_episodes,
-    cast: dramaDetails.credits.cast.slice(0, 5).map(c => c.name),
+    network: network,
+    episodes: episodes,
+    cast: cast,
     genre: mapTmdbGenres(dramaDetails.genres),
     whereToWatch: ['Netflix', 'Viki'],
     affiliate_hint: 'streaming',
+    faq: aiContent.faq,
   };
-
-  // --- Step 3: AI Post-processing ---
-  console.log('🤖 Generando contenido con Gemini 1.5 Flash...');
-  const aiContent = await generateAiContent(overview);
-  frontmatter.description = aiContent.seoDescription;
 
   // --- Step 4: File Generation ---
   const body = `

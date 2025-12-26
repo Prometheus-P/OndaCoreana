@@ -4,7 +4,13 @@ import JsonLd from '../components/seo/JsonLd.astro';
 import ShareButtons from '../components/ui/ShareButtons.astro';
 import AdSlot from '../components/ads/AdSlot.astro';
 import AffiliateBox from '../components/affiliate/AffiliateBox.astro';
+import FAQSection from '../components/ui/FAQSection.astro';
 import { buildEntryUrl, type ArticleEntry } from '../lib/related';
+
+interface FAQItem {
+  question: string;
+  answer: string;
+}
 
 interface Props {
   title: string;
@@ -24,6 +30,8 @@ interface Props {
   noAds?: boolean;
   /** Related content items */
   relatedItems?: ArticleEntry[];
+  /** FAQ items for AEO optimization */
+  faq?: FAQItem[];
 }
 
 const {
@@ -41,6 +49,7 @@ const {
   affiliateHint,
   noAds = false,
   relatedItems = [],
+  faq = [],
 } = Astro.props;
 
 const language = 'es-419';
@@ -113,6 +122,10 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString(language, {
             { name: title, url: Astro.url.pathname },
           ],
         },
+        ...(faq.length > 0 ? [{
+          type: 'FAQPage' as const,
+          questions: faq,
+        }] : []),
       ]}
     />
 
@@ -227,6 +240,11 @@ const formattedUpdatedDate = updatedDate?.toLocaleDateString(language, {
     <!-- Affiliate Box: Auto-inserted based on content type or frontmatter hint -->
     {effectiveAffiliateHint && (
       <AffiliateBox hint={effectiveAffiliateHint} testId="affiliate-box" />
+    )}
+
+    <!-- FAQ Section: For AEO optimization -->
+    {faq.length > 0 && (
+      <FAQSection questions={faq} testId="faq-section" />
     )}
 
     <!-- Tags footer -->

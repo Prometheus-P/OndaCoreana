@@ -1,5 +1,11 @@
 import { defineCollection, z } from 'astro:content';
 
+// FAQ item schema for AEO optimization
+const faqItemSchema = z.object({
+  question: z.string(),
+  answer: z.string(),
+});
+
 // Schema base para todos los artículos
 const baseArticleSchema = z.object({
   title: z.string().max(60),
@@ -16,6 +22,8 @@ const baseArticleSchema = z.object({
   affiliate_hint: z.enum(['kpop_goods', 'esim', 'travel_insurance', 'streaming', 'korean_learning']).optional(),
   /** Disable ads on this specific article */
   noAds: z.boolean().default(false),
+  /** FAQ section for AEO (Answer Engine Optimization) - improves AI search engine citations */
+  faq: z.array(faqItemSchema).optional(),
 });
 
 // Colección: K-Dramas

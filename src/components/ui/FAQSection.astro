@@ -1,0 +1,96 @@
+---
+/**
+ * FAQSection - Displays FAQ items with Schema.org FAQPage structured data
+ * Uses native <details>/<summary> for accessibility and no JS dependency
+ * Optimized for AEO (Answer Engine Optimization) to improve AI search citations
+ */
+interface Props {
+  questions: Array<{
+    question: string;
+    answer: string;
+  }>;
+  /** Test ID for E2E testing */
+  testId?: string;
+}
+
+const { questions, testId } = Astro.props;
+
+// Don't render if no questions
+if (!questions || questions.length === 0) {
+  return null;
+}
+---
+
+<section
+  class="faq-section not-prose"
+  style="margin-top: var(--md-sys-spacing-3xl); padding-top: var(--md-sys-spacing-2xl); border-top: 1px solid var(--md-sys-color-outline-variant);"
+  data-testid={testId}
+  data-pagefind-body
+>
+  <h2
+    class="text-2xl font-semibold"
+    style="color: var(--md-sys-color-on-surface); margin-bottom: var(--md-sys-spacing-lg);"
+  >
+    Preguntas Frecuentes
+  </h2>
+
+  <div class="faq-list" style="display: flex; flex-direction: column; gap: var(--md-sys-spacing-md);">
+    {questions.map(({ question, answer }) => (
+      <details
+        class="faq-item"
+        style="background-color: var(--md-sys-color-surface-variant); border-radius: var(--md-sys-shape-corner-medium); overflow: hidden;"
+      >
+        <summary
+          class="faq-question"
+          style="padding: var(--md-sys-spacing-md) var(--md-sys-spacing-lg); cursor: pointer; font-weight: 600; color: var(--md-sys-color-on-surface); display: flex; align-items: center; justify-content: space-between; gap: var(--md-sys-spacing-md);"
+        >
+          <span>{question}</span>
+          <svg
+            class="faq-icon"
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            style="flex-shrink: 0; transition: transform 0.2s ease;"
+          >
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </summary>
+        <div
+          class="faq-answer"
+          style="padding: 0 var(--md-sys-spacing-lg) var(--md-sys-spacing-lg); color: var(--md-sys-color-on-surface-variant); line-height: 1.6;"
+        >
+          <p>{answer}</p>
+        </div>
+      </details>
+    ))}
+  </div>
+</section>
+
+<style>
+  .faq-item[open] .faq-icon {
+    transform: rotate(180deg);
+  }
+
+  .faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-item summary::marker {
+    display: none;
+    content: '';
+  }
+
+  .faq-item summary:hover {
+    background-color: color-mix(in srgb, var(--md-sys-color-on-surface) 5%, transparent);
+  }
+
+  .faq-item summary:focus-visible {
+    outline: 2px solid var(--md-sys-color-primary);
+    outline-offset: -2px;
+  }
+</style>
