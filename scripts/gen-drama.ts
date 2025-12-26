@@ -11,6 +11,19 @@ import path from 'path';
 // Load environment variables
 dotenv.config();
 
+// Parse CLI arguments
+const args = process.argv.slice(2);
+const getArg = (name: string): string | undefined => {
+  const arg = args.find(a => a.startsWith(`--${name}=`));
+  return arg?.split('=')[1];
+};
+const hasFlag = (name: string): boolean => args.includes(`--${name}`);
+
+const CLI_SEARCH = getArg('search');
+const CLI_ID = getArg('id');
+const CLI_POPULAR = hasFlag('popular');
+const CLI_COUNT = parseInt(getArg('count') || '1', 10);
+
 const TMDB_API_KEY = process.env.TMDB_API_KEY;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
@@ -27,7 +40,7 @@ const tmdb = axios.create({
 });
 
 const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
 // --- TYPE DEFINITIONS ---
 interface TvSearchResult {
@@ -157,45 +170,7 @@ Proporciona únicamente el objeto JSON en tu respuesta. No envuelvas el JSON en 
 }
 
 
-async function main() {
-  console.log('✨ Bienvenido al Generador de Contenido de K-Dramas ✨');
-
-  // --- Step 1: Search and Select ---
-  const { searchQuery } = await inquirer.prompt([
-    {
-      type: 'input',
-      name: 'searchQuery',
-      message: '📺 ¿Qué drama coreano quieres buscar en TMDB?',
-    },
-  ]);
-
-  const searchResponse = await tmdb.get< { results: TvSearchResult[] }>('/search/tv', {
-    params: {
-      query: searchQuery,
-      language: 'es-ES',
-      include_adult: false,
-    },
-  });
-
-  if (!searchResponse.data.results.length) {
-    console.log(`❌ No se encontraron resultados para "${searchQuery}".`);
-    return;
-  }
-
-  const choices = searchResponse.data.results.map(drama => ({
-      name: `${drama.name} (${drama.first_air_date?.split('-')[0] || 'N/A'}) - ${drama.original_name}`,
-      value: drama.id,
-  }));
-
-  const { dramaId } = await inquirer.prompt([
-      {
-          type: 'list',
-          name: 'dramaId',
-          message: '👇 Selecciona el drama correcto:',
-          choices,
-      },
-  ]);
-  
+async function generateDramaContent(dramaId: number): Promise<void> {
   // --- Step 2: Fetching & Mapping ---
   console.log(`⬇️  Obteniendo detalles para el ID: ${dramaId}...`);
   const { data: dramaDetails } = await tmdb.get<TvDetails>(`/tv/${dramaId}`, {
@@ -204,21 +179,33 @@ async function main() {
           append_to_response: 'credits,translations',
       },
   });
-  
+
   const spanishTranslation = dramaDetails.translations.translations.find(t => t.iso_639_1 === 'es');
   const title = spanishTranslation?.data?.name || dramaDetails.name;
   const overview = spanishTranslation?.data?.overview || dramaDetails.overview;
   const slug = createSlug(title);
 
+  // Check if file already exists
+  const outputDir = path.join(process.cwd(), 'src', 'content', 'dramas');
+  const outputPath = path.join(outputDir, `${slug}.mdx`);
+  if (fs.existsSync(outputPath)) {
+    console.log(`⏭️  Saltando "${title}" - archivo ya existe.`);
+    return;
+  }
+
   // Image handling
   const posterPath = dramaDetails.poster_path;
+  if (!posterPath) {
+    console.log(`⚠️  Saltando "${title}" - no tiene poster.`);
+    return;
+  }
   const imageUrl = `https://image.tmdb.org/t/p/w1280${posterPath}`;
   const imageDir = path.join(process.cwd(), 'public', 'images', 'dramas');
   if (!fs.existsSync(imageDir)) {
       fs.mkdirSync(imageDir, { recursive: true });
   }
   const imageLocalPath = path.join(imageDir, `${slug}.jpg`);
-  
+
   console.log(`🖼️  Descargando poster a ${imageLocalPath}...`);
   await downloadImage(imageUrl, imageLocalPath);
 
@@ -263,21 +250,103 @@ ${frontmatter.cast.map(actor => `- ${actor}`).join('\\n')}
 
 *(Aquí puedes añadir tu reseña personal sobre el drama...)*
 `;
-  
+
   const mdxContent = `---
 ${yaml.dump(frontmatter)}---
 ${body}
 `;
 
-  const outputDir = path.join(process.cwd(), 'src', 'content', 'dramas');
-   if (!fs.existsSync(outputDir)) {
+  if (!fs.existsSync(outputDir)) {
       fs.mkdirSync(outputDir, { recursive: true });
   }
-  const outputPath = path.join(outputDir, `${slug}.mdx`);
 
   fs.writeFileSync(outputPath, mdxContent);
-
   console.log(`✅ ¡Éxito! Archivo creado en: ${outputPath}`);
+}
+
+async function main() {
+  console.log('✨ Bienvenido al Generador de Contenido de K-Dramas ✨');
+
+  // --- Mode: Popular K-Dramas (non-interactive) ---
+  if (CLI_POPULAR) {
+    console.log(`📺 Obteniendo los ${CLI_COUNT} K-Dramas más populares...`);
+    const { data } = await tmdb.get<{ results: TvSearchResult[] }>('/discover/tv', {
+      params: {
+        language: 'es-ES',
+        with_origin_country: 'KR',
+        sort_by: 'popularity.desc',
+        page: 1,
+      },
+    });
+
+    const dramas = data.results.slice(0, CLI_COUNT);
+    console.log(`📋 Encontrados ${dramas.length} dramas para procesar.\n`);
+
+    for (const drama of dramas) {
+      try {
+        await generateDramaContent(drama.id);
+      } catch (error) {
+        console.error(`❌ Error procesando "${drama.name}":`, error);
+      }
+    }
+    return;
+  }
+
+  // --- Mode: Direct ID (non-interactive) ---
+  if (CLI_ID) {
+    await generateDramaContent(parseInt(CLI_ID, 10));
+    return;
+  }
+
+  // --- Mode: Search query (non-interactive) ---
+  let searchQuery = CLI_SEARCH;
+  if (!searchQuery) {
+    const answer = await inquirer.prompt([
+      {
+        type: 'input',
+        name: 'searchQuery',
+        message: '📺 ¿Qué drama coreano quieres buscar en TMDB?',
+      },
+    ]);
+    searchQuery = answer.searchQuery;
+  }
+
+  const searchResponse = await tmdb.get< { results: TvSearchResult[] }>('/search/tv', {
+    params: {
+      query: searchQuery,
+      language: 'es-ES',
+      include_adult: false,
+    },
+  });
+
+  if (!searchResponse.data.results.length) {
+    console.log(`❌ No se encontraron resultados para "${searchQuery}".`);
+    return;
+  }
+
+  const choices = searchResponse.data.results.map(drama => ({
+      name: `${drama.name} (${drama.first_air_date?.split('-')[0] || 'N/A'}) - ${drama.original_name}`,
+      value: drama.id,
+  }));
+
+  let dramaId: number;
+  if (CLI_SEARCH) {
+    // Non-interactive: pick first result
+    dramaId = choices[0].value;
+    console.log(`📺 Seleccionando automáticamente: ${choices[0].name}`);
+  } else {
+    const answer = await inquirer.prompt([
+        {
+            type: 'list',
+            name: 'dramaId',
+            message: '👇 Selecciona el drama correcto:',
+            choices,
+        },
+    ]);
+    dramaId = answer.dramaId;
+  }
+
+  await generateDramaContent(dramaId);
 }
 
 main().catch(error => {
