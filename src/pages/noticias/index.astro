@@ -12,35 +12,63 @@ const noticias = await getPublishedContentSorted('noticias');
 const faqData = [
   {
     question: '¿Dónde puedo encontrar noticias de K-Drama y K-Pop en español?',
-    answer: 'OndaCoreana es tu fuente principal de noticias del entretenimiento coreano en español. Cubrimos estrenos de dramas, comebacks de grupos K-Pop, noticias de actores y todo el mundo Hallyu actualizado diariamente.',
+    answer: 'OndaCoreana es tu fuente principal de noticias del entretenimiento coreano en español. Cubrimos estrenos de dramas, comebacks de grupos K-Pop, noticias de actores, premios, y todo el mundo Hallyu actualizado diariamente. También puedes seguir cuentas especializadas en redes sociales y canales de YouTube dedicados al K-content en español.',
   },
   {
     question: '¿Qué es Hallyu o la Ola Coreana?',
-    answer: 'Hallyu (한류) significa "Ola Coreana" y se refiere al fenómeno global de popularidad de la cultura surcoreana. Incluye K-Pop, K-Dramas, cine coreano, moda, gastronomía y productos de belleza que han conquistado audiencias mundiales desde los años 2000.',
+    answer: 'Hallyu (한류) significa "Ola Coreana" y se refiere al fenómeno global de popularidad de la cultura surcoreana que comenzó en los años 2000. Incluye K-Pop, K-Dramas, cine coreano (ganador de Oscars con "Parásitos"), moda, K-beauty (cosméticos), gastronomía, y videojuegos. El término fue acuñado por medios chinos para describir la influencia cultural coreana en Asia, que ahora es mundial.',
   },
   {
     question: '¿Cuándo se estrenan nuevos K-Dramas?',
-    answer: 'Los K-Dramas se estrenan durante todo el año. Las principales cadenas coreanas (tvN, JTBC, SBS, KBS, MBC) lanzan nuevos dramas cada semana. Netflix y Disney+ también estrenan dramas coreanos originales regularmente. Publicamos todas las fechas de estreno.',
+    answer: 'Los K-Dramas se estrenan durante todo el año sin temporadas definidas. Las cadenas coreanas (tvN, JTBC, SBS, KBS, MBC) lanzan nuevos dramas semanalmente, típicamente los miércoles-jueves o sábados-domingos a las 21:00-22:00 hora coreana. Netflix, Disney+, y otras plataformas tienen calendarios propios de estrenos. Publicamos todas las fechas de estreno y horarios de emisión.',
   },
   {
     question: '¿Cómo me entero de los comebacks de K-Pop?',
-    answer: 'Las agencias anuncian comebacks con semanas de anticipación a través de sus redes sociales. En OndaCoreana cubrimos todos los anuncios importantes, teasers, fechas de lanzamiento y promociones de los grupos más populares.',
+    answer: 'Las agencias anuncian comebacks 2-4 semanas antes a través de redes sociales oficiales (Twitter/X, Instagram, Weverse). El proceso incluye: anuncio de fecha, fotos conceptuales, teasers de video, highlight medley, y finalmente el lanzamiento. En OndaCoreana cubrimos todos los anuncios importantes, calendarios de comeback, y promociones de los grupos más populares.',
   },
   {
     question: '¿Qué premios importantes existen en el entretenimiento coreano?',
-    answer: 'Los principales premios son: MAMA (música), Melon Music Awards, Golden Disc Awards, Baeksang Arts Awards (dramas y cine), Blue Dragon Film Awards, y Seoul Drama Awards. Cubrimos todas las ceremonias y ganadores.',
+    answer: 'Premios de música: MAMA (Mnet Asian Music Awards), Melon Music Awards, Golden Disc Awards, Seoul Music Awards, y Gaon Chart Music Awards. Premios de dramas y cine: Baeksang Arts Awards (los más prestigiosos), Blue Dragon Film Awards, Grand Bell Awards, y Seoul Drama Awards. Premios de variedades: SBS Entertainment Awards, MBC Entertainment Awards. Cubrimos todas las ceremonias, nominaciones y ganadores.',
   },
   {
     question: '¿Los actores de K-Drama también cantan?',
-    answer: 'Muchos actores coreanos son multitalentosos. Algunos empezaron como idols de K-Pop (como IU, D.O. de EXO, o Yoona de SNSD) y otros graban OST (bandas sonoras) para sus dramas. La industria coreana valora la versatilidad artística.',
+    answer: 'Muchos actores coreanos son multitalentosos. Idols que actúan: IU (actriz y cantante solista), D.O. de EXO, Yoona de SNSD, Joy de Red Velvet, Cha Eun-woo de ASTRO. Actores que cantan OST: muchos actores graban bandas sonoras para sus propios dramas. La industria coreana valora la versatilidad, y las agencias entrenan a sus artistas en múltiples disciplinas.',
   },
   {
     question: '¿Qué significa OST en K-Drama?',
-    answer: 'OST significa "Original Sound Track" (banda sonora original). Los K-Dramas son famosos por sus OST emotivas, canciones originales creadas específicamente para la serie. Artistas populares graban estos temas que a menudo se vuelven hits.',
+    answer: 'OST significa "Original Sound Track" (banda sonora original). Los K-Dramas son famosos por sus OST emotivas, canciones originales creadas específicamente para cada serie. Cada drama tiene 10-15 canciones en su OST, incluyendo temas principales, baladas románticas, y música instrumental. Artistas populares de K-Pop frecuentemente graban OST que se convierten en hits independientes. Los álbumes de OST se venden por separado.',
   },
   {
     question: '¿Cómo funcionan las temporadas de dramas en Corea?',
-    answer: 'A diferencia de EE.UU., Corea no tiene "temporadas de TV" definidas. Los dramas se emiten durante todo el año, usualmente dos veces por semana. Las cadenas compiten por ratings con sus producciones simultáneas en diferentes horarios.',
+    answer: 'A diferencia de EE.UU., Corea no tiene "temporadas de TV" definidas. Los dramas se emiten durante todo el año, usualmente 2 episodios por semana durante 8-10 semanas. Las cadenas compiten simultáneamente en el mismo horario (ej: miércoles-jueves a las 22:00). Los ratings se miden por AGB Nielsen Korea y determinan el éxito comercial. La competencia es intensa entre cadenas por el horario "prime time" coreano.',
+  },
+  {
+    question: '¿Qué es Dispatch en el entretenimiento coreano?',
+    answer: 'Dispatch (디스패치) es un medio de noticias de entretenimiento coreano famoso por revelar relaciones de celebridades. Tradicionalmente publica exclusivas el 1 de enero de cada año. Sus "D-Day" son muy anticipados y temidos por fans e idols. También cubren noticias generales del entretenimiento, aeropuerto fashions, y eventos. Han revelado parejas famosas como Kai y Jennie, Song Joong-ki y Song Hye-kyo, entre otros.',
+  },
+  {
+    question: '¿Qué son los ratings de K-Drama?',
+    answer: 'Los ratings miden el porcentaje de televisores que sintonizan un programa. En Corea, AGB Nielsen Korea mide los ratings nacionales y por región (Seoul, metropolitana). Un rating de 10%+ se considera un éxito, 20%+ es un mega hit. Los récords incluyen "El Juego del Calamar" (no medido tradicionalmente por ser de Netflix), "Crash Landing on You" (21.7%), y "Reply 1988" (18.8%). Los ratings determinan contratos publicitarios y éxito comercial.',
+  },
+  {
+    question: '¿Qué es un "dating scandal" en K-Pop?',
+    answer: 'Un "dating scandal" (escándalo de citas) ocurre cuando se revela que un idol tiene una relación romántica. Aunque no es ilegal, las agencias tradicionalmente prohíben o desalientan las relaciones públicas para mantener la imagen de "disponibilidad" ante los fans. Las reacciones varían: algunos fans apoyan, otros se sienten traicionados. La cultura está cambiando y ahora más parejas son aceptadas, especialmente si los idols son mayores o establecidos.',
+  },
+  {
+    question: '¿Qué significa "all-kill" en los charts coreanos?',
+    answer: 'Un "all-kill" ocurre cuando una canción ocupa el #1 simultáneamente en todas las principales plataformas de música coreanas: Melon, Genie, Bugs, Vibe, y FLO. Un "perfect all-kill" (PAK) es cuando también es #1 en el chart semanal de iChart. Es el máximo logro de una canción y demuestra dominio total del mercado musical coreano. Artistas como IU, BTS, y BLACKPINK han logrado múltiples all-kills.',
+  },
+  {
+    question: '¿Qué son los Baeksang Arts Awards?',
+    answer: 'Los Baeksang Arts Awards (백상예술대상) son los premios más prestigiosos del entretenimiento coreano, equivalentes a los Emmy y Oscar combinados. Premian lo mejor en televisión (dramas y variedades), cine, y teatro. Se celebran anualmente en mayo. Las categorías incluyen: Gran Premio (Daesang), Mejor Actor/Actriz, Mejor Drama, y Mejor Película. Ganar un Baeksang es el máximo reconocimiento para actores y producciones coreanas.',
+  },
+  {
+    question: '¿Cómo funcionan los programas de supervivencia de K-Pop?',
+    answer: 'Los programas de supervivencia son shows donde trainees compiten para formar un grupo debut. Los fans votan para decidir quién debuta. Programas famosos: "Produce 101" (creó I.O.I, Wanna One, IZ*ONE, X1), "I-LAND" (ENHYPEN), "Girls Planet 999" (Kep1er), "Boys Planet" (ZEROBASEONE). Estos shows generan enorme atención mediática y los grupos resultantes debutan con una base de fans establecida.',
+  },
+  {
+    question: '¿Qué es un "sasaeng" fan?',
+    answer: 'Un sasaeng (사생) es un fan obsesivo que invade la privacidad de celebridades de manera extrema: siguiendo su auto, infiltrándose en hoteles, llamando repetidamente, o incluso entrando a sus casas. Este comportamiento es ilegal y peligroso. Las agencias y la policía actúan contra sasaengs. El fandom saludable rechaza este comportamiento. El término viene de "sa" (privado) y "saeng" (vida), literalmente "vida privada".',
   },
 ];
 ---

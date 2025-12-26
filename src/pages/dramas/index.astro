@@ -15,35 +15,63 @@ const AD_INTERVAL = 4;
 const faqData = [
   {
     question: '¿Qué es un K-Drama?',
-    answer: 'Un K-Drama (Korean Drama) es una serie de televisión producida en Corea del Sur. Se caracterizan por temporadas cortas de 16-20 episodios, historias completas sin múltiples temporadas, y géneros variados como romance, thriller, fantasía y comedia.',
+    answer: 'Un K-Drama (Korean Drama) es una serie de televisión producida en Corea del Sur. Se caracterizan por temporadas cortas de 16-20 episodios con historias completas, alta producción visual, bandas sonoras emotivas y géneros variados como romance, thriller, fantasía y comedia. A diferencia de las series occidentales, los K-Dramas suelen contar una historia completa en una sola temporada.',
   },
   {
     question: '¿Cuántos episodios tiene un K-Drama típico?',
-    answer: 'La mayoría de los K-Dramas tienen entre 16 y 20 episodios de aproximadamente 60-70 minutos cada uno. Sin embargo, algunos dramas históricos pueden tener más de 50 episodios, y los mini-dramas pueden tener solo 8-12 episodios.',
+    answer: 'La mayoría de los K-Dramas tienen entre 16 y 20 episodios de aproximadamente 60-70 minutos cada uno. Los mini-dramas tienen 8-12 episodios, mientras que los dramas históricos (sageuk) pueden extenderse a 50 o más episodios. Las series de las cadenas tvN y JTBC suelen tener 16 episodios, mientras que las de Netflix varían según el formato.',
   },
   {
     question: '¿Dónde puedo ver K-Dramas con subtítulos en español?',
-    answer: 'Las principales plataformas para ver K-Dramas en español son Netflix, Viki (especializado en contenido asiático con subtítulos de la comunidad), Disney+, y Amazon Prime Video. Viki ofrece muchos títulos gratuitos con anuncios.',
+    answer: 'Las principales plataformas para ver K-Dramas en español son: Netflix (catálogo más grande con doblaje), Viki (especializado en contenido asiático con subtítulos de la comunidad, muchos títulos gratuitos), Disney+ (producciones originales coreanas), Amazon Prime Video (catálogo en crecimiento), y KOCOWA (especializado en K-content). Cada plataforma tiene diferentes catálogos según tu región.',
   },
   {
     question: '¿Cuáles son los K-Dramas más populares de todos los tiempos?',
-    answer: 'Entre los más populares están "El Juego del Calamar", "Crash Landing on You", "Goblin", "Descendants of the Sun", "Itaewon Class" y "All of Us Are Dead". Estos han ganado reconocimiento internacional y millones de fans.',
+    answer: 'Los K-Dramas más populares incluyen: "El Juego del Calamar" (récord mundial de Netflix), "Crash Landing on You" (romance icónico), "Goblin" (fantasía romántica), "Descendants of the Sun" (romance militar), "Itaewon Class" (emprendimiento), "All of Us Are Dead" (zombies), "My Love from the Star" (ciencia ficción romántica), y "Reply 1988" (nostalgia familiar). Estos han definido el fenómeno Hallyu global.',
   },
   {
     question: '¿Los K-Dramas tienen temporadas múltiples?',
-    answer: 'A diferencia de las series occidentales, la mayoría de K-Dramas cuentan una historia completa en una sola temporada. Pocas excepciones como "El Juego del Calamar" o "Hospital Playlist" han tenido segundas temporadas debido a su éxito extraordinario.',
+    answer: 'A diferencia de las series occidentales, la mayoría de K-Dramas cuentan una historia completa en una sola temporada de 16-20 episodios. Las excepciones son raras y ocurren solo con éxitos extraordinarios como "El Juego del Calamar" (temporada 2), "Hospital Playlist" (2 temporadas), "Penthouse" (3 temporadas) y "Kingdom" (2 temporadas + spin-off). Esta estructura cerrada es parte del atractivo del formato.',
   },
   {
     question: '¿Qué géneros de K-Dramas existen?',
-    answer: 'Los K-Dramas abarcan múltiples géneros: romance, comedia romántica, thriller, fantasía, ciencia ficción, históricos (sageuk), médicos, legales, escolares (school drama) y de supervivencia. El romance suele estar presente en la mayoría.',
+    answer: 'Los K-Dramas abarcan múltiples géneros: romance (el más popular), comedia romántica (rom-com), thriller/suspenso, fantasía, ciencia ficción, históricos (sageuk), médicos, legales, escolares (school drama), de oficina, de supervivencia, y melodrama familiar. Muchos dramas combinan varios géneros, siendo común encontrar elementos románticos en casi todos. Los sageuk (dramas históricos) son especialmente populares por mostrar la cultura tradicional coreana.',
   },
   {
     question: '¿Por qué los K-Dramas son tan adictivos?',
-    answer: 'Los K-Dramas enganchan por sus historias bien estructuradas con inicio, desarrollo y final claro, la química entre protagonistas, bandas sonoras memorables (OST), cinematografía cuidada, y finales de episodio con cliffhangers que invitan a seguir viendo.',
+    answer: 'Los K-Dramas enganchan por múltiples factores: historias bien estructuradas con inicio, desarrollo y final claro; química intensa entre protagonistas; bandas sonoras (OST) memorables y emotivas; cinematografía cuidada con locaciones hermosas; vestuario y moda atractivos; cliffhangers al final de cada episodio; y la tensión del "slow burn" romántico. Además, la duración limitada permite compromiso sin años de seguimiento.',
   },
   {
     question: '¿Necesito entender coreano para ver K-Dramas?',
-    answer: 'No es necesario. Todas las plataformas ofrecen subtítulos en español. Sin embargo, muchos fans empiezan a aprender coreano básico naturalmente al escuchar frases repetidas. Ver dramas es una forma popular de practicar el idioma.',
+    answer: 'No es necesario entender coreano. Todas las plataformas de streaming ofrecen subtítulos en español o inglés. Sin embargo, muchos fans aprenden coreano básico naturalmente al escuchar frases repetidas como "saranghae" (te amo), "aigoo" (expresión de sorpresa), o "daebak" (increíble). Ver K-Dramas es una forma popular y efectiva de practicar el idioma mientras disfrutas del entretenimiento.',
+  },
+  {
+    question: '¿Qué es un OST en K-Drama?',
+    answer: 'OST significa "Original Sound Track" (banda sonora original). Los K-Dramas son famosos por sus OST emotivas, canciones originales creadas específicamente para cada serie. Artistas populares de K-Pop graban estos temas que frecuentemente se vuelven hits musicales. Cada drama tiene múltiples canciones que acompañan momentos clave: temas románticos, de tensión, y emotivos. Los OST son tan importantes que tienen álbumes propios y conciertos.',
+  },
+  {
+    question: '¿Qué significa "oppa" en los K-Dramas?',
+    answer: '"Oppa" (오빠) es un término coreano que usan las mujeres para dirigirse a hombres mayores cercanos (hermanos, amigos, novios). En K-Dramas románticos, cuando la protagonista llama "oppa" al protagonista masculino indica cercanía emocional y afecto. Otros términos comunes son "unnie" (hermana mayor, usado por mujeres), "hyung" (hermano mayor, usado por hombres), y "noona" (mujer mayor, usado por hombres).',
+  },
+  {
+    question: '¿Qué es un drama sageuk?',
+    answer: 'Sageuk (사극) significa "drama histórico" en coreano. Son series ambientadas en períodos históricos de Corea, principalmente la era Joseon (1392-1897). Incluyen tramas de intrigas palaciegas, romances prohibidos, luchas de poder y artes marciales. Ejemplos populares: "Moon Lovers: Scarlet Heart Ryeo", "Mr. Sunshine", "The Red Sleeve", y "Jewel in the Palace". Los sageuk muestran hanbok (vestimenta tradicional), arquitectura histórica y costumbres ancestrales.',
+  },
+  {
+    question: '¿Qué es el "Second Lead Syndrome"?',
+    answer: 'El "Second Lead Syndrome" es un fenómeno donde los espectadores prefieren al segundo protagonista masculino sobre el principal. Ocurre cuando el segundo lead es más atento, romántico o tiene mejor química con la protagonista, pero ella elige al protagonista principal. Dramas famosos por causar este síndrome: "Reply 1988", "Start-Up", "True Beauty", y "Cheese in the Trap". Es tema de intensos debates entre fans.',
+  },
+  {
+    question: '¿Cuándo se estrenan nuevos K-Dramas?',
+    answer: 'Los K-Dramas se estrenan durante todo el año, sin temporadas definidas como en EE.UU. Las cadenas coreanas (tvN, JTBC, SBS, KBS, MBC) lanzan nuevos dramas cada semana, generalmente con episodios los miércoles-jueves o sábados-domingos. Netflix, Disney+ y otras plataformas tienen calendarios propios. Los horarios de estreno suelen ser a las 21:00-22:00 hora de Corea (KST), con subtítulos disponibles horas después.',
+  },
+  {
+    question: '¿Cómo se filman los K-Dramas?',
+    answer: 'Los K-Dramas tienen un sistema de producción único llamado "live-shoot" donde los episodios se filman pocas semanas antes de emitirse. Esto permite ajustar la historia según la reacción del público, pero es muy demandante para los actores. Un drama típico se filma en 4-6 meses. Las producciones de Netflix suelen filmarse completamente antes del estreno. Los actores trabajan largas jornadas (16+ horas) durante la producción.',
+  },
+  {
+    question: '¿Qué K-Dramas son buenos para principiantes?',
+    answer: 'K-Dramas recomendados para principiantes: "Crash Landing on You" (romance accesible), "Goblin" (fantasía romántica), "Itaewon Class" (superación personal), "Vincenzo" (acción y comedia), "Hometown Cha-Cha-Cha" (comedia romántica ligera), "Strong Woman Do Bong Soon" (comedia y romance), y "What\'s Wrong with Secretary Kim" (rom-com de oficina). Estos tienen tramas fáciles de seguir, subtítulos de calidad, y son representativos del género.',
   },
 ];
 ---
