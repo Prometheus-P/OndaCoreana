@@ -3,18 +3,54 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import NewsletterForm from '../components/newsletter/NewsletterForm.astro';
 import AdSlot from '../components/ads/AdSlot.astro';
 import ContentCard from '../components/ui/ContentCard.astro';
+import FAQSection from '../components/ui/FAQSection.astro';
+import JsonLd from '../components/seo/JsonLd.astro';
 import { getRecentContent } from '../utils/content-helpers';
 
 // Obtener contenido reciente
 const recentDramas = await getRecentContent('dramas', 4);
 const recentKpop = await getRecentContent('kpop', 4);
 const recentNoticias = await getRecentContent('noticias', 6);
+
+// FAQ data for AEO optimization
+const homepageFaq = [
+  {
+    question: "¿Qué es OndaCoreana?",
+    answer: "OndaCoreana es el portal líder en español sobre cultura coreana, dedicado a la comunidad latina. Ofrecemos reseñas de K-Dramas, perfiles de artistas K-Pop, noticias actualizadas y guías completas sobre Corea del Sur."
+  },
+  {
+    question: "¿Dónde puedo ver K-Dramas con subtítulos en español?",
+    answer: "Puedes ver K-Dramas con subtítulos en español en plataformas como Netflix, Viki y Kocowa. Netflix ofrece una amplia selección con doblaje latino, mientras que Viki tiene la biblioteca más extensa con subtítulos creados por fans."
+  },
+  {
+    question: "¿Cuáles son los K-Dramas más populares en Latinoamérica?",
+    answer: "Los K-Dramas más populares en Latinoamérica incluyen El Juego del Calamar, Crash Landing on You, Goblin y Reina de las Lágrimas. Estos dramas han cautivado a millones de espectadores latinos con sus historias emocionantes."
+  },
+  {
+    question: "¿Cómo puedo aprender coreano desde cero?",
+    answer: "Puedes empezar aprendiendo el alfabeto Hangul, que se puede dominar en pocas horas. Luego, utiliza apps como Duolingo o Talk To Me In Korean, y practica viendo K-Dramas con subtítulos. En OndaCoreana tenemos guías completas para principiantes."
+  },
+  {
+    question: "¿Qué grupos de K-Pop son los más famosos actualmente?",
+    answer: "Los grupos de K-Pop más famosos incluyen BTS, BLACKPINK, Stray Kids, NewJeans y aespa. BTS ha roto récords mundiales, mientras que BLACKPINK es el grupo femenino más seguido. La nueva generación está liderada por NewJeans y Stray Kids."
+  }
+];
 ---
 
 <BaseLayout
   title="OndaCoreana - K-Dramas, K-Pop y Cultura Coreana en Español"
   description="Tu fuente definitiva de información sobre K-Dramas, K-Pop y cultura coreana en español. Noticias, guías, reseñas y más para la comunidad latina."
 >
+  <Fragment slot="head">
+    <JsonLd
+      schema={[
+        { type: 'WebSite' },
+        { type: 'Organization' },
+        { type: 'FAQPage', questions: homepageFaq },
+      ]}
+    />
+  </Fragment>
+
   <!-- Hero Section -->
   <section
     class="section-shell"
@@ -227,10 +263,59 @@ const recentNoticias = await getRecentContent('noticias', 6);
     </div>
   </section>
 
-  <!-- Ad: Before Newsletter -->
+  <!-- Ad: Before FAQ -->
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
     <AdSlot slot="home-bottom" format="auto" testId="ad-home-bottom" />
   </div>
+
+  <!-- FAQ Section for AEO -->
+  <section class="section-shell" style="--section-bg: var(--md-color-surface-container);">
+    <div class="section-shell__inner">
+      <div class="mb-8">
+        <p class="chip" style="--chip-bg: color-mix(in srgb, var(--md-color-primary) 12%, var(--md-color-surface-container)); --chip-color: var(--md-color-on-surface);">
+          Ayuda
+        </p>
+        <h2 class="text-3xl font-semibold" style="color: var(--md-color-on-surface); margin-top: var(--md-spacing-sm);">
+          Preguntas Frecuentes
+        </h2>
+      </div>
+      <div class="faq-list" style="display: flex; flex-direction: column; gap: var(--md-spacing-md); max-width: 48rem;">
+        {homepageFaq.map(({ question, answer }) => (
+          <details
+            class="faq-item"
+            style="background-color: var(--md-sys-color-surface-variant); border-radius: var(--md-sys-shape-corner-medium); overflow: hidden;"
+          >
+            <summary
+              class="faq-question"
+              style="padding: var(--md-sys-spacing-md) var(--md-sys-spacing-lg); cursor: pointer; font-weight: 600; color: var(--md-sys-color-on-surface); display: flex; align-items: center; justify-content: space-between; gap: var(--md-sys-spacing-md);"
+            >
+              <span>{question}</span>
+              <svg
+                class="faq-icon"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                style="flex-shrink: 0; transition: transform 0.2s ease;"
+              >
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </summary>
+            <div
+              class="faq-answer"
+              style="padding: 0 var(--md-sys-spacing-lg) var(--md-sys-spacing-lg); color: var(--md-sys-color-on-surface-variant); line-height: 1.6;"
+            >
+              <p>{answer}</p>
+            </div>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
 
   <!-- Newsletter CTA -->
   <section class="py-16">
@@ -239,3 +324,19 @@ const recentNoticias = await getRecentContent('noticias', 6);
     </div>
   </section>
 </BaseLayout>
+
+<style>
+  .faq-item[open] .faq-icon {
+    transform: rotate(180deg);
+  }
+  .faq-item summary::-webkit-details-marker {
+    display: none;
+  }
+  .faq-item summary::marker {
+    display: none;
+    content: '';
+  }
+  .faq-item summary:hover {
+    background-color: color-mix(in srgb, var(--md-sys-color-on-surface) 5%, transparent);
+  }
+</style>
