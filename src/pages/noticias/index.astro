@@ -1,16 +1,57 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ContentCard from '../../components/ui/ContentCard.astro';
+import FAQSection from '../../components/ui/FAQSection.astro';
+import JsonLd from '../../components/seo/JsonLd.astro';
 import { getPublishedContentSorted } from '../../utils/content-helpers';
 import { newsCategories } from '../../config/content-types';
 
 const noticias = await getPublishedContentSorted('noticias');
+
+// FAQ data for AEO optimization
+const faqData = [
+  {
+    question: '¿Dónde puedo encontrar noticias de K-Drama y K-Pop en español?',
+    answer: 'OndaCoreana es tu fuente principal de noticias del entretenimiento coreano en español. Cubrimos estrenos de dramas, comebacks de grupos K-Pop, noticias de actores y todo el mundo Hallyu actualizado diariamente.',
+  },
+  {
+    question: '¿Qué es Hallyu o la Ola Coreana?',
+    answer: 'Hallyu (한류) significa "Ola Coreana" y se refiere al fenómeno global de popularidad de la cultura surcoreana. Incluye K-Pop, K-Dramas, cine coreano, moda, gastronomía y productos de belleza que han conquistado audiencias mundiales desde los años 2000.',
+  },
+  {
+    question: '¿Cuándo se estrenan nuevos K-Dramas?',
+    answer: 'Los K-Dramas se estrenan durante todo el año. Las principales cadenas coreanas (tvN, JTBC, SBS, KBS, MBC) lanzan nuevos dramas cada semana. Netflix y Disney+ también estrenan dramas coreanos originales regularmente. Publicamos todas las fechas de estreno.',
+  },
+  {
+    question: '¿Cómo me entero de los comebacks de K-Pop?',
+    answer: 'Las agencias anuncian comebacks con semanas de anticipación a través de sus redes sociales. En OndaCoreana cubrimos todos los anuncios importantes, teasers, fechas de lanzamiento y promociones de los grupos más populares.',
+  },
+  {
+    question: '¿Qué premios importantes existen en el entretenimiento coreano?',
+    answer: 'Los principales premios son: MAMA (música), Melon Music Awards, Golden Disc Awards, Baeksang Arts Awards (dramas y cine), Blue Dragon Film Awards, y Seoul Drama Awards. Cubrimos todas las ceremonias y ganadores.',
+  },
+  {
+    question: '¿Los actores de K-Drama también cantan?',
+    answer: 'Muchos actores coreanos son multitalentosos. Algunos empezaron como idols de K-Pop (como IU, D.O. de EXO, o Yoona de SNSD) y otros graban OST (bandas sonoras) para sus dramas. La industria coreana valora la versatilidad artística.',
+  },
+  {
+    question: '¿Qué significa OST en K-Drama?',
+    answer: 'OST significa "Original Sound Track" (banda sonora original). Los K-Dramas son famosos por sus OST emotivas, canciones originales creadas específicamente para la serie. Artistas populares graban estos temas que a menudo se vuelven hits.',
+  },
+  {
+    question: '¿Cómo funcionan las temporadas de dramas en Corea?',
+    answer: 'A diferencia de EE.UU., Corea no tiene "temporadas de TV" definidas. Los dramas se emiten durante todo el año, usualmente dos veces por semana. Las cadenas compiten por ratings con sus producciones simultáneas en diferentes horarios.',
+  },
+];
 ---
 
 <BaseLayout
   title="Noticias de K-Drama, K-Pop y Cultura Coreana"
   description="Las últimas noticias del mundo del entretenimiento coreano. K-Dramas, K-Pop, cine coreano y más, todo en español."
 >
+  <Fragment slot="head">
+    <JsonLd schema={{ type: 'FAQPage', questions: faqData }} />
+  </Fragment>
   <section class="section-shell" style="--section-bg: linear-gradient(110deg, color-mix(in srgb, var(--md-color-primary) 75%, #0b0b0b) 0%, color-mix(in srgb, var(--md-color-tertiary) 60%, transparent) 100%); --section-color: var(--md-color-on-primary);">
     <div class="section-shell__inner">
       <h1 class="text-4xl font-bold" style="color: inherit;">Noticias</h1>
@@ -76,6 +117,13 @@ const noticias = await getPublishedContentSorted('noticias');
       ) : (
         <p class="text-center subtle-text">Próximamente: noticias del mundo del entretenimiento coreano</p>
       )}
+    </div>
+  </section>
+
+  <!-- FAQ Section for AEO -->
+  <section class="section-shell" style="--section-bg: var(--md-color-surface-container-low);">
+    <div class="section-shell__inner">
+      <FAQSection questions={faqData} />
     </div>
   </section>
 </BaseLayout>

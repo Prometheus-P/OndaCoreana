@@ -2,18 +2,59 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import AdSlot from '../../components/ads/AdSlot.astro';
 import ContentCard from '../../components/ui/ContentCard.astro';
+import FAQSection from '../../components/ui/FAQSection.astro';
+import JsonLd from '../../components/seo/JsonLd.astro';
 import { getPublishedContentSorted } from '../../utils/content-helpers';
 
 const dramas = await getPublishedContentSorted('dramas');
 
 // Insert ad after every N cards
 const AD_INTERVAL = 4;
+
+// FAQ data for AEO optimization
+const faqData = [
+  {
+    question: '¿Qué es un K-Drama?',
+    answer: 'Un K-Drama (Korean Drama) es una serie de televisión producida en Corea del Sur. Se caracterizan por temporadas cortas de 16-20 episodios, historias completas sin múltiples temporadas, y géneros variados como romance, thriller, fantasía y comedia.',
+  },
+  {
+    question: '¿Cuántos episodios tiene un K-Drama típico?',
+    answer: 'La mayoría de los K-Dramas tienen entre 16 y 20 episodios de aproximadamente 60-70 minutos cada uno. Sin embargo, algunos dramas históricos pueden tener más de 50 episodios, y los mini-dramas pueden tener solo 8-12 episodios.',
+  },
+  {
+    question: '¿Dónde puedo ver K-Dramas con subtítulos en español?',
+    answer: 'Las principales plataformas para ver K-Dramas en español son Netflix, Viki (especializado en contenido asiático con subtítulos de la comunidad), Disney+, y Amazon Prime Video. Viki ofrece muchos títulos gratuitos con anuncios.',
+  },
+  {
+    question: '¿Cuáles son los K-Dramas más populares de todos los tiempos?',
+    answer: 'Entre los más populares están "El Juego del Calamar", "Crash Landing on You", "Goblin", "Descendants of the Sun", "Itaewon Class" y "All of Us Are Dead". Estos han ganado reconocimiento internacional y millones de fans.',
+  },
+  {
+    question: '¿Los K-Dramas tienen temporadas múltiples?',
+    answer: 'A diferencia de las series occidentales, la mayoría de K-Dramas cuentan una historia completa en una sola temporada. Pocas excepciones como "El Juego del Calamar" o "Hospital Playlist" han tenido segundas temporadas debido a su éxito extraordinario.',
+  },
+  {
+    question: '¿Qué géneros de K-Dramas existen?',
+    answer: 'Los K-Dramas abarcan múltiples géneros: romance, comedia romántica, thriller, fantasía, ciencia ficción, históricos (sageuk), médicos, legales, escolares (school drama) y de supervivencia. El romance suele estar presente en la mayoría.',
+  },
+  {
+    question: '¿Por qué los K-Dramas son tan adictivos?',
+    answer: 'Los K-Dramas enganchan por sus historias bien estructuradas con inicio, desarrollo y final claro, la química entre protagonistas, bandas sonoras memorables (OST), cinematografía cuidada, y finales de episodio con cliffhangers que invitan a seguir viendo.',
+  },
+  {
+    question: '¿Necesito entender coreano para ver K-Dramas?',
+    answer: 'No es necesario. Todas las plataformas ofrecen subtítulos en español. Sin embargo, muchos fans empiezan a aprender coreano básico naturalmente al escuchar frases repetidas. Ver dramas es una forma popular de practicar el idioma.',
+  },
+];
 ---
 
 <BaseLayout
   title="K-Dramas - Reseñas, Guías y Recomendaciones"
   description="Descubre los mejores K-Dramas con nuestras reseñas detalladas, guías de visualización y recomendaciones personalizadas. Todo en español."
 >
+  <Fragment slot="head">
+    <JsonLd schema={{ type: 'FAQPage', questions: faqData }} />
+  </Fragment>
   <section class="section-shell" style="--section-bg: linear-gradient(120deg, color-mix(in srgb, var(--md-color-primary) 80%, #0f0f0f) 0%, color-mix(in srgb, var(--md-color-tertiary) 60%, transparent) 100%); --section-color: var(--md-color-on-primary);">
     <div class="section-shell__inner">
       <h1 class="text-4xl font-bold" style="color: inherit;">K-Dramas</h1>
@@ -76,4 +117,11 @@ const AD_INTERVAL = 4;
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-8">
     <AdSlot slot="dramas-bottom" format="auto" testId="ad-dramas-bottom" />
   </div>
+
+  <!-- FAQ Section for AEO -->
+  <section class="section-shell" style="--section-bg: var(--md-color-surface-container-low);">
+    <div class="section-shell__inner">
+      <FAQSection questions={faqData} />
+    </div>
+  </section>
 </BaseLayout>

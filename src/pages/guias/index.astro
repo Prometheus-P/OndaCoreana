@@ -1,17 +1,58 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import ContentCard from '../../components/ui/ContentCard.astro';
+import FAQSection from '../../components/ui/FAQSection.astro';
+import JsonLd from '../../components/seo/JsonLd.astro';
 import { getPublishedContentSorted } from '../../utils/content-helpers';
 
 const guias = await getPublishedContentSorted('guias');
 
 const categories = ['streaming', 'viaje', 'idioma', 'cultura', 'general'];
+
+// FAQ data for AEO optimization
+const faqData = [
+  {
+    question: '¿Cuál es la mejor plataforma para ver K-Dramas?',
+    answer: 'Netflix ofrece el catálogo más grande con doblaje en español. Viki es ideal para fans con subtítulos de la comunidad y contenido exclusivo. Disney+ tiene producciones originales coreanas. Amazon Prime Video también suma títulos regularmente. La mejor opción depende de tus preferencias y presupuesto.',
+  },
+  {
+    question: '¿Cómo empezar a aprender coreano básico?',
+    answer: 'Comienza aprendiendo el alfabeto Hangul (se puede dominar en 1-2 semanas). Luego, usa aplicaciones como Duolingo, TTMIK o Lingodeer. Ver K-Dramas con subtítulos ayuda con la pronunciación. Practica frases cotidianas y números. La constancia es clave.',
+  },
+  {
+    question: '¿Qué necesito para viajar a Corea del Sur?',
+    answer: 'Ciudadanos de muchos países latinoamericanos pueden entrar sin visa por 90 días (turismo). Necesitas pasaporte vigente, boleto de regreso y prueba de alojamiento. Es recomendable tener seguro de viaje, tarjeta T-money para transporte, y descargar apps como Naver Maps y Papago.',
+  },
+  {
+    question: '¿Cuánto cuesta un viaje a Corea del Sur?',
+    answer: 'Un viaje de 10 días puede costar entre $1,500-$3,000 USD dependiendo del origen, temporada y estilo. Incluye vuelo (mayor gasto), alojamiento ($30-100/noche), comida ($15-30/día) y transporte. Los vuelos son más baratos en temporada baja (marzo-mayo, septiembre-noviembre).',
+  },
+  {
+    question: '¿Qué lugares visitar en Seúl para fans de K-Drama?',
+    answer: 'Locaciones populares incluyen: Namsan Tower (escenas románticas), Bukchon Hanok Village (casas tradicionales), Gangnam (tiendas de K-Pop), COEX Mall, y los cafés temáticos de Hongdae. También puedes visitar las sedes de agencias como HYBE, SM y JYP.',
+  },
+  {
+    question: '¿Cómo ver K-Dramas gratis y legalmente?',
+    answer: 'Viki ofrece contenido gratuito con anuncios. YouTube tiene algunos dramas completos en canales oficiales como KBS World. Las pruebas gratuitas de Netflix, Disney+ y Amazon Prime también permiten ver contenido. Evita sitios ilegales que dañan la industria.',
+  },
+  {
+    question: '¿Qué comida coreana debo probar primero?',
+    answer: 'Platos esenciales para principiantes: Bibimbap (arroz con vegetales), Bulgogi (carne marinada), Kimchi (vegetal fermentado), Korean Fried Chicken, Kimbap (rollos de arroz), Tteokbokki (pastel de arroz picante), y Korean BBQ. Comienza con platos menos picantes si no estás acostumbrado.',
+  },
+  {
+    question: '¿Cuáles son las costumbres coreanas más importantes?',
+    answer: 'Respetar la jerarquía por edad es fundamental. Usa dos manos para dar y recibir objetos. Quítate los zapatos al entrar a casas. No claves los palillos en el arroz. El contacto visual prolongado puede ser descortés. Inclínate al saludar. Rechaza regalos u ofrecimientos al menos una vez antes de aceptar.',
+  },
+];
 ---
 
 <BaseLayout
   title="Guías de Cultura Coreana - Streaming, Viaje, Idioma"
   description="Guías completas sobre cultura coreana: cómo ver K-Dramas, aprender coreano, viajar a Corea y más. Todo explicado en español."
 >
+  <Fragment slot="head">
+    <JsonLd schema={{ type: 'FAQPage', questions: faqData }} />
+  </Fragment>
   <section class="section-shell" style="--section-bg: linear-gradient(140deg, color-mix(in srgb, var(--md-color-tertiary) 65%, #002222) 0%, color-mix(in srgb, var(--md-color-primary) 55%, transparent) 100%); --section-color: var(--md-color-on-primary);">
     <div class="section-shell__inner">
       <h1 class="text-4xl font-bold" style="color: inherit;">Guías</h1>
@@ -76,6 +117,13 @@ const categories = ['streaming', 'viaje', 'idioma', 'cultura', 'general'];
       ) : (
         <p class="text-center subtle-text">Próximamente: guías sobre streaming, viajes a Corea, idioma coreano y más</p>
       )}
+    </div>
+  </section>
+
+  <!-- FAQ Section for AEO -->
+  <section class="section-shell" style="--section-bg: var(--md-color-surface-container-low);">
+    <div class="section-shell__inner">
+      <FAQSection questions={faqData} />
     </div>
   </section>
 </BaseLayout>

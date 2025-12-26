@@ -2,18 +2,59 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import AdSlot from '../../components/ads/AdSlot.astro';
 import ContentCard from '../../components/ui/ContentCard.astro';
+import FAQSection from '../../components/ui/FAQSection.astro';
+import JsonLd from '../../components/seo/JsonLd.astro';
 import { getPublishedContentSorted } from '../../utils/content-helpers';
 
 const artists = await getPublishedContentSorted('kpop');
 
 // Insert ad after every N cards
 const AD_INTERVAL = 4;
+
+// FAQ data for AEO optimization
+const faqData = [
+  {
+    question: '¿Qué significa K-Pop?',
+    answer: 'K-Pop es la abreviatura de "Korean Pop" (Pop Coreano). Es un género musical originado en Corea del Sur que combina pop, hip-hop, R&B y música electrónica. Se caracteriza por grupos de idols con coreografías sincronizadas, estéticas visuales elaboradas y una industria altamente profesionalizada.',
+  },
+  {
+    question: '¿Cuáles son los grupos de K-Pop más famosos?',
+    answer: 'Los grupos más famosos incluyen BTS (Bangtan Sonyeondan), BLACKPINK, EXO, TWICE, Stray Kids, aespa, NCT, SEVENTEEN, Red Velvet y (G)I-DLE. BTS y BLACKPINK han logrado récords mundiales y reconocimiento global sin precedentes.',
+  },
+  {
+    question: '¿Qué es un idol de K-Pop?',
+    answer: 'Un idol es un artista (cantante, bailarín, rapero) entrenado por una agencia de entretenimiento coreana durante años antes de debutar. Los idols son parte de grupos y se caracterizan por su talento múltiple, imagen cuidada, y conexión cercana con sus fans a través de redes sociales y fan meetings.',
+  },
+  {
+    question: '¿Cómo se llaman los fans de K-Pop?',
+    answer: 'Cada grupo tiene un nombre oficial para su fandom. Por ejemplo: ARMY (BTS), BLINK (BLACKPINK), ONCE (TWICE), EXO-L (EXO), STAY (Stray Kids), MY (aespa) y CARAT (SEVENTEEN). Los fans son muy organizados y apoyan a sus artistas en votaciones, streaming y proyectos.',
+  },
+  {
+    question: '¿Qué es un comeback en K-Pop?',
+    answer: 'Un comeback es el lanzamiento de nueva música por un artista o grupo después de un período de inactividad. Incluye nuevo álbum, canción principal, videoclip, concepto visual y promociones en programas musicales. Los comebacks son eventos muy esperados por los fans.',
+  },
+  {
+    question: '¿Dónde puedo escuchar K-Pop?',
+    answer: 'Puedes escuchar K-Pop en Spotify, Apple Music, YouTube Music, y Melon (plataforma coreana). Los videoclips están en YouTube. Para contenido adicional, aplicaciones como Weverse, V LIVE y UNIVERSE conectan fans con artistas.',
+  },
+  {
+    question: '¿Qué agencias de K-Pop son las más importantes?',
+    answer: 'Las "Big 4" agencias son: HYBE (BTS, SEVENTEEN, TXT), SM Entertainment (EXO, NCT, aespa), JYP Entertainment (Stray Kids, TWICE, ITZY) y YG Entertainment (BLACKPINK, TREASURE). Estas compañías han definido el estándar de la industria K-Pop.',
+  },
+  {
+    question: '¿Cómo apoyar a mi grupo favorito de K-Pop?',
+    answer: 'Puedes apoyar haciendo streaming de su música en plataformas oficiales, comprando álbumes físicos, votando en programas musicales como M Countdown o Music Bank, participando en su fandom oficial, y comprando merchandise oficial. Evita siempre las descargas ilegales.',
+  },
+];
 ---
 
 <BaseLayout
   title="K-Pop - Artistas, Grupos y Noticias"
   description="Todo sobre K-Pop en español: perfiles de artistas, grupos, comebacks, noticias y más. Tu guía completa del mundo del K-Pop."
 >
+  <Fragment slot="head">
+    <JsonLd schema={{ type: 'FAQPage', questions: faqData }} />
+  </Fragment>
   <section class="section-shell" style="--section-bg: linear-gradient(140deg, color-mix(in srgb, var(--md-color-tertiary) 90%, #0d0d0d) 0%, color-mix(in srgb, var(--md-color-primary) 70%, transparent) 100%); --section-color: var(--md-color-on-primary);">
     <div class="section-shell__inner">
       <h1 class="text-4xl font-bold" style="color: inherit;">K-Pop</h1>
@@ -71,4 +112,11 @@ const AD_INTERVAL = 4;
   <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-8">
     <AdSlot slot="kpop-bottom" format="auto" testId="ad-kpop-bottom" />
   </div>
+
+  <!-- FAQ Section for AEO -->
+  <section class="section-shell" style="--section-bg: var(--md-color-surface-container-low);">
+    <div class="section-shell__inner">
+      <FAQSection questions={faqData} />
+    </div>
+  </section>
 </BaseLayout>
