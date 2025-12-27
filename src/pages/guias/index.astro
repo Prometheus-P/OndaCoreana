@@ -149,37 +149,62 @@ const faqData = [
   </section>
 
   <!-- Glossary Section for AEO -->
-  <section class="section-shell" style="--section-bg: var(--md-color-surface-container);">
+  <section class="section-shell" style="--section-bg: var(--md-color-surface);">
     <div class="section-shell__inner">
-      <h2 class="text-2xl font-bold mb-6" style="color: var(--md-color-on-surface);">Glosario de Cultura Coreana</h2>
-      <dl class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" style="color: var(--md-color-on-surface);">
-        <div class="p-4 rounded-lg" style="background: var(--md-color-surface-container-high);">
-          <dt class="font-semibold text-lg" style="color: var(--md-color-tertiary);">Hangul (한글)</dt>
-          <dd class="mt-1 text-sm" style="color: var(--md-color-on-surface-variant);">Alfabeto coreano creado en 1443 por el Rey Sejong. Sistema fonético de 14 consonantes y 10 vocales, considerado uno de los más científicos del mundo.</dd>
+      <h2 class="text-2xl font-bold" style="color: var(--md-color-on-surface); margin-bottom: 1.5rem;">Glosario de Cultura Coreana</h2>
+      <dl class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="glossary-card">
+          <dt class="glossary-term">Hangul (한글)</dt>
+          <dd class="glossary-def">Alfabeto coreano creado en 1443 por el Rey Sejong. Sistema fonético de 14 consonantes y 10 vocales, considerado uno de los más científicos del mundo.</dd>
         </div>
-        <div class="p-4 rounded-lg" style="background: var(--md-color-surface-container-high);">
-          <dt class="font-semibold text-lg" style="color: var(--md-color-tertiary);">Hanbok (한복)</dt>
-          <dd class="mt-1 text-sm" style="color: var(--md-color-on-surface-variant);">Vestimenta tradicional coreana. Consiste en jeogori (chaqueta) y chima (falda) para mujeres, o baji (pantalón) para hombres. Se usa en festividades y bodas.</dd>
+        <div class="glossary-card">
+          <dt class="glossary-term">Hanbok (한복)</dt>
+          <dd class="glossary-def">Vestimenta tradicional coreana. Consiste en jeogori (chaqueta) y chima (falda) para mujeres, o baji (pantalón) para hombres. Se usa en festividades y bodas.</dd>
         </div>
-        <div class="p-4 rounded-lg" style="background: var(--md-color-surface-container-high);">
-          <dt class="font-semibold text-lg" style="color: var(--md-color-tertiary);">Kimchi (김치)</dt>
-          <dd class="mt-1 text-sm" style="color: var(--md-color-on-surface-variant);">Vegetales fermentados, principalmente col china con chile, ajo y jengibre. Patrimonio cultural inmaterial de la UNESCO y acompañamiento esencial en comidas coreanas.</dd>
+        <div class="glossary-card">
+          <dt class="glossary-term">Kimchi (김치)</dt>
+          <dd class="glossary-def">Vegetales fermentados, principalmente col china con chile, ajo y jengibre. Patrimonio cultural inmaterial de la UNESCO y acompañamiento esencial en comidas coreanas.</dd>
         </div>
-        <div class="p-4 rounded-lg" style="background: var(--md-color-surface-container-high);">
-          <dt class="font-semibold text-lg" style="color: var(--md-color-tertiary);">Soju (소주)</dt>
-          <dd class="mt-1 text-sm" style="color: var(--md-color-on-surface-variant);">Bebida alcohólica destilada tradicional de Corea (16-25% alcohol). Se bebe en shots pequeños y es parte integral de la cultura social coreana.</dd>
+        <div class="glossary-card">
+          <dt class="glossary-term">Soju (소주)</dt>
+          <dd class="glossary-def">Bebida alcohólica destilada tradicional de Corea (16-25% alcohol). Se bebe en shots pequeños y es parte integral de la cultura social coreana.</dd>
         </div>
-        <div class="p-4 rounded-lg" style="background: var(--md-color-surface-container-high);">
-          <dt class="font-semibold text-lg" style="color: var(--md-color-tertiary);">Jjimjilbang (찜질방)</dt>
-          <dd class="mt-1 text-sm" style="color: var(--md-color-on-surface-variant);">Baño público coreano con saunas, piscinas calientes y áreas de descanso. Experiencia cultural única que incluye tratamientos de spa y comida.</dd>
+        <div class="glossary-card">
+          <dt class="glossary-term">Jjimjilbang (찜질방)</dt>
+          <dd class="glossary-def">Baño público coreano con saunas, piscinas calientes y áreas de descanso. Experiencia cultural única que incluye tratamientos de spa y comida.</dd>
         </div>
-        <div class="p-4 rounded-lg" style="background: var(--md-color-surface-container-high);">
-          <dt class="font-semibold text-lg" style="color: var(--md-color-tertiary);">T-money (티머니)</dt>
-          <dd class="mt-1 text-sm" style="color: var(--md-color-on-surface-variant);">Tarjeta recargable para transporte público en Corea. Funciona en metro, autobús y taxis. También sirve para compras en tiendas de conveniencia.</dd>
+        <div class="glossary-card">
+          <dt class="glossary-term">T-money (티머니)</dt>
+          <dd class="glossary-def">Tarjeta recargable para transporte público en Corea. Funciona en metro, autobús y taxis. También sirve para compras en tiendas de conveniencia.</dd>
         </div>
       </dl>
     </div>
   </section>
+
+  <style>
+    .glossary-card {
+      padding: 1.25rem;
+      border-radius: 0.75rem;
+      background: var(--md-color-surface-container-high);
+      border: 1px solid var(--md-color-outline-variant);
+      transition: box-shadow 0.2s ease, transform 0.2s ease;
+    }
+    .glossary-card:hover {
+      box-shadow: var(--md-elevation-2);
+      transform: translateY(-2px);
+    }
+    .glossary-term {
+      font-weight: 600;
+      font-size: 1.125rem;
+      color: var(--md-color-tertiary);
+      margin-bottom: 0.5rem;
+    }
+    .glossary-def {
+      font-size: 0.875rem;
+      line-height: 1.6;
+      color: var(--md-color-on-surface-variant);
+    }
+  </style>
 
   <!-- FAQ Section for AEO -->
   <section class="section-shell" style="--section-bg: var(--md-color-surface-container-low);">

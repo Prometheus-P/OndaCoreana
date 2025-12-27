@@ -149,37 +149,62 @@ const faqData = [
   </section>
 
   <!-- Glossary Section for AEO -->
-  <section class="section-shell" style="--section-bg: var(--md-color-surface-container);">
+  <section class="section-shell" style="--section-bg: var(--md-color-surface);">
     <div class="section-shell__inner">
-      <h2 class="text-2xl font-bold mb-6" style="color: var(--md-color-on-surface);">Glosario del Entretenimiento Coreano</h2>
-      <dl class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" style="color: var(--md-color-on-surface);">
-        <div class="p-4 rounded-lg" style="background: var(--md-color-surface-container-high);">
-          <dt class="font-semibold text-lg" style="color: var(--md-color-primary);">Hallyu (한류)</dt>
-          <dd class="mt-1 text-sm" style="color: var(--md-color-on-surface-variant);">La "Ola Coreana": fenómeno global de popularidad de la cultura surcoreana incluyendo K-Pop, K-Dramas, cine, moda, belleza y gastronomía.</dd>
+      <h2 class="text-2xl font-bold" style="color: var(--md-color-on-surface); margin-bottom: 1.5rem;">Glosario del Entretenimiento Coreano</h2>
+      <dl class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="glossary-card">
+          <dt class="glossary-term">Hallyu (한류)</dt>
+          <dd class="glossary-def">La "Ola Coreana": fenómeno global de popularidad de la cultura surcoreana incluyendo K-Pop, K-Dramas, cine, moda, belleza y gastronomía.</dd>
         </div>
-        <div class="p-4 rounded-lg" style="background: var(--md-color-surface-container-high);">
-          <dt class="font-semibold text-lg" style="color: var(--md-color-primary);">Netizen (네티즌)</dt>
-          <dd class="mt-1 text-sm" style="color: var(--md-color-on-surface-variant);">Usuario de internet coreano. Sus opiniones y comentarios en portales como Naver o Pann influyen significativamente en la industria del entretenimiento.</dd>
+        <div class="glossary-card">
+          <dt class="glossary-term">Netizen (네티즌)</dt>
+          <dd class="glossary-def">Usuario de internet coreano. Sus opiniones y comentarios en portales como Naver o Pann influyen significativamente en la industria del entretenimiento.</dd>
         </div>
-        <div class="p-4 rounded-lg" style="background: var(--md-color-surface-container-high);">
-          <dt class="font-semibold text-lg" style="color: var(--md-color-primary);">Daesang (대상)</dt>
-          <dd class="mt-1 text-sm" style="color: var(--md-color-on-surface-variant);">Gran Premio: el galardón más prestigioso en ceremonias de premios coreanas. Reconoce al mejor artista, álbum o drama del año.</dd>
+        <div class="glossary-card">
+          <dt class="glossary-term">Daesang (대상)</dt>
+          <dd class="glossary-def">Gran Premio: el galardón más prestigioso en ceremonias de premios coreanas. Reconoce al mejor artista, álbum o drama del año.</dd>
         </div>
-        <div class="p-4 rounded-lg" style="background: var(--md-color-surface-container-high);">
-          <dt class="font-semibold text-lg" style="color: var(--md-color-primary);">Sasaeng (사생)</dt>
-          <dd class="mt-1 text-sm" style="color: var(--md-color-on-surface-variant);">Fan obsesivo que invade la privacidad de celebridades. Comportamiento rechazado por fandoms saludables y la industria del entretenimiento.</dd>
+        <div class="glossary-card">
+          <dt class="glossary-term">Sasaeng (사생)</dt>
+          <dd class="glossary-def">Fan obsesivo que invade la privacidad de celebridades. Comportamiento rechazado por fandoms saludables y la industria del entretenimiento.</dd>
         </div>
-        <div class="p-4 rounded-lg" style="background: var(--md-color-surface-container-high);">
-          <dt class="font-semibold text-lg" style="color: var(--md-color-primary);">Dispatch (디스패치)</dt>
-          <dd class="mt-1 text-sm" style="color: var(--md-color-on-surface-variant);">Medio de noticias de entretenimiento famoso por revelar relaciones de celebridades. Tradicionalmente publica exclusivas el 1 de enero.</dd>
+        <div class="glossary-card">
+          <dt class="glossary-term">Dispatch (디스패치)</dt>
+          <dd class="glossary-def">Medio de noticias de entretenimiento famoso por revelar relaciones de celebridades. Tradicionalmente publica exclusivas el 1 de enero.</dd>
         </div>
-        <div class="p-4 rounded-lg" style="background: var(--md-color-surface-container-high);">
-          <dt class="font-semibold text-lg" style="color: var(--md-color-primary);">All-kill (올킬)</dt>
-          <dd class="mt-1 text-sm" style="color: var(--md-color-on-surface-variant);">Cuando una canción ocupa el #1 en todas las listas musicales coreanas simultáneamente. Indica éxito masivo y dominio total de los charts.</dd>
+        <div class="glossary-card">
+          <dt class="glossary-term">All-kill (올킬)</dt>
+          <dd class="glossary-def">Cuando una canción ocupa el #1 en todas las listas musicales coreanas simultáneamente. Indica éxito masivo y dominio total de los charts.</dd>
         </div>
       </dl>
     </div>
   </section>
+
+  <style>
+    .glossary-card {
+      padding: 1.25rem;
+      border-radius: 0.75rem;
+      background: var(--md-color-surface-container-high);
+      border: 1px solid var(--md-color-outline-variant);
+      transition: box-shadow 0.2s ease, transform 0.2s ease;
+    }
+    .glossary-card:hover {
+      box-shadow: var(--md-elevation-2);
+      transform: translateY(-2px);
+    }
+    .glossary-term {
+      font-weight: 600;
+      font-size: 1.125rem;
+      color: var(--md-color-primary);
+      margin-bottom: 0.5rem;
+    }
+    .glossary-def {
+      font-size: 0.875rem;
+      line-height: 1.6;
+      color: var(--md-color-on-surface-variant);
+    }
+  </style>
 
   <!-- FAQ Section for AEO -->
   <section class="section-shell" style="--section-bg: var(--md-color-surface-container-low);">

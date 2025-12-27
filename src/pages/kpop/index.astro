@@ -142,37 +142,62 @@ const faqData = [
   </div>
 
   <!-- Glossary Section for AEO -->
-  <section class="section-shell" style="--section-bg: var(--md-color-surface-container);">
+  <section class="section-shell" style="--section-bg: var(--md-color-surface);">
     <div class="section-shell__inner">
-      <h2 class="text-2xl font-bold mb-6" style="color: var(--md-color-on-surface);">Glosario de Términos de K-Pop</h2>
-      <dl class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" style="color: var(--md-color-on-surface);">
-        <div class="p-4 rounded-lg" style="background: var(--md-color-surface-container-high);">
-          <dt class="font-semibold text-lg" style="color: var(--md-color-tertiary);">Idol (아이돌)</dt>
-          <dd class="mt-1 text-sm" style="color: var(--md-color-on-surface-variant);">Artista de K-Pop entrenado profesionalmente por una agencia. Domina canto, baile, rap y actuación. Mantiene una imagen pública cuidada y conexión cercana con fans.</dd>
+      <h2 class="text-2xl font-bold" style="color: var(--md-color-on-surface); margin-bottom: 1.5rem;">Glosario de Términos de K-Pop</h2>
+      <dl class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="glossary-card">
+          <dt class="glossary-term">Idol (아이돌)</dt>
+          <dd class="glossary-def">Artista de K-Pop entrenado profesionalmente por una agencia. Domina canto, baile, rap y actuación. Mantiene una imagen pública cuidada y conexión cercana con fans.</dd>
         </div>
-        <div class="p-4 rounded-lg" style="background: var(--md-color-surface-container-high);">
-          <dt class="font-semibold text-lg" style="color: var(--md-color-tertiary);">Comeback (컴백)</dt>
-          <dd class="mt-1 text-sm" style="color: var(--md-color-on-surface-variant);">Regreso de un artista con nuevo álbum y promociones. Incluye concepto visual, videoclip, coreografía y presentaciones en programas musicales.</dd>
+        <div class="glossary-card">
+          <dt class="glossary-term">Comeback (컴백)</dt>
+          <dd class="glossary-def">Regreso de un artista con nuevo álbum y promociones. Incluye concepto visual, videoclip, coreografía y presentaciones en programas musicales.</dd>
         </div>
-        <div class="p-4 rounded-lg" style="background: var(--md-color-surface-container-high);">
-          <dt class="font-semibold text-lg" style="color: var(--md-color-tertiary);">Bias (최애)</dt>
-          <dd class="mt-1 text-sm" style="color: var(--md-color-on-surface-variant);">Miembro favorito de un grupo. "Bias wrecker" es otro miembro que amenaza con convertirse en tu nuevo favorito por su carisma.</dd>
+        <div class="glossary-card">
+          <dt class="glossary-term">Bias (최애)</dt>
+          <dd class="glossary-def">Miembro favorito de un grupo. "Bias wrecker" es otro miembro que amenaza con convertirse en tu nuevo favorito por su carisma.</dd>
         </div>
-        <div class="p-4 rounded-lg" style="background: var(--md-color-surface-container-high);">
-          <dt class="font-semibold text-lg" style="color: var(--md-color-tertiary);">Fandom (팬덤)</dt>
-          <dd class="mt-1 text-sm" style="color: var(--md-color-on-surface-variant);">Comunidad organizada de fans con nombre oficial. Ejemplos: ARMY (BTS), BLINK (BLACKPINK), ONCE (TWICE). Apoyan con streaming, votaciones y proyectos.</dd>
+        <div class="glossary-card">
+          <dt class="glossary-term">Fandom (팬덤)</dt>
+          <dd class="glossary-def">Comunidad organizada de fans con nombre oficial. Ejemplos: ARMY (BTS), BLINK (BLACKPINK), ONCE (TWICE). Apoyan con streaming, votaciones y proyectos.</dd>
         </div>
-        <div class="p-4 rounded-lg" style="background: var(--md-color-surface-container-high);">
-          <dt class="font-semibold text-lg" style="color: var(--md-color-tertiary);">Lightstick (응원봉)</dt>
-          <dd class="mt-1 text-sm" style="color: var(--md-color-on-surface-variant);">Bastón luminoso oficial de cada grupo usado en conciertos. Diseño único que identifica al fandom y se sincroniza con la música durante shows.</dd>
+        <div class="glossary-card">
+          <dt class="glossary-term">Lightstick (응원봉)</dt>
+          <dd class="glossary-def">Bastón luminoso oficial de cada grupo usado en conciertos. Diseño único que identifica al fandom y se sincroniza con la música durante shows.</dd>
         </div>
-        <div class="p-4 rounded-lg" style="background: var(--md-color-surface-container-high);">
-          <dt class="font-semibold text-lg" style="color: var(--md-color-tertiary);">Trainee (연습생)</dt>
-          <dd class="mt-1 text-sm" style="color: var(--md-color-on-surface-variant);">Aprendiz que entrena en una agencia antes de debutar. El período puede durar de 2 a 7 años, practicando canto, baile, idiomas y habilidades de entretenimiento.</dd>
+        <div class="glossary-card">
+          <dt class="glossary-term">Trainee (연습생)</dt>
+          <dd class="glossary-def">Aprendiz que entrena en una agencia antes de debutar. El período puede durar de 2 a 7 años, practicando canto, baile, idiomas y habilidades de entretenimiento.</dd>
         </div>
       </dl>
     </div>
   </section>
+
+  <style>
+    .glossary-card {
+      padding: 1.25rem;
+      border-radius: 0.75rem;
+      background: var(--md-color-surface-container-high);
+      border: 1px solid var(--md-color-outline-variant);
+      transition: box-shadow 0.2s ease, transform 0.2s ease;
+    }
+    .glossary-card:hover {
+      box-shadow: var(--md-elevation-2);
+      transform: translateY(-2px);
+    }
+    .glossary-term {
+      font-weight: 600;
+      font-size: 1.125rem;
+      color: var(--md-color-tertiary);
+      margin-bottom: 0.5rem;
+    }
+    .glossary-def {
+      font-size: 0.875rem;
+      line-height: 1.6;
+      color: var(--md-color-on-surface-variant);
+    }
+  </style>
 
   <!-- FAQ Section for AEO -->
   <section class="section-shell" style="--section-bg: var(--md-color-surface-container-low);">

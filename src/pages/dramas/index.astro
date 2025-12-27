@@ -147,37 +147,62 @@ const faqData = [
   </div>
 
   <!-- Glossary Section for AEO -->
-  <section class="section-shell" style="--section-bg: var(--md-color-surface-container);">
+  <section class="section-shell" style="--section-bg: var(--md-color-surface);">
     <div class="section-shell__inner">
-      <h2 class="text-2xl font-bold mb-6" style="color: var(--md-color-on-surface);">Glosario de Términos de K-Drama</h2>
-      <dl class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3" style="color: var(--md-color-on-surface);">
-        <div class="p-4 rounded-lg" style="background: var(--md-color-surface-container-high);">
-          <dt class="font-semibold text-lg" style="color: var(--md-color-primary);">Sageuk (사극)</dt>
-          <dd class="mt-1 text-sm" style="color: var(--md-color-on-surface-variant);">Drama histórico ambientado en la era Joseon u otros períodos de la historia coreana. Incluye tramas políticas, romances de palacio y artes marciales.</dd>
+      <h2 class="text-2xl font-bold" style="color: var(--md-color-on-surface); margin-bottom: 1.5rem;">Glosario de Términos de K-Drama</h2>
+      <dl class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="glossary-card">
+          <dt class="glossary-term">Sageuk (사극)</dt>
+          <dd class="glossary-def">Drama histórico ambientado en la era Joseon u otros períodos de la historia coreana. Incluye tramas políticas, romances de palacio y artes marciales.</dd>
         </div>
-        <div class="p-4 rounded-lg" style="background: var(--md-color-surface-container-high);">
-          <dt class="font-semibold text-lg" style="color: var(--md-color-primary);">OST (Original Soundtrack)</dt>
-          <dd class="mt-1 text-sm" style="color: var(--md-color-on-surface-variant);">Banda sonora original del drama. Las canciones son compuestas específicamente para la serie y suelen convertirse en hits musicales.</dd>
+        <div class="glossary-card">
+          <dt class="glossary-term">OST (Original Soundtrack)</dt>
+          <dd class="glossary-def">Banda sonora original del drama. Las canciones son compuestas específicamente para la serie y suelen convertirse en hits musicales.</dd>
         </div>
-        <div class="p-4 rounded-lg" style="background: var(--md-color-surface-container-high);">
-          <dt class="font-semibold text-lg" style="color: var(--md-color-primary);">Aegyo (애교)</dt>
-          <dd class="mt-1 text-sm" style="color: var(--md-color-on-surface-variant);">Comportamiento tierno y adorable usado para expresar afecto. Común en escenas románticas de K-Dramas donde los personajes actúan de forma cute.</dd>
+        <div class="glossary-card">
+          <dt class="glossary-term">Aegyo (애교)</dt>
+          <dd class="glossary-def">Comportamiento tierno y adorable usado para expresar afecto. Común en escenas románticas de K-Dramas donde los personajes actúan de forma cute.</dd>
         </div>
-        <div class="p-4 rounded-lg" style="background: var(--md-color-surface-container-high);">
-          <dt class="font-semibold text-lg" style="color: var(--md-color-primary);">Chaebol (재벌)</dt>
-          <dd class="mt-1 text-sm" style="color: var(--md-color-on-surface-variant);">Heredero de un conglomerado empresarial coreano. Personaje típico en dramas románticos: rico, guapo y con conflictos familiares.</dd>
+        <div class="glossary-card">
+          <dt class="glossary-term">Chaebol (재벌)</dt>
+          <dd class="glossary-def">Heredero de un conglomerado empresarial coreano. Personaje típico en dramas románticos: rico, guapo y con conflictos familiares.</dd>
         </div>
-        <div class="p-4 rounded-lg" style="background: var(--md-color-surface-container-high);">
-          <dt class="font-semibold text-lg" style="color: var(--md-color-primary);">Oppa (오빠)</dt>
-          <dd class="mt-1 text-sm" style="color: var(--md-color-on-surface-variant);">Término que usan las mujeres para llamar a hombres mayores cercanos. En dramas románticos, indica cercanía emocional con el protagonista masculino.</dd>
+        <div class="glossary-card">
+          <dt class="glossary-term">Oppa (오빠)</dt>
+          <dd class="glossary-def">Término que usan las mujeres para llamar a hombres mayores cercanos. En dramas románticos, indica cercanía emocional con el protagonista masculino.</dd>
         </div>
-        <div class="p-4 rounded-lg" style="background: var(--md-color-surface-container-high);">
-          <dt class="font-semibold text-lg" style="color: var(--md-color-primary);">Second Lead Syndrome</dt>
-          <dd class="mt-1 text-sm" style="color: var(--md-color-on-surface-variant);">Cuando los fans prefieren al segundo protagonista masculino sobre el principal. Fenómeno común que genera debates apasionados entre espectadores.</dd>
+        <div class="glossary-card">
+          <dt class="glossary-term">Second Lead Syndrome</dt>
+          <dd class="glossary-def">Cuando los fans prefieren al segundo protagonista masculino sobre el principal. Fenómeno común que genera debates apasionados entre espectadores.</dd>
         </div>
       </dl>
     </div>
   </section>
+
+  <style>
+    .glossary-card {
+      padding: 1.25rem;
+      border-radius: 0.75rem;
+      background: var(--md-color-surface-container-high);
+      border: 1px solid var(--md-color-outline-variant);
+      transition: box-shadow 0.2s ease, transform 0.2s ease;
+    }
+    .glossary-card:hover {
+      box-shadow: var(--md-elevation-2);
+      transform: translateY(-2px);
+    }
+    .glossary-term {
+      font-weight: 600;
+      font-size: 1.125rem;
+      color: var(--md-color-primary);
+      margin-bottom: 0.5rem;
+    }
+    .glossary-def {
+      font-size: 0.875rem;
+      line-height: 1.6;
+      color: var(--md-color-on-surface-variant);
+    }
+  </style>
 
   <!-- FAQ Section for AEO -->
   <section class="section-shell" style="--section-bg: var(--md-color-surface-container-low);">
