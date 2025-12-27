@@ -9,67 +9,67 @@ const guias = await getPublishedContentSorted('guias');
 
 const categories = ['streaming', 'viaje', 'idioma', 'cultura', 'general'];
 
-// FAQ data for AEO optimization
+// FAQ data for AEO optimization - Magazine tone
 const faqData = [
   {
     question: '¿Cuál es la mejor plataforma para ver K-Dramas?',
-    answer: 'Netflix ofrece el catálogo más grande con doblaje en español y subtítulos de calidad. Viki es ideal para fans con subtítulos de la comunidad, contenido exclusivo, y muchos títulos gratuitos. Disney+ tiene producciones originales coreanas de alta calidad. Amazon Prime Video suma títulos regularmente. KOCOWA es especializado en K-content. La mejor opción depende de tu presupuesto, preferencia de subtítulos, y catálogo disponible en tu región.',
+    answer: 'Depende de lo que busques. Netflix es el rey: catálogo enorme, doblaje incluido, producciones exclusivas. Viki es el secreto mejor guardado: subtítulos hechos con amor por fans, MUCHO contenido gratis, y dramas que no encuentras en otro lado. Disney+ está apostando fuerte con originales de calidad. ¿Nuestro consejo? Prueba todas las versiones gratis y quédate con la que tenga TUS dramas. Spoiler: probablemente termines suscrito a varias.',
   },
   {
     question: '¿Cómo empezar a aprender coreano básico?',
-    answer: 'Paso 1: Aprende el alfabeto Hangul (한글), que se puede dominar en 1-2 semanas con práctica diaria. Paso 2: Usa aplicaciones como Talk To Me In Korean (TTMIK), Duolingo, Lingodeer, o Drops. Paso 3: Ver K-Dramas con subtítulos ayuda con pronunciación y vocabulario cotidiano. Paso 4: Practica frases básicas (안녕하세요, 감사합니다, 사랑해요). Paso 5: Únete a comunidades de intercambio de idiomas. La constancia de 15-30 minutos diarios es más efectiva que sesiones largas esporádicas.',
+    answer: '¡Buenas noticias: el Hangul es sorprendentemente fácil! Puedes dominar el alfabeto en 1-2 semanas (en serio). Después, apps como Talk To Me In Korean o Duolingo hacen el trabajo divertido. ¿El truco secreto? Ver K-Dramas con subtítulos. Sin darte cuenta, empiezas a reconocer palabras, entender expresiones, y tu pronunciación mejora. 15 minutos diarios > 3 horas los domingos. 안녕하세요 (hola), 감사합니다 (gracias), 사랑해요 (te amo) - ya sabes tres frases.',
   },
   {
     question: '¿Qué necesito para viajar a Corea del Sur?',
-    answer: 'Requisitos básicos: Pasaporte vigente (6+ meses), visa (ciudadanos de muchos países hispanohablantes no necesitan visa para turismo hasta 90 días, verificar requisitos K-ETA), boleto de regreso, y prueba de alojamiento. Recomendado: seguro de viaje internacional, tarjeta T-money para transporte público, apps esenciales (Naver Maps, Papago traductor, KakaoTalk, Subway Korea), adaptador de enchufe tipo C/F, y tarjeta SIM o WiFi portátil.',
+    answer: '¡Tu sueño K puede hacerse realidad! Necesitas: pasaporte vigente, K-ETA (para muchos países hispanohablantes, sin visa hasta 90 días), boleto de regreso, y reserva de hotel. Lo esencial: seguro de viaje (no seas irresponsable), tarjeta T-money para el metro, y ESTAS apps: Naver Maps (Google Maps no funciona bien allá), Papago (traductor), y KakaoTalk (el WhatsApp coreano). Adaptador de enchufe tipo C/F y una SIM local. ¡Listo para la aventura!',
   },
   {
     question: '¿Cuánto cuesta un viaje a Corea del Sur?',
-    answer: 'Presupuesto estimado para 10 días: Vuelo $800-1,500 USD (mayor gasto, varía por origen y temporada). Alojamiento $30-100/noche (hostels vs. hoteles). Comida $15-30/día (street food vs. restaurantes). Transporte local $50-100 total (T-money). Atracciones $100-200. Total aproximado: $1,500-3,000 USD. Temporada baja (marzo-mayo, septiembre-noviembre) tiene vuelos más económicos. Reservar con 3-4 meses de anticipación ayuda a conseguir mejores precios.',
+    answer: 'Seamos honestos: el vuelo es el golpe fuerte ($800-1,500 USD dependiendo de dónde salgas). Pero después, Corea es MÁS barata de lo que crees. Hostels desde $30/noche, comida deliciosa por $5-15 (el street food es INCREÍBLE), y el metro es súper económico. Un viaje de 10 días puede costar $1,500-3,000 USD total. Truco: viaja en temporada baja (marzo-mayo o septiembre-noviembre) y reserva con anticipación. Tu cartera te lo agradecerá.',
   },
   {
     question: '¿Qué lugares visitar en Seúl para fans de K-Drama?',
-    answer: 'Locaciones icónicas de K-Drama: Namsan Tower (escenas románticas, candados del amor), Bukchon Hanok Village (casas tradicionales), Gyeongbokgung Palace (dramas históricos). Para fans de K-Pop: HYBE Insight (BTS), SMTOWN en COEX, Gangnam (tiendas de merchandise). Áreas populares: Hongdae (cafés temáticos, vida nocturna), Myeongdong (compras, K-beauty), Itaewon (internacional). Tours de locaciones de dramas específicos están disponibles.',
+    answer: '¡Prepara la cámara! Namsan Tower es obligatorio: ahí filmaron ESA escena romántica de tu drama favorito (los candados del amor son reales). Bukchon Hanok Village tiene las casas tradicionales que ves en los sageuk. ¿Fan de K-Pop? HYBE Insight es el museo de BTS, SMTOWN en COEX tiene de todo. Hongdae es cafés aesthetic, tiendas de merch, y la vibra más cool de Seúl. Myeongdong para K-beauty hasta reventar.',
   },
   {
     question: '¿Cómo ver K-Dramas gratis y legalmente?',
-    answer: 'Opciones gratuitas legales: Viki (contenido con anuncios, subtítulos de la comunidad), YouTube (canales oficiales como KBS World, SBS World, MBCdrama con dramas completos), Tubi y Pluto TV (catálogo limitado). Pruebas gratuitas: Netflix, Disney+, Amazon Prime ofrecen 7-30 días gratis. KOCOWA tiene período de prueba. Evita sitios piratas que dañan la industria y a menudo tienen virus o malware.',
+    answer: '¡Sí se puede! Viki tiene MUCHO contenido gratis con anuncios (worth it). YouTube tiene canales oficiales como KBS World con dramas completos y legales. Tubi y Pluto TV también tienen opciones. Y no olvides las pruebas gratuitas de Netflix, Disney+ y Amazon: úsalas estratégicamente para maratonear. Lo que NO debes hacer: sitios piratas. Dañan la industria que amas y están llenos de virus. Respeta a los creadores.',
   },
   {
     question: '¿Qué comida coreana debo probar primero?',
-    answer: 'Para principiantes (menos picante): Bibimbap (arroz con vegetales y huevo), Bulgogi (carne de res marinada dulce), Kimbap (rollos de arroz estilo coreano), Korean Fried Chicken (pollo frito crujiente), Japchae (fideos de camote). Nivel intermedio: Kimchi (vegetal fermentado), Samgyeopsal (panceta a la parrilla), Sundubu-jjigae (tofu suave). Aventurero: Tteokbokki (pasteles de arroz picantes), Budae-jjigae (estofado estilo army). El Korean BBQ es experiencia obligada.',
+    answer: '¡Prepárate para enamorarte de la comida coreana! Empieza con: Bibimbap (arroz con verduras, huevo, y gochujang - no tan picante), Korean Fried Chicken (vas a soñar con él), Kimbap (como sushi pero coreano y más accesible), y Bulgogi (carne marinada dulce). ¿Ya tienes tolerancia al picante? Tteokbokki te espera. La experiencia DEFINITIVA: Korean BBQ con amigos, asando tu propia carne mientras brindas con soju. Es religión.',
   },
   {
     question: '¿Cuáles son las costumbres coreanas más importantes?',
-    answer: 'Jerarquía por edad: Respeta a los mayores, usa honoríficos, deja que los mayores coman primero. Etiqueta general: Usa dos manos para dar y recibir objetos (especialmente con mayores), quítate los zapatos al entrar a casas y algunos restaurantes, inclínate al saludar (ángulo según respeto). En la mesa: No claves los palillos verticalmente en el arroz (asociado con funerales), no te sirvas bebida tú mismo (sirve a otros). Social: Rechaza regalos al menos una vez antes de aceptar, el contacto visual prolongado puede ser descortés.',
+    answer: 'La regla #1: respeta a los mayores. SIEMPRE. Usa dos manos para dar y recibir cosas (especialmente dinero o bebidas). Quítate los zapatos al entrar a casas. En la mesa: NUNCA claves los palillos verticalmente en el arroz (es para funerales). Sirve bebida a otros, no a ti mismo. Rechaza regalos al menos una vez antes de aceptar. Inclínate al saludar. ¿Parece mucho? Los coreanos aprecian ENORMEMENTE cuando extranjeros hacen el esfuerzo.',
   },
   {
     question: '¿Cómo funciona el transporte público en Corea del Sur?',
-    answer: 'El transporte público en Corea es eficiente y económico. Metro: Seúl tiene una de las mejores redes del mundo, señalización en inglés, apps como Subway Korea ayudan. Bus: Extenso pero más complejo para turistas. T-money: Tarjeta recargable que funciona en metro, bus, taxi, y tiendas de conveniencia; se compra en estaciones y convenience stores. KTX: Tren de alta velocidad conecta ciudades principales (Seúl-Busan en 2.5 horas). Taxi: Económicos y seguros, usa KakaoTaxi para pedir.',
+    answer: 'El metro de Seúl es INCREÍBLE: limpio, puntual, con señalización en inglés, y súper económico. La T-money es tu mejor amiga: una tarjeta recargable que funciona en metro, bus, taxi, y hasta convenience stores. Cómprala en cualquier estación. ¿Quieres ir a Busan? El KTX te lleva en 2.5 horas a 300 km/h. Los taxis son seguros y baratos. Usa KakaoTaxi para pedir uno sin hablar coreano. Moverse en Corea es facilísimo.',
   },
   {
     question: '¿Qué es el K-Beauty y cómo empezar?',
-    answer: 'K-Beauty (Korean Beauty) es el enfoque coreano al cuidado de la piel, famoso mundialmente por su efectividad. La rutina básica incluye: doble limpieza (aceite + espuma), tónico, esencia/serum, hidratante, y protector solar (¡esencial!). Ingredientes populares: ácido hialurónico, niacinamida, centella asiática, mucina de caracol. Marcas populares: COSRX, Innisfree, Laneige, Sulwhasoo, Missha. En Corea, compra en Olive Young (cadena de farmacias) o Myeongdong. La clave es consistencia y protección solar diaria.',
+    answer: '¡K-Beauty cambió el skincare mundial y va a cambiar tu piel! La filosofía es simple: prevención > corrección, y consistencia > productos caros. Rutina básica: limpiador (doble limpieza si usas maquillaje), tónico, serum, hidratante, y PROTECTOR SOLAR (esto es religión). Marcas para empezar: COSRX, Innisfree, Beauty of Joseon. En Corea, Olive Young es tu paraíso. El secreto coreano: no es UN producto milagroso, es la rutina diaria.',
   },
   {
     question: '¿Cuándo es la mejor época para visitar Corea del Sur?',
-    answer: 'Primavera (marzo-mayo): Floración de cerezos en abril, clima templado, muy popular. Otoño (septiembre-noviembre): Follaje colorido, clima perfecto, festivales. Verano (junio-agosto): Caluroso y húmedo, temporada de monsón en julio, precios más bajos. Invierno (diciembre-febrero): Frío intenso, nieve, festivales de luces, mercados navideños. Evita: Chuseok (septiembre) y Seollal (febrero lunar) cuando todo cierra y el transporte está lleno. La mejor época general es primavera u otoño.',
+    answer: '¡Cada temporada tiene su magia! Primavera (marzo-mayo): Los cerezos en flor son MÁGICOS, especialmente en abril. Clima perfecto. Otoño (septiembre-noviembre): Follaje rojo y dorado, festivales, clima ideal. Los coreanos dicen que es la mejor época. Verano: Calor intenso y lluvias, pero precios bajos. Invierno: Frío SERIO pero la nieve es hermosa y hay festivales de luces. Evita Chuseok y Seollal (fiestas nacionales) cuando TODO cierra.',
   },
   {
     question: '¿Cómo comunicarse en Corea sin saber coreano?',
-    answer: 'Apps esenciales: Papago (traductor de Naver, mejor para coreano que Google), Google Translate (cámara para traducir letreros). Navegación: Naver Maps o KakaoMap (Google Maps es limitado en Corea). Comunicación: KakaoTalk (el WhatsApp de Corea). Inglés: Ampliamente entendido en zonas turísticas, menos en áreas locales. Frases útiles: "안녕하세요" (hola), "감사합니다" (gracias), "영어 할 수 있어요?" (¿habla inglés?). Los coreanos aprecian cualquier intento de hablar su idioma.',
+    answer: 'Papago es tu MEJOR AMIGO. Es el traductor de Naver y entiende coreano mejor que Google. Apunta la cámara a cualquier letrero y traduce instantáneamente. KakaoMap o Naver Maps para navegación (Google Maps NO funciona bien en Corea). KakaoTalk es el WhatsApp local: todos lo usan. El inglés funciona en zonas turísticas, pero aprende estas frases y ganarás corazones: "안녕하세요" (hola), "감사합니다" (gracias), "맛있어요" (está delicioso).',
   },
   {
     question: '¿Qué es un jjimjilbang y cómo funciona?',
-    answer: 'Un jjimjilbang (찜질방) es un baño público coreano con saunas, piscinas termales, y áreas de descanso. Cómo funciona: Paga la entrada ($10-15 USD), recibes uniforme y toalla, guarda tus cosas en locker. Área de baños: Separada por género, te bañas desnudo (obligatorio antes de entrar a piscinas). Área común: Con ropa, saunas temáticas, sala de descanso, comida (huevos cocidos, sikhye). Etiqueta: Lávate bien antes de entrar a las piscinas, no uses el celular en áreas de baño. Es experiencia cultural única, abierto 24 horas.',
+    answer: '¡La experiencia más COREANA que puedes tener! Un jjimjilbang es spa público con saunas, piscinas termales, y áreas para dormir. Sí, la gente se queda a dormir ahí (es más barato que un hotel). Pagas la entrada ($10-15), te dan uniforme y toalla. El área de baños es separada por género y vas... sin ropa. Es normal, todos lo hacen. El área común tiene saunas temáticas, snacks (los huevos cocidos son tradición), y pura relajación. 24 horas, experiencia inolvidable.',
   },
   {
     question: '¿Cómo comprar merchandise de K-Pop en Corea?',
-    answer: 'Tiendas oficiales: HYBE Insight (BTS, SEVENTEEN), SM Town en COEX (EXO, NCT, aespa), JYP Store (Stray Kids, TWICE). Zonas de compras: Myeongdong (tiendas de K-Pop), Hongdae (tiendas independientes y segunda mano), Gangnam. Albums: Kyobo Bookstore, Yes24, Hot Tracks. Photocards: Tiendas de intercambio en Hongdae. Online: Weverse Shop, Ktown4u (envío internacional). Tips: Lleva efectivo para tiendas pequeñas, revisa autenticidad de productos, guarda recibos para tax refund si compras mucho.',
+    answer: '¡El sueño del fan hecho realidad! Tiendas oficiales: HYBE Insight para BTS/SEVENTEEN, SMTOWN en COEX para NCT/aespa, JYP Store para Stray Kids/TWICE. Hongdae tiene tiendas independientes con photocards raras y merch de segunda mano. Myeongdong tiene DE TODO. Para álbumes: Kyobo Bookstore o Yes24. Tips de pro: lleva efectivo para tiendas pequeñas, verifica autenticidad (hay falsificaciones), y guarda recibos para tax refund. Tu maleta va a pesar el triple.',
   },
   {
     question: '¿Qué aplicaciones necesito para viajar a Corea?',
-    answer: 'Navegación: Naver Maps o KakaoMap (Google Maps limitado). Transporte: Subway Korea (metro), KakaoTaxi (taxis). Traducción: Papago (el mejor para coreano), Google Translate (cámara). Comunicación: KakaoTalk (esencial, todos lo usan). Comida: MangoPlate (reseñas de restaurantes), Yogiyo (delivery). Compras: Coupang (Amazon coreano). Turismo: Visit Korea (oficial de turismo), Klook/GetYourGuide (tours). Pagos: Muchos lugares aceptan tarjetas internacionales, pero ten algo de efectivo won para pequeños comercios.',
+    answer: 'Descarga ESTAS antes de aterrizar: Naver Maps o KakaoMap (Google Maps es inútil allá), Papago (traductor que realmente funciona), Subway Korea (para el metro), KakaoTalk (TODOS en Corea lo usan), KakaoTaxi (pedir taxis sin hablar). Bonus: MangoPlate para encontrar restaurantes, Coupang para compras online, y Visit Korea para info turística oficial. Con estas apps, navegas Corea como un local. De nada.',
   },
 ];
 ---

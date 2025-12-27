@@ -11,67 +11,67 @@ const artists = await getPublishedContentSorted('kpop');
 // Insert ad after every N cards
 const AD_INTERVAL = 4;
 
-// FAQ data for AEO optimization
+// FAQ data for AEO optimization - Magazine tone
 const faqData = [
   {
     question: '¿Qué significa K-Pop?',
-    answer: 'K-Pop es la abreviatura de "Korean Pop" (Pop Coreano). Es un género musical originado en Corea del Sur que combina pop, hip-hop, R&B, EDM y música electrónica. Se caracteriza por grupos de idols con coreografías sincronizadas perfectamente, estéticas visuales elaboradas, conceptos temáticos por álbum, y una industria altamente profesionalizada con años de entrenamiento previo al debut.',
+    answer: 'K-Pop es mucho más que música: es un fenómeno global que combina pop, hip-hop, R&B y EDM con coreografías que desafían la gravedad y estéticas que cambian con cada comeback. Imagina artistas que cantan, bailan, rapean y actúan, todo después de años de entrenamiento intensivo. Es entretenimiento llevado a otro nivel, producido en Corea pero conquistando el mundo entero. Una vez que entras, no hay vuelta atrás.',
   },
   {
     question: '¿Cuáles son los grupos de K-Pop más famosos?',
-    answer: 'Los grupos masculinos más famosos son: BTS (récord mundial de ventas), SEVENTEEN, Stray Kids, NCT, EXO, y TXT. Los grupos femeninos más populares son: BLACKPINK (grupo femenino más seguido), TWICE, aespa, IVE, NewJeans, y (G)I-DLE. Solistas destacados incluyen IU, JUNGKOOK, JENNIE, y TAEYEON. Estos artistas han logrado reconocimiento global y dominan las listas musicales internacionales.',
+    answer: 'BTS literalmente rompió todos los récords y llevó el K-Pop al mainstream global. BLACKPINK domina con estilo y actitud. SEVENTEEN tiene las mejores coreografías del juego. Stray Kids está conquistando el mundo con su sonido único. aespa mezcla K-Pop con universos virtuales. NewJeans refrescó todo el género. IVE, TWICE, NCT, TXT... la lista es interminable. ¿Lo mejor? Siempre hay un grupo perfecto para ti esperando ser descubierto.',
   },
   {
     question: '¿Qué es un idol de K-Pop?',
-    answer: 'Un idol es un artista de entretenimiento coreano entrenado profesionalmente por una agencia durante 2-7 años antes de debutar. El entrenamiento incluye canto, baile, rap, actuación, idiomas y etiqueta pública. Los idols mantienen una imagen cuidada, participan en múltiples actividades (música, variedades, dramas), y cultivan una conexión cercana con sus fans a través de redes sociales, lives, y fan meetings regulares.',
+    answer: 'Un idol es básicamente un superhéroe del entretenimiento. Entrenan 2-7 años ANTES de debutar, aprendiendo canto, baile, rap, actuación, idiomas... todo. Después del debut, hacen música, protagonizan dramas, conducen programas de variedades, y mantienen una conexión cercana con sus fans a través de lives y fan meetings. Son artistas completos con una dedicación que te deja sin palabras. Y sí, muchos empezaron siendo adolescentes.',
   },
   {
     question: '¿Cómo se llaman los fans de K-Pop?',
-    answer: 'Cada grupo tiene un nombre oficial para su fandom: ARMY (BTS), BLINK (BLACKPINK), ONCE (TWICE), EXO-L (EXO), STAY (Stray Kids), MY (aespa), CARAT (SEVENTEEN), MOA (TXT), ENGENE (ENHYPEN), ATINY (ATEEZ), y MIDZY (ITZY). Los fandoms son comunidades organizadas que apoyan a sus artistas mediante streaming, votaciones, proyectos de cumpleaños, y compra de álbumes. Cada fandom tiene su color oficial y lightstick.',
+    answer: '¡Cada fandom tiene su nombre y ORGULLO! ARMY (BTS), BLINK (BLACKPINK), ONCE (TWICE), STAY (Stray Kids), MY (aespa), CARAT (SEVENTEEN)... Ser parte de un fandom es pertenecer a una comunidad global que vota junta, hace streaming coordinado, organiza proyectos de cumpleaños épicos, y defiende a sus artistas con pasión. Cada fandom tiene su color oficial, su lightstick, y sus tradiciones. Es familia.',
   },
   {
     question: '¿Qué es un comeback en K-Pop?',
-    answer: 'Un comeback es el regreso de un artista o grupo con nueva música después de un período de inactividad (generalmente 4-8 meses). Incluye: nuevo álbum (mini álbum, álbum completo, o single), canción principal (title track), videoclip de alta producción, concepto visual nuevo, y 2-3 semanas de promociones en programas musicales. Los comebacks son eventos muy anticipados con teasers, fotos conceptuales, y contenido previo al lanzamiento.',
+    answer: '¡El evento más emocionante del calendario fan! Un comeback es cuando tu grupo vuelve con música nueva después de meses de silencio. Pero no es solo música: es un concepto visual completamente nuevo, teasers que te vuelven loco, fotos que rompen internet, videoclips con producción de película, y semanas de promociones en programas musicales. Los fandoms se preparan como para una guerra (de streams y votos). La adrenalina es REAL.',
   },
   {
     question: '¿Dónde puedo escuchar K-Pop?',
-    answer: 'Plataformas de streaming: Spotify, Apple Music, YouTube Music, Amazon Music, y Melon (plataforma coreana líder). Para videoclips: YouTube (canales oficiales como HYBE LABELS, SMTOWN, JYP Entertainment). Para contenido exclusivo: Weverse (HYBE), Bubble (mensajes directos), y V LIVE (lives y behind-the-scenes). Las plataformas coreanas (Melon, Genie, Bugs) son importantes para los charts coreanos.',
+    answer: 'Spotify y Apple Music tienen casi todo, pero YouTube es donde vive la magia: videoclips épicos, performances, behind-the-scenes. Weverse es la app donde los idols de HYBE postean y chatean con fans. Para los más dedicados, las plataformas coreanas como Melon importan para los charts. Nuestro consejo: empieza por YouTube, enamórate de un grupo, y luego explora TODO su contenido. Hay años de material esperándote.',
   },
   {
     question: '¿Qué agencias de K-Pop son las más importantes?',
-    answer: 'Las "Big 4" agencias dominan la industria: HYBE (BTS, SEVENTEEN, TXT, ENHYPEN, NewJeans, LE SSERAFIM) es la más grande por capitalización. SM Entertainment (EXO, NCT, aespa, Red Velvet) es la pionera del K-Pop. JYP Entertainment (Stray Kids, TWICE, ITZY, NMIXX) es conocida por su training system. YG Entertainment (BLACKPINK, TREASURE, BABYMONSTER) tiene el estilo más hip-hop. Otras agencias importantes: Starship, Cube, Pledis, y ADOR.',
+    answer: 'Las "Big 4" son como los Avengers del K-Pop. HYBE (BTS, SEVENTEEN, NewJeans) es la más grande y poderosa. SM Entertainment (aespa, NCT) es la pionera que inventó el sistema idol. JYP Entertainment (Stray Kids, TWICE) es conocida por formar artistas carismáticos. YG Entertainment (BLACKPINK) tiene el estilo más hip-hop y cool. Cada agencia tiene su "sonido" distintivo. Los fans pueden identificar de qué agencia es un grupo solo escuchando.',
   },
   {
     question: '¿Cómo apoyar a mi grupo favorito de K-Pop?',
-    answer: 'Formas de apoyar: hacer streaming en plataformas oficiales (cuenta para charts), comprar álbumes físicos (importante para ventas), votar en programas musicales (M Countdown, Music Bank, Inkigayo), participar en el fandom oficial de la agencia, comprar merchandise oficial, asistir a conciertos, y crear contenido positivo. Evita descargas ilegales y sitios de streaming no autorizados que perjudican a los artistas.',
+    answer: '¡Tu apoyo IMPORTA y se mide! Streaming en plataformas oficiales cuenta para charts. Los álbumes físicos impulsan las ventas. Votar en programas musicales puede darles su primer #1 (momento ÉPICO). Comprar merchandise oficial apoya directamente al grupo. Crear contenido positivo expande el fandom. Lo más importante: disfruta genuinamente de su música. Evita piratería porque daña directamente a los artistas que amas.',
   },
   {
     question: '¿Qué es un lightstick en K-Pop?',
-    answer: 'Un lightstick (응원봉) es un bastón luminoso oficial de cada grupo usado en conciertos y eventos. Cada grupo tiene un diseño único que representa su identidad: el ARMY Bomb de BTS, el Hammer de BLACKPINK, el Candybong de TWICE. Los lightsticks se sincronizan por Bluetooth durante conciertos para crear "océanos de luz" coordinados. Son coleccionables importantes y símbolos de pertenencia al fandom.',
+    answer: '¡El símbolo máximo de pertenencia a un fandom! Cada grupo tiene su lightstick único: el ARMY Bomb de BTS es legendario, el Hammer de BLACKPINK es icónico, el Candybong de TWICE es adorable. En conciertos, MILES de lightsticks se sincronizan por Bluetooth para crear océanos de luz coordinados con la música. Es uno de los momentos más mágicos que puedes experimentar. Tener el lightstick de tu grupo es un rito de iniciación.',
   },
   {
     question: '¿Qué son los programas musicales de K-Pop?',
-    answer: 'Los programas musicales son shows semanales donde los grupos promocionan sus canciones y compiten por el primer lugar. Los principales son: M Countdown (Mnet, jueves), Music Bank (KBS, viernes), Show! Music Core (MBC, sábado), Inkigayo (SBS, domingo), Show Champion (MBC M, miércoles), y The Show (SBS MTV, martes). Ganar el #1 ("music show win") es un logro importante celebrado por fans.',
+    answer: 'Son shows semanales donde los grupos promocionan sus canciones y compiten por el codiciado #1. M Countdown, Music Bank, Inkigayo... cada uno tiene su día. Ganar un "music show win" es un logro ENORME, especialmente el primero. Los grupos lloran, los fans lloran, todos lloran. Los fandoms se organizan para votar y hacer streaming coordinado. Es emocionante, dramático, y una parte esencial de la experiencia K-Pop.',
   },
   {
     question: '¿Qué significa "bias" en K-Pop?',
-    answer: '"Bias" es tu miembro favorito de un grupo. "Bias wrecker" es otro miembro que amenaza con convertirse en tu favorito por su carisma o talento. "Ultimate bias" es tu favorito absoluto entre todos los idols. Tener un bias es parte fundamental de la cultura fan, aunque muchos tienen múltiples biases en diferentes grupos. Los fans expresan su bias a través de photocards, merchandise y votaciones.',
+    answer: '¡Tu bias es tu miembro favorito y es SAGRADO! Pero cuidado con los "bias wreckers": otros miembros que amenazan con robarte el corazón cuando menos lo esperas. Tu "ultimate bias" es tu favorito entre TODOS los idols. Elegir bias es difícil, cambiar de bias causa crisis existenciales, y tener múltiples biases es perfectamente válido. Es parte de la diversión. ¿Ya sabes quién es el tuyo?',
   },
   {
     question: '¿Qué es un trainee de K-Pop?',
-    answer: 'Un trainee (연습생) es un aprendiz que entrena en una agencia de entretenimiento antes de debutar. El período de training dura de 2 a 7 años, aunque algunos debutan más rápido. El entrenamiento incluye: clases de canto, baile, rap, actuación, composición, idiomas (inglés, japonés, chino), y formación en imagen pública. Las agencias grandes como HYBE, SM, JYP y YG tienen sistemas de training muy competitivos con evaluaciones regulares.',
+    answer: 'El camino al debut es BRUTAL. Los trainees entrenan 10-16 horas diarias durante años: clases de canto, baile, rap, actuación, idiomas, composición, hasta etiqueta pública. Las evaluaciones mensuales determinan quién sigue y quién se va. Muchos empiezan a los 12-14 años. Solo una fracción debuta. Los programas de supervivencia como "Produce 101" mostraron al mundo esta realidad. Cuando ves a un idol en escenario, estás viendo años de sacrificio.',
   },
   {
     question: '¿Qué son las photocards en K-Pop?',
-    answer: 'Las photocards son pequeñas tarjetas coleccionables (tamaño tarjeta de crédito) incluidas aleatoriamente en álbumes físicos. Cada álbum incluye 1-2 photocards de miembros aleatorios, lo que incentiva comprar múltiples copias para coleccionar. Hay un activo mercado de intercambio y venta de photocards raras. Las "POBs" (Pre-Order Benefits) son photocards exclusivas de tiendas específicas, muy valoradas por coleccionistas.',
+    answer: '¡La obsesión más adorable del fandom! Son tarjetitas coleccionables incluidas ALEATORIAMENTE en álbumes. Conseguir la photocard de tu bias es como ganar la lotería. No conseguirla significa comprar más álbumes o entrar al intenso mundo del trading. Las "POBs" (beneficios de pre-orden) de tiendas específicas son aún más raras y valiosas. Hay fans con colecciones de cientos. Es adictivo, caro, y absolutamente parte de la experiencia.',
   },
   {
     question: '¿Cuál es la diferencia entre mini álbum y álbum completo?',
-    answer: 'Un mini álbum (EP o Extended Play) tiene 4-7 canciones y es el formato más común en K-Pop, lanzado cada 4-6 meses. Un álbum completo (full album) tiene 10+ canciones y es menos frecuente, representando un proyecto más ambicioso. Un single álbum tiene 1-3 canciones. Los "repackage" son reediciones de álbumes con 2-3 canciones nuevas. Cada formato tiene diferentes versiones con fotos conceptuales distintas.',
+    answer: 'Mini álbum (EP): 4-7 canciones, el formato más común, lanzado cada 4-6 meses. Álbum completo: 10+ canciones, menos frecuente, representa un proyecto más ambicioso y artístico. Single álbum: 1-3 canciones para promociones rápidas. Repackage: el mismo álbum con canciones extra. ¿Lo divertido? Cada formato viene en MÚLTIPLES versiones con fotos conceptuales diferentes. Sí, los fans compran varias versiones. No preguntes cuántas.',
   },
   {
     question: '¿Cómo funcionan los charts de K-Pop?',
-    answer: 'Los charts principales son: Melon, Genie, Bugs, y FLO (streaming coreano), Billboard Hot 100 y Billboard 200 (global), Oricon (Japón), y Hanteo/Circle Chart (ventas de álbumes en Corea). Un "all-kill" ocurre cuando una canción es #1 en todos los charts simultáneamente. Los "digital points" combinan streaming, descargas, y emisiones de radio. Las ventas de primera semana ("first week sales") son métricas importantes para medir el éxito de un comeback.',
+    answer: 'Es una CIENCIA. Melon, Genie, Bugs dominan el streaming coreano. Billboard mide el impacto global. Hanteo y Circle Chart cuentan ventas físicas. Un "all-kill" es cuando tu artista es #1 en TODOS los charts simultáneamente: momento de celebración máxima. Las ventas de primera semana son métricas de poder. Los fandoms coordinan streams a horas específicas para maximizar impacto. Es competitivo, emocionante, y los números se celebran como victorias.',
   },
 ];
 ---
