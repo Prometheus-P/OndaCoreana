@@ -26,6 +26,18 @@ const baseArticleSchema = z.object({
   faq: z.array(faqItemSchema).optional(),
 });
 
+// Streaming platform enum for type safety
+const streamingPlatformEnum = z.enum([
+  'netflix',
+  'viki',
+  'disney-plus',
+  'amazon-prime',
+  'apple-tv',
+  'kocowa',
+  'wavve',
+  'tving',
+]);
+
 // Colección: K-Dramas
 const dramas = defineCollection({
   type: 'content',
@@ -36,7 +48,17 @@ const dramas = defineCollection({
     episodes: z.number().optional(),
     genre: z.array(z.string()).default([]),
     cast: z.array(z.string()).default([]),
-    whereToWatch: z.array(z.string()).default([]), // Netflix, Viki, etc.
+    whereToWatch: z.array(streamingPlatformEnum).default([]), // Streaming platforms
+    /** Airing status: airing (currently airing), completed, upcoming */
+    airingStatus: z.enum(['airing', 'completed', 'upcoming']).default('completed'),
+    /** Day of the week when new episodes air */
+    airingDay: z
+      .enum(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'])
+      .optional(),
+    /** Editor's pick flag for Top 10 recommendations */
+    isEditorPick: z.boolean().default(false),
+    /** Order in editor's picks list (lower = higher priority) */
+    editorPickOrder: z.number().optional(),
   }),
 });
 
@@ -49,6 +71,14 @@ const kpop = defineCollection({
     agency: z.string().optional(), // HYBE, SM, JYP, etc.
     debutYear: z.number().optional(),
     members: z.array(z.string()).optional(),
+    /** Recent activity status: comeback, tour, hiatus, active */
+    recentActivity: z.enum(['comeback', 'tour', 'hiatus', 'active']).default('active'),
+    /** Date of last comeback (for tracking recent comebacks) */
+    lastComebackDate: z.coerce.date().optional(),
+    /** Editor's pick flag for Top 10 recommendations */
+    isEditorPick: z.boolean().default(false),
+    /** Order in editor's picks list (lower = higher priority) */
+    editorPickOrder: z.number().optional(),
   }),
 });
 

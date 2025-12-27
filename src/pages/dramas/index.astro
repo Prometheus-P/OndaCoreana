@@ -3,10 +3,28 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import AdSlot from '../../components/ads/AdSlot.astro';
 import ContentCard from '../../components/ui/ContentCard.astro';
 import FAQSection from '../../components/ui/FAQSection.astro';
+import PlatformFilter from '../../components/ui/PlatformFilter.astro';
 import JsonLd from '../../components/seo/JsonLd.astro';
-import { getPublishedContentSorted } from '../../utils/content-helpers';
+import {
+  getPublishedContentSorted,
+  getDramaCountsByPlatform,
+  type StreamingPlatform,
+} from '../../utils/content-helpers';
 
-const dramas = await getPublishedContentSorted('dramas');
+// Get URL parameter for platform filter
+const url = new URL(Astro.request.url);
+const selectedPlatform = url.searchParams.get('platform') as StreamingPlatform | null;
+
+// Get all dramas
+const allDramas = await getPublishedContentSorted('dramas');
+
+// Filter by platform if selected
+const dramas = selectedPlatform
+  ? allDramas.filter((d) => d.data.whereToWatch?.includes(selectedPlatform))
+  : allDramas;
+
+// Get platform counts for filter badges
+const platformCounts = await getDramaCountsByPlatform();
 
 // Insert ad after every N cards
 const AD_INTERVAL = 4;
@@ -89,6 +107,19 @@ const faqData = [
       <p style="color: color-mix(in srgb, var(--md-color-on-primary) 80%, transparent); max-width: 40rem;">
         Reseñas, guías y recomendaciones de los dramas coreanos que marcan tendencia.
       </p>
+    </div>
+  </section>
+
+  <!-- Platform Filter -->
+  <section class="section-shell" style="--section-bg: var(--md-color-surface);">
+    <div class="section-shell__inner">
+      <PlatformFilter
+        selectedPlatform={selectedPlatform}
+        platformCounts={platformCounts}
+        totalCount={allDramas.length}
+        baseUrl="/dramas"
+        testId="platform-filter"
+      />
     </div>
   </section>
 

@@ -5,12 +5,25 @@ import AdSlot from '../components/ads/AdSlot.astro';
 import ContentCard from '../components/ui/ContentCard.astro';
 import FAQSection from '../components/ui/FAQSection.astro';
 import JsonLd from '../components/seo/JsonLd.astro';
-import { getRecentContent } from '../utils/content-helpers';
+import ThisWeekSection from '../components/ui/ThisWeekSection.astro';
+import EditorPicks from '../components/ui/EditorPicks.astro';
+import NewsletterCTA from '../components/ui/NewsletterCTA.astro';
+import {
+  getRecentContent,
+  getAiringDramas,
+  getRecentComebacks,
+  getEditorPicks,
+} from '../utils/content-helpers';
 
 // Obtener contenido reciente
 const recentDramas = await getRecentContent('dramas', 4);
 const recentKpop = await getRecentContent('kpop', 4);
 const recentNoticias = await getRecentContent('noticias', 6);
+
+// Nuevas consultas para consumer demand features
+const airingDramas = await getAiringDramas();
+const recentComebacks = await getRecentComebacks(30);
+const editorPicksDramas = await getEditorPicks('dramas', 10);
 
 // FAQ data for AEO optimization (10 questions for better AEO score)
 const homepageFaq = [
@@ -100,6 +113,20 @@ const homepageFaq = [
       </div>
     </div>
   </section>
+
+  <!-- Esta Semana - Trending Content -->
+  {(airingDramas.length > 0 || recentComebacks.length > 0) && (
+    <section class="section-shell" style="--section-bg: var(--md-color-surface);">
+      <div class="section-shell__inner">
+        <ThisWeekSection
+          airingDramas={airingDramas}
+          recentComebacks={recentComebacks}
+          limit={4}
+          testId="this-week-section"
+        />
+      </div>
+    </section>
+  )}
 
   <!-- Quick Answers Summary for AEO -->
   <section class="section-shell" style="--section-bg: var(--md-color-surface);">
@@ -310,6 +337,28 @@ const homepageFaq = [
       ) : (
         <p class="text-center subtle-text">Próximamente: reseñas de los mejores K-Dramas</p>
       )}
+    </div>
+  </section>
+
+  <!-- Editor's Top 10 Picks -->
+  {editorPicksDramas.length > 0 && (
+    <section class="section-shell" style="--section-bg: var(--md-color-surface);">
+      <div class="section-shell__inner">
+        <EditorPicks
+          items={editorPicksDramas}
+          title="Top 10 Recomendados"
+          contentType="dramas"
+          variant="full"
+          testId="editor-picks-dramas"
+        />
+      </div>
+    </section>
+  )}
+
+  <!-- Newsletter CTA (Inline) -->
+  <section class="section-shell" style="--section-bg: var(--md-color-surface-container-low);">
+    <div class="section-shell__inner">
+      <NewsletterCTA variant="inline" testId="newsletter-cta-inline" />
     </div>
   </section>
 

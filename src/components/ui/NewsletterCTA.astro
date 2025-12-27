@@ -1,0 +1,345 @@
+---
+/**
+ * NewsletterCTA Component
+ * Prominent newsletter subscription call-to-action
+ * Increases newsletter visibility and conversion
+ */
+
+import NewsletterForm from '../newsletter/NewsletterForm.astro';
+
+interface Props {
+  /** Display variant */
+  variant?: 'inline' | 'floating' | 'compact';
+  /** Test ID for testing */
+  testId?: string;
+}
+
+const { variant = 'inline', testId } = Astro.props;
+
+const benefits = [
+  'Estrenos de la semana',
+  'Comebacks exclusivos',
+  'Recomendaciones personalizadas',
+];
+---
+
+{variant === 'inline' && (
+  <section class="newsletter-cta newsletter-cta--inline" data-testid={testId}>
+    <div class="newsletter-cta__content">
+      <div class="newsletter-cta__icon">📬</div>
+      <h2 class="newsletter-cta__title">
+        ¿Quieres recibir lo mejor cada semana?
+      </h2>
+      <p class="newsletter-cta__subtitle">
+        Únete a miles de fans que ya reciben nuestro boletín semanal
+      </p>
+      <ul class="newsletter-cta__benefits">
+        {benefits.map((benefit) => (
+          <li class="newsletter-cta__benefit">
+            <svg class="newsletter-cta__check" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+            {benefit}
+          </li>
+        ))}
+      </ul>
+      <div class="newsletter-cta__form">
+        <NewsletterForm variant="inline" />
+      </div>
+      <p class="newsletter-cta__privacy">
+        Sin spam. Cancela cuando quieras.
+      </p>
+    </div>
+  </section>
+)}
+
+{variant === 'compact' && (
+  <section class="newsletter-cta newsletter-cta--compact" data-testid={testId}>
+    <div class="newsletter-cta__row">
+      <div class="newsletter-cta__text">
+        <span class="newsletter-cta__compact-icon">📬</span>
+        <span class="newsletter-cta__compact-title">
+          Recibe las mejores noticias K-Drama y K-Pop en tu correo
+        </span>
+      </div>
+      <div class="newsletter-cta__compact-form">
+        <NewsletterForm variant="inline" />
+      </div>
+    </div>
+  </section>
+)}
+
+{variant === 'floating' && (
+  <aside class="newsletter-cta newsletter-cta--floating" data-testid={testId} data-newsletter-floating>
+    <button class="newsletter-cta__close" aria-label="Cerrar" data-close-btn>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18" />
+        <line x1="6" y1="6" x2="18" y2="18" />
+      </svg>
+    </button>
+    <div class="newsletter-cta__floating-content">
+      <span class="newsletter-cta__floating-icon">📬</span>
+      <p class="newsletter-cta__floating-text">
+        ¡No te pierdas ningún estreno ni comeback!
+      </p>
+      <div class="newsletter-cta__floating-form">
+        <NewsletterForm variant="inline" />
+      </div>
+    </div>
+  </aside>
+)}
+
+<style>
+  /* Inline variant - prominent section */
+  .newsletter-cta--inline {
+    padding: 2.5rem 2rem;
+    background: linear-gradient(135deg,
+      color-mix(in srgb, var(--md-color-primary) 15%, var(--md-color-surface)) 0%,
+      color-mix(in srgb, var(--md-color-tertiary) 10%, var(--md-color-surface)) 100%
+    );
+    border: 1px solid var(--md-color-outline-variant);
+    border-radius: 1rem;
+  }
+
+  .newsletter-cta__content {
+    max-width: 32rem;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .newsletter-cta__icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  .newsletter-cta__title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--md-color-on-surface);
+    margin: 0 0 0.5rem;
+  }
+
+  .newsletter-cta__subtitle {
+    font-size: 1rem;
+    color: var(--md-color-on-surface-variant);
+    margin: 0 0 1.5rem;
+  }
+
+  .newsletter-cta__benefits {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem 1.5rem;
+  }
+
+  .newsletter-cta__benefit {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.875rem;
+    color: var(--md-color-on-surface);
+  }
+
+  .newsletter-cta__check {
+    color: var(--md-color-primary);
+    flex-shrink: 0;
+  }
+
+  .newsletter-cta__form {
+    max-width: 28rem;
+    margin: 0 auto;
+  }
+
+  .newsletter-cta__privacy {
+    font-size: 0.75rem;
+    color: var(--md-color-on-surface-variant);
+    margin: 1rem 0 0;
+  }
+
+  /* Compact variant - minimal horizontal bar */
+  .newsletter-cta--compact {
+    padding: 1rem 1.5rem;
+    background: var(--md-color-surface-container);
+    border: 1px solid var(--md-color-outline-variant);
+    border-radius: 0.75rem;
+  }
+
+  .newsletter-cta__row {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    align-items: center;
+  }
+
+  @media (min-width: 768px) {
+    .newsletter-cta__row {
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  }
+
+  .newsletter-cta__text {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+  }
+
+  .newsletter-cta__compact-icon {
+    font-size: 1.5rem;
+  }
+
+  .newsletter-cta__compact-title {
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: var(--md-color-on-surface);
+  }
+
+  .newsletter-cta__compact-form {
+    flex-shrink: 0;
+    width: 100%;
+  }
+
+  @media (min-width: 768px) {
+    .newsletter-cta__compact-form {
+      width: auto;
+      max-width: 24rem;
+    }
+  }
+
+  /* Floating variant - bottom sticky bar */
+  .newsletter-cta--floating {
+    position: fixed;
+    bottom: 1rem;
+    left: 1rem;
+    right: 1rem;
+    z-index: 50;
+    padding: 1rem 1.5rem;
+    background: var(--md-color-surface);
+    border: 1px solid var(--md-color-outline-variant);
+    border-radius: 1rem;
+    box-shadow: var(--md-elevation-3);
+    transform: translateY(120%);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+
+  .newsletter-cta--floating.is-visible {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  .newsletter-cta--floating.is-dismissed {
+    display: none;
+  }
+
+  @media (min-width: 768px) {
+    .newsletter-cta--floating {
+      left: auto;
+      max-width: 28rem;
+    }
+  }
+
+  .newsletter-cta__close {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    padding: 0.25rem;
+    background: none;
+    border: none;
+    color: var(--md-color-on-surface-variant);
+    cursor: pointer;
+    border-radius: 50%;
+    transition: background-color 0.2s ease;
+  }
+
+  .newsletter-cta__close:hover {
+    background: var(--md-color-surface-container-high);
+  }
+
+  .newsletter-cta__floating-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    text-align: center;
+  }
+
+  @media (min-width: 640px) {
+    .newsletter-cta__floating-content {
+      flex-direction: row;
+      text-align: left;
+    }
+  }
+
+  .newsletter-cta__floating-icon {
+    font-size: 1.75rem;
+    flex-shrink: 0;
+  }
+
+  .newsletter-cta__floating-text {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--md-color-on-surface);
+    margin: 0;
+    flex: 1;
+  }
+
+  .newsletter-cta__floating-form {
+    flex-shrink: 0;
+    width: 100%;
+  }
+
+  @media (min-width: 640px) {
+    .newsletter-cta__floating-form {
+      width: auto;
+    }
+  }
+</style>
+
+<script>
+  // Floating newsletter CTA behavior
+  const floatingCTA = document.querySelector('[data-newsletter-floating]') as HTMLElement;
+  const closeBtn = floatingCTA?.querySelector('[data-close-btn]');
+
+  if (floatingCTA) {
+    // Check if user dismissed before (using sessionStorage for per-session)
+    const isDismissed = sessionStorage.getItem('newsletter-cta-dismissed');
+
+    if (!isDismissed) {
+      // Show after scrolling 50% of page
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              floatingCTA.classList.add('is-visible');
+              observer.disconnect();
+            }
+          });
+        },
+        { threshold: 0 }
+      );
+
+      // Create a trigger element at 50% of page height
+      const trigger = document.createElement('div');
+      trigger.style.position = 'absolute';
+      trigger.style.top = '50%';
+      trigger.style.width = '1px';
+      trigger.style.height = '1px';
+      document.body.appendChild(trigger);
+      observer.observe(trigger);
+    } else {
+      floatingCTA.classList.add('is-dismissed');
+    }
+
+    // Close button handler
+    closeBtn?.addEventListener('click', () => {
+      floatingCTA.classList.remove('is-visible');
+      floatingCTA.classList.add('is-dismissed');
+      sessionStorage.setItem('newsletter-cta-dismissed', 'true');
+    });
+  }
+</script>

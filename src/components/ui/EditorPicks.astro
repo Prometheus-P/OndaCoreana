@@ -1,0 +1,285 @@
+---
+/**
+ * EditorPicks Component
+ * Top 10 curated recommendations with ranking display
+ * Addresses "What are the best dramas?" consumer demand
+ */
+
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  /** Editor's pick items (dramas or kpop artists) */
+  items: CollectionEntry<'dramas'>[] | CollectionEntry<'kpop'>[];
+  /** Section title */
+  title?: string;
+  /** Content type for proper linking */
+  contentType: 'dramas' | 'kpop';
+  /** Display variant */
+  variant?: 'compact' | 'full';
+  /** Maximum items to show */
+  limit?: number;
+  /** Test ID for testing */
+  testId?: string;
+}
+
+const {
+  items,
+  title = 'Top 10 Recomendados',
+  contentType,
+  variant = 'compact',
+  limit = 10,
+  testId,
+} = Astro.props;
+
+const displayItems = items.slice(0, limit);
+
+// Get medal color for top 3
+function getRankStyle(index: number): string {
+  if (index === 0) return '--rank-bg: #FFD700; --rank-color: #1a1a1a;'; // Gold
+  if (index === 1) return '--rank-bg: #C0C0C0; --rank-color: #1a1a1a;'; // Silver
+  if (index === 2) return '--rank-bg: #CD7F32; --rank-color: #fff;'; // Bronze
+  return '--rank-bg: var(--md-color-surface-container-high); --rank-color: var(--md-color-on-surface);';
+}
+
+// Get item display name
+function getItemName(item: CollectionEntry<'dramas'> | CollectionEntry<'kpop'>): string {
+  if ('dramaTitle' in item.data) return item.data.dramaTitle;
+  if ('artistName' in item.data) return item.data.artistName;
+  return item.data.title;
+}
+
+// Get item subtitle
+function getItemSubtitle(item: CollectionEntry<'dramas'> | CollectionEntry<'kpop'>): string {
+  if ('genre' in item.data && item.data.genre?.length) {
+    return item.data.genre[0];
+  }
+  if ('agency' in item.data && item.data.agency) {
+    return item.data.agency;
+  }
+  return '';
+}
+
+// Get item URL
+function getItemUrl(item: CollectionEntry<'dramas'> | CollectionEntry<'kpop'>): string {
+  return `/${contentType}/${item.slug}`;
+}
+---
+
+<section class:list={['editor-picks', `editor-picks--${variant}`]} data-testid={testId}>
+  <div class="editor-picks__header">
+    <h2 class="editor-picks__title">
+      <span class="editor-picks__trophy">🏆</span>
+      {title}
+    </h2>
+    <a href={`/${contentType}`} class="editor-picks__cta">
+      Ver todos
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="9 18 15 12 9 6" />
+      </svg>
+    </a>
+  </div>
+
+  {displayItems.length > 0 ? (
+    <ol class="editor-picks__list">
+      {displayItems.map((item, index) => (
+        <li class="editor-picks__item" style={getRankStyle(index)}>
+          <a href={getItemUrl(item)} class="editor-picks__link">
+            <span class="editor-picks__rank">
+              {String(index + 1).padStart(2, '0')}
+            </span>
+            {variant === 'full' && item.data.heroImage && (
+              <div class="editor-picks__image">
+                <img
+                  src={item.data.heroImage}
+                  alt={item.data.heroImageAlt || getItemName(item)}
+                  loading="lazy"
+                />
+              </div>
+            )}
+            <div class="editor-picks__info">
+              <span class="editor-picks__name">{getItemName(item)}</span>
+              {getItemSubtitle(item) && (
+                <span class="editor-picks__subtitle">{getItemSubtitle(item)}</span>
+              )}
+            </div>
+            <svg class="editor-picks__arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </a>
+        </li>
+      ))}
+    </ol>
+  ) : (
+    <p class="editor-picks__empty">
+      Próximamente: nuestras recomendaciones favoritas
+    </p>
+  )}
+</section>
+
+<style>
+  .editor-picks {
+    padding: 0;
+  }
+
+  .editor-picks__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .editor-picks__title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--md-color-on-surface);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .editor-picks__trophy {
+    font-size: 1.5rem;
+  }
+
+  .editor-picks__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--md-color-primary);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .editor-picks__cta:hover {
+    color: var(--md-color-on-primary-container);
+  }
+
+  .editor-picks__list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .editor-picks__item {
+    border-radius: 0.75rem;
+    background: var(--md-color-surface);
+    border: 1px solid var(--md-color-outline-variant);
+    overflow: hidden;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .editor-picks__item:hover {
+    border-color: var(--md-color-primary);
+    box-shadow: var(--md-elevation-1);
+  }
+
+  .editor-picks__link {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    padding: 0.75rem 1rem;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .editor-picks__rank {
+    flex-shrink: 0;
+    width: 2.25rem;
+    height: 2.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--rank-bg);
+    color: var(--rank-color);
+    font-size: 0.875rem;
+    font-weight: 700;
+    border-radius: 0.5rem;
+  }
+
+  .editor-picks__image {
+    flex-shrink: 0;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+
+  .editor-picks__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .editor-picks__info {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+
+  .editor-picks__name {
+    font-weight: 600;
+    font-size: 0.9375rem;
+    color: var(--md-color-on-surface);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .editor-picks__subtitle {
+    font-size: 0.75rem;
+    color: var(--md-color-on-surface-variant);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .editor-picks__arrow {
+    flex-shrink: 0;
+    color: var(--md-color-on-surface-variant);
+    opacity: 0;
+    transform: translateX(-4px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+
+  .editor-picks__item:hover .editor-picks__arrow {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .editor-picks__empty {
+    text-align: center;
+    color: var(--md-color-on-surface-variant);
+    padding: 2rem;
+    background: var(--md-color-surface-container-low);
+    border-radius: 0.75rem;
+  }
+
+  /* Full variant adjustments */
+  .editor-picks--full .editor-picks__list {
+    gap: 0.75rem;
+  }
+
+  .editor-picks--full .editor-picks__link {
+    padding: 1rem 1.25rem;
+  }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    .editor-picks__title {
+      font-size: 1.25rem;
+    }
+
+    .editor-picks--full .editor-picks__image {
+      display: none;
+    }
+  }
+</style>
